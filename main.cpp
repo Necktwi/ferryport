@@ -410,7 +410,7 @@ opendevice:
                 }
             } else {
                 if (gp == GPS_PROTO_NMEA0183) {
-
+                    parseNMEA0183(f, gpsReadStart, gpsReadEnd, gpsCoordinates);
                 } else {
                     parseLocalGPSProtocol(f, gpsReadStart, gpsReadEnd, gpsCoordinates);
                 }
