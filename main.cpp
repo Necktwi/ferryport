@@ -2243,6 +2243,7 @@ void* test(void *) {
 
     /*GPS*/
     debug = 9;
+    readConfig();
     GPSManager::gpsLocationUpdater(NULL);
     fflush(stdout);
 }

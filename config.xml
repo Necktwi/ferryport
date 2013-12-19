@@ -23,7 +23,7 @@
     <internet-test-url>www.google.com</internet-test-url>
     <corporate-network-gateway>192.168.2.1</corporate-network-gateway>
     <gps-device>/dev/ttyO1</gps-device>
-    <gps-sdevice-baudrate>57600</gps-sdevice-baudrate>
+    <gps-sdevice-baudrate>9600</gps-sdevice-baudrate>
     <gps-protocol>GPS_PROTO_NMEA0183</gps-protocol>
     <debug description="debug value in context of 
         basic=1,
