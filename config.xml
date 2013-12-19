@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<config>
+    <app-name>viewyourworld</app-name>
+    <server-addr>183.82.98.147</server-addr>
+    <server-port>80</server-port>
+    <stream-addr>183.82.98.147</stream-addr>
+    <stream-port>25222</stream-port>
+    <connection-encryption description="NO-default value,TLS1_1-TLS version 1.1 encryption">NO</connection-encryption>
+    <namespace>PortalvisionService</namespace>
+    <bootup>false</bootup>
+    <camcapture-compression description="if true, higher cpu utilization and low usb bandwidth">false</camcapture-compression>
+    <record-fps>15</record-fps>
+    <record-resolution>320x240</record-resolution>
+    <stream-fps>8</stream-fps>
+    <stream-resolution>240x180</stream-resolution>
+    <manage-network>1</manage-network>
+    <reconnect-duration description="time to reconnect in minutes when network disconnected">2</reconnect-duration>
+    <reconnect-poll-count>2</reconnect-poll-count>
+    <mobile-broadband-connection description="if u use wvdial to connect set it to 'wvdial' without quotes or if u use network manager set it to connection name. If connection name contains spaces, put it in double quotes">wvdial</mobile-broadband-connection>
+    <config-modem description="to run wvdialconf at startup put it true default false">false</config-modem>
+    <mobile-modem-vendor-product-id description="colon seperated vedor id and product id of mobile modem">19d2:fff1</mobile-modem-vendor-product-id>
+    <usb-hub-vendor-product-id description="colon seperated vedor id and product id of mobile modem">05e3:0608</usb-hub-vendor-product-id>
+    <internet-test-url>www.google.com</internet-test-url>
+    <corporate-network-gateway>192.168.2.1</corporate-network-gateway>
+    <gps-device>/dev/ttyO1</gps-device>
+    <gps-sdevice-baudrate>57600</gps-sdevice-baudrate>
+    <gps-protocol>GPS_PROTO_NMEA0183</gps-protocol>
+    <debug description="debug value in context of 
+        basic=1,
+        spawn=2,
+        socket=4,
+        gps=8,
+        MediaManager=16,
+        lowlevel calls like signalHandler, spawn = 32
+    ">17</debug>
+    <cmos-batt description="true if mainboard has cmos battery else false">false</cmos-batt>
+    <!--properties fetched from server during installation-->
+    <system-id>0</system-id>
+    <videoStreamingType>RTMP</videoStreamingType>
+    <autoInsertCameras>True</autoInsertCameras>
+    <pollInterval>60000</pollInterval>
+    <pid>4188</pid>
+</config>
