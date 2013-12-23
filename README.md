@@ -29,12 +29,15 @@ Installation instructions for ubuntu
 6. add "deb http://deb.newmeksolutions.com/ $(ARCH)/" to top of /etc/apt/sources.list without quotes
 7. sudo route add default gw 192.168.7.1
 8. sudo vi /etc/resolv.conf
-9. sudo vi /etc/udev/rules.d/70-persistent-net.rules add at EOF
+9. change nameserver 192.168.1.1 to 192.168.7.1
+10. sudo ntpdate ntp.ubuntu.com
+11. sudo vi /etc/udev/rules.d/70-persistent-net.rules add at EOF
 
 # USB device 0x0bda:0x8189 (usb)
 SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="wlan*", NAME="wlan0"
 
-10. sudo vi /etc/network/interfaces  and replace #wifi example section with the below
+
+11. sudo vi /etc/network/interfaces  and replace #wifi example section with the below
 
 # WiFi Example
 auto wlan0

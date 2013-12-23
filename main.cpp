@@ -236,9 +236,9 @@ class GPSManager {
 public:
 
     enum GPSProto {
-        GPS_PROTO_UNKNOWN, GPS_PROTO_LOCAL, GPS_PROTO_NMEA, GPS_PROTO_NMEA0183
+        GPS_PROTO_UNKNOWN, GPS_PROTO_LOCAL, GPS_PROTO_NMEA0183
     };
-    static string gpsProtoStr[4];
+    static const char* gpsProtoStr[]; // = {"GPS_PROTO_UNKNOWN", "GPS_PROTO_LOCAL", "GPS_PROTO_NMEA0183"};
 
     enum gps_type {
         RS232, BT
@@ -341,7 +341,7 @@ public:
         if ((devno = (int) gpsDevice.find("rfcomm", 0)) > 0) {
             devno += 6;
             gt = BT;
-            gp = GPS_PROTO_NMEA;
+            gp = GPS_PROTO_NMEA0183;
 rerfspawn:
             string cmd = "rfcomm connect " + gpsDevice.substr(devno, gpsDevice.length());
             spawn * rfspawn = new spawn(cmd, true, &GPSManager::bye_rfspawn, false, false);
@@ -381,33 +381,8 @@ opendevice:
             goto opendevice;
         }
         if (f) {
-            if (gt == BT && gp == GPS_PROTO_NMEA) {
-                string gpsphrase;
-                bool gpsphrase_start;
-                vector<string> GPRMCphrases;
-                c = getc(f);
-                while (c != EOF) {
-                    if (c == '$') {
-                        time(&gpsReadStart);
-                        gpsphrase = "";
-                        gpsphrase_start = true;
-                    } else if (gpsphrase_start && c == '\n') {
-                        gpsphrase_start = false;
-                        time(&gpsReadEnd);
-                        if ((int) gpsphrase.find("GPRMC", 0) > 0) {
-                            GPRMCphrases = explode(",", gpsphrase);
-                            gpsCoordinates = GPRMCphrases[3].length() > 0 ? gpsDevice + ":" + "Latitude,Longitude:-" + GPRMCphrases[3] + GPRMCphrases[4] + "," + GPRMCphrases[5] + GPRMCphrases[6] : gpsDevice + ":" + "Latitude,Longitude:-0000.0000,0000.0000";
-                            if ((debug & 8) == 8) {
-                                cout << "\n" + getTime() + " gpsManager: gpsCoordinates : " + gpsCoordinates + ".\n";
-                                fflush(stdout);
-                            }
-                        }
-                    }
-                    if (gpsphrase_start) {
-                        gpsphrase.append(1, (char) c);
-                    }
-                    c = getc(f);
-                }
+            if (gt == BT && gp == GPS_PROTO_NMEA0183) {
+                parseNMEA0183(f, gpsReadStart, gpsReadEnd, gpsCoordinates);
             } else {
                 if (gp == GPS_PROTO_NMEA0183) {
                     parseNMEA0183(f, gpsReadStart, gpsReadEnd, gpsCoordinates);
@@ -443,7 +418,7 @@ bool GPSManager::bt_respawn;
 GPSManager::GPSProto GPSManager::gp;
 GPSManager::gps_type GPSManager::gt = GPSManager::RS232;
 int GPSManager::initConnectTrials = 10;
-string GPSManager::gpsProtoStr[4];
+const char* GPSManager::gpsProtoStr[] = {"GPS_PROTO_UNKNOWN", "GPS_PROTO_LOCAL", "GPS_PROTO_NMEA0183"};
 
 class RecordsManager {
 public:
@@ -1126,7 +1101,7 @@ void readConfig() {
     xo = xmlXPathEvalExpression((xmlChar*) "/config/gps-protocol", xc);
     node = xo->nodesetval->nodeTab[0];
     string gp = string((char*) xmlNodeGetContent(node));
-    GPSManager::gp = gp.compare("GPS_PROTO_LOCAL") == 0 ? GPSManager::GPSProto::GPS_PROTO_LOCAL : (gp.compare("GPS_PROTO_NMEA") == 0 ? GPSManager::GPSProto::GPS_PROTO_NMEA : (gp.compare("GPS_PROTO_NMEA0183") == 0 ? GPSManager::GPSProto::GPS_PROTO_NMEA0183 : GPSManager::GPSProto::GPS_PROTO_UNKNOWN));
+    GPSManager::gp = gp.compare("GPS_PROTO_LOCAL") == 0 ? GPSManager::GPSProto::GPS_PROTO_LOCAL : (gp.compare("GPS_PROTO_NMEA0183") == 0 ? GPSManager::GPSProto::GPS_PROTO_NMEA0183 : GPSManager::GPSProto::GPS_PROTO_UNKNOWN);
     xo = xmlXPathEvalExpression((xmlChar*) "/config/cmos-batt", xc);
     node = xo->nodesetval->nodeTab[0];
     CMOSWorking = string((char*) xmlNodeGetContent(node)).compare("true") == 0 ? true : false;
@@ -1817,7 +1792,7 @@ void configure() {
     cout << "\ncorporate-network-gateway:\t" + corpNWGW;
     cout << "\ngps-device:\t" + gpsDevice;
     cout << "\ngps-sdevice-baudrate:\t" + gpsSDeviceBaudrate;
-    cout << "\ngps-protocol:\t" << GPSManager::gpsProtoStr[GPSManager::gp];
+    cout << "\ngps-protocol:\t" << (const char*) GPSManager::gpsProtoStr[GPSManager::gp];
     cout << "\ndebug:\t" + string(itoa(debug));
     cout << "\ncmos-batt:\t" + readConfigValue("cmos-batt");
     cout << "\n-------------------------\nSet or Add configuration property\n";
@@ -2125,32 +2100,32 @@ void* test(void *) {
     //    }
     //    cout << "\nExiting the thread!\n";
     /*Testing MediaManager*/
-    //    debug = 17;
-    //    readConfig();
-    //    valarray<MediaManager::media> imedia(2);
-    //    imedia[0].audioSamplingFrequency = 44100;
-    //    imedia[0].duration = 0;
-    //    imedia[0].identifier = "default";
-    //    imedia[0].type = MediaManager::AUDIO;
-    //    imedia[1].duration = 0;
-    //    imedia[1].encoding = MediaManager::MJPEG;
-    //    imedia[1].height = 240;
-    //    imedia[1].identifier = "/dev/video0";
-    //    imedia[1].type = MediaManager::VIDEO;
-    //    imedia[1].videoframerate = 0.4;
-    //    imedia[1].width = 320;
-    //    valarray<MediaManager::media> omedia(1);
-    //    omedia[0].identifier = "fmsp://fms.newmeksolutions.com:92711/" + appName + "/1780";
-    //    //    omedia[0].identifier = "ferrymediacapture1/";
-    //    omedia[0].segmentDuration = 2;
-    //    omedia[0].duration = 0;
-    //    omedia[0].videoframerate = 0.5;
-    //    omedia[0].audioBitrate = 64000;
-    //    omedia[0].duration = 10;
-    //    omedia[0].encoding = MediaManager::MP2;
-    //    omedia[0].splMediaProps.fmpFeederSplProps.reconnect = true;
-    //    omedia[0].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
-    //    MediaManager::capture(imedia, omedia);
+    debug = 17;
+    readConfig();
+    valarray<MediaManager::media> imedia(2);
+    imedia[0].audioSamplingFrequency = 44100;
+    imedia[0].duration = 0;
+    imedia[0].identifier = "default";
+    imedia[0].type = MediaManager::AUDIO;
+    imedia[1].duration = 0;
+    imedia[1].encoding = MediaManager::MJPEG;
+    imedia[1].height = 240;
+    imedia[1].identifier = "/dev/video0";
+    imedia[1].type = MediaManager::VIDEO;
+    imedia[1].videoframerate = 0.4;
+    imedia[1].width = 320;
+    valarray<MediaManager::media> omedia(1);
+    omedia[0].identifier = "fmsp://fms.newmeksolutions.com:92711/" + appName + "/1780";
+    //    omedia[0].identifier = "ferrymediacapture1/";
+    omedia[0].segmentDuration = 2;
+    omedia[0].duration = 0;
+    omedia[0].videoframerate = 0.5;
+    omedia[0].audioBitrate = 64000;
+    omedia[0].duration = 10;
+    omedia[0].encoding = MediaManager::MP2;
+    omedia[0].splMediaProps.fmpFeederSplProps.reconnect = true;
+    omedia[0].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
+    MediaManager::capture(imedia, omedia);
 
     /*stat*/
     //    struct stat statbuf;
@@ -2242,9 +2217,9 @@ void* test(void *) {
     //    udev_unref(udev);
 
     /*GPS*/
-    debug = 9;
-    readConfig();
-    GPSManager::gpsLocationUpdater(NULL);
+    //    debug = 9;
+    //    readConfig();
+    //    GPSManager::gpsLocationUpdater(NULL);
     fflush(stdout);
 }
 
@@ -2451,10 +2426,9 @@ int writeRootProcess() {
 }
 
 int main(int argc, char** argv) {
-    GPSManager::gpsProtoStr[0] = string("GPS_PROTO_UNKNOWN");
-    GPSManager::gpsProtoStr[1] = string("GPS_PROTO_LOCAL");
-    GPSManager::gpsProtoStr[2] = string("GPS_PROTO_NMEA");
-    GPSManager::gpsProtoStr[3] = string("GPS_PROTO_NMEA0183");
+    //    GPSManager::gpsProtoStr[0] = string("GPS_PROTO_UNKNOWN");
+    //    GPSManager::gpsProtoStr[1] = string("GPS_PROTO_LOCAL");
+    //    GPSManager::gpsProtoStr[2] = string("GPS_PROTO_NMEA0183");
     family_message_block_id = shmget(IPC_PRIVATE, sizeof (family_message_block), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     family_message_block_ptr = (family_message_block*) shmat(family_message_block_id, NULL, 0);
     struct stat statbuf;

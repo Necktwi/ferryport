@@ -209,8 +209,11 @@ connect:
         ffargs->cs = new ClientSocket(url, port);
     } catch (SocketException&) {
         if (ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnect) {
+            if ((debug & 16) == 16) {
+                std::cout << "\n" << getTime() << " MediaManager: connection to " << url << ":" << port << " failed. sleeping for " << ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec << "sec.\n";
+                fflush(stdout);
+            }
             sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
-            delete ffargs->cs;
             goto connect;
         }
         ffargs->ffr.error = "Unable to connect streaming server.";
@@ -218,7 +221,7 @@ connect:
         return (void*) &ffargs->ffr;
     }
     time(&ffargs->lastconnectFTS.t);
-    std::string beacon = ("{path:\"" + path + "\",MAXPACKSIZE:8192}");
+    std::string beacon = ("{path:\"" + path + "\",MAXPACKSIZE:20000}");
     try {
         *ffargs->cs << beacon;
     } catch (SocketException e) {
@@ -271,8 +274,8 @@ connect:
             received_frames_per_segment_duration = videoframesCfloat > videoframesPfloat ? (videoframesCfloat - videoframesPfloat + 1) : (videoframesCfloat + 200 - videoframesPfloat);
             if (transmitted_frames_per_segment_duration == 0)transmitted_frames_per_segment_duration = received_frames_per_segment_duration;
             cf = videoframesPfloat;
-//            std::string frame_fn;
-//            int frame_fd;
+            //            std::string frame_fn;
+            //            int frame_fd;
             for (int i = 0; i < transmitted_frames_per_segment_duration; i++) {
                 pf = cf;
                 cf = (videoframesPfloat + (i * received_frames_per_segment_duration / transmitted_frames_per_segment_duration)) % ffargs->ivideomedia->buffer.framebuffer->size();
@@ -281,11 +284,11 @@ connect:
                 buf.assign((char*) (*ffargs->ivideomedia->buffer.framebuffer)[cf].frame, (*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
                 *packet += buf;
                 framesizes.push_back((*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
-//                frame_fn = ffargs->omedia->identifier + std::string(itoa(i)) + ".jpeg";
-//                frame_fd = open(frame_fn.c_str(), O_WRONLY | O_CREAT | O_TRUNC);
-//                write(frame_fd, (*ffargs->ivideomedia->buffer.framebuffer)[cf].frame, (*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
-//                close(frame_fd);
-//                //cs->send(buf, MSG_MORE);
+                //                frame_fn = ffargs->omedia->identifier + std::string(itoa(i)) + ".jpeg";
+                //                frame_fd = open(frame_fn.c_str(), O_WRONLY | O_CREAT | O_TRUNC);
+                //                write(frame_fd, (*ffargs->ivideomedia->buffer.framebuffer)[cf].frame, (*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
+                //                close(frame_fd);
+                //                //cs->send(buf, MSG_MORE);
                 *packet += buf = "FFESCSTR";
                 //cs->send(buf, MSG_MORE);
                 if (i < (transmitted_frames_per_segment_duration - 1)) {
@@ -314,18 +317,19 @@ connect:
         }
         *packet += buf = "FFESCSTR,time:\"" + std::string((char*) itoa((int) tstart.tv_sec)) + "\",duration:" + std::string((char*) itoa(ffargs->omedia->segmentDuration)) + ",endex:" + std::string((char*) itoa(index)) + "}";
         //cs->send(buf); //, MSG_MORE);
-//        ClientSocket::AftermathObj* afmo = new ClientSocket::AftermathObj();
-//        afmo->aftermath = &MediaManager::fmp_feeder_aftermath;
-//        MediaManager::fmp_feeder_aftermath_args * ffaa = new MediaManager::fmp_feeder_aftermath_args();
-//        ffaa->cs = ffargs->cs;
-//        ffaa->csm = &ffargs->csm;
-//        afmo->aftermathDS = ffaa;
+        //        ClientSocket::AftermathObj* afmo = new ClientSocket::AftermathObj();
+        //        afmo->aftermath = &MediaManager::fmp_feeder_aftermath;
+        //        MediaManager::fmp_feeder_aftermath_args * ffaa = new MediaManager::fmp_feeder_aftermath_args();
+        //        ffaa->cs = ffargs->cs;
+        //        ffaa->csm = &ffargs->csm;
+        //        afmo->aftermathDS = ffaa;
         ffargs->csm.lock();
         //ffargs->cs->asyncsend(packet, afmo);
         try {
             ffargs->cs->send(packet, MSG_DONTWAIT | MSG_NOSIGNAL);
         } catch (SocketException e) {
             ffargs->csm.unlock();
+            delete ffargs->cs;
             goto connect;
         }
         ffargs->csm.unlock();

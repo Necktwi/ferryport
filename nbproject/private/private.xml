@@ -18,6 +18,8 @@
         <group>
             <file>rfs://gowtham@newmek7.newmeksolutions.com:22/home/gowtham/NetBeansProjects/remotedevicecontroller/config.xml</file>
             <file>rfs://gowtham@newmek7.newmeksolutions.com:22/home/gowtham/NetBeansProjects/remotedevicecontroller/main.cpp</file>
+            <file>rfs://gowtham@newmek7.newmeksolutions.com:22/home/gowtham/NetBeansProjects/remotedevicecontroller/Makefile</file>
+            <file>rfs://gowtham@newmek7.newmeksolutions.com:22/home/gowtham/NetBeansProjects/remotedevicecontroller/wvdial.conf</file>
         </group>
     </open-files>
 </project-private>

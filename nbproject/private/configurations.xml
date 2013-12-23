@@ -32,10 +32,10 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t &lt; libav_output_files/snd_capture.wav</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -s daemon</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -s normal</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -c</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" -c</runcommand>
+        <runcommand>"${OUTPUT_PATH}" -t</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
