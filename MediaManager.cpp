@@ -23,6 +23,7 @@
 #include <sys/stat.h>
 #include <libavcodec/avcodec.h>
 #include <unistd.h>
+#include<time.h>
 
 MediaManager::MediaManager() {
 
@@ -199,6 +200,9 @@ void *MediaManager::fmp_feeder(void* args) {
     pthread_cleanup_push(deallocate_fmp_feeder_args, args);
     int index = 0;
     struct timespec tstart = {0, 0}, tend = {0, 0};
+    struct timespec req;
+    time_t waketime;
+    int ret = 0;
     int cpos = ffargs->omedia->identifier.find(":", 10);
     int ppos = ffargs->omedia->identifier.find("/", 10);
     int port = cpos > 0 ? atoi(ffargs->omedia->identifier.substr(cpos + 1, ffargs->omedia->identifier.length() - (ppos > 0 ? ppos : 0) - cpos - 1).c_str()) : 927101;
@@ -266,6 +270,10 @@ connect:
     sleep(ffargs->omedia->segmentDuration);
     while (ffargs->iaudiomedia->state>-1 || ffargs->ivideomedia->state>-1) {
         clock_gettime(CLOCK_MONOTONIC, &tstart);
+        //time(&waketime);
+        //waketime+=ffargs->omedia->segmentDuration;
+        tstart.tv_sec += ffargs->omedia->segmentDuration;
+        //req.tv_sec=waketime;
         if (ffargs->ivideomedia->state != -1) {
             videoframesPfloat = videoframesCfloat;
             videoframesCfloat = ffargs->ivideomedia->bufferfloat;
@@ -323,7 +331,7 @@ connect:
             //cs->send(buf, MSG_MORE);
             free(lavea.output_buffer);
         }
-        *packet += buf = "FFESCSTR,time:\"" + std::string((char*) itoa((int) tstart.tv_sec)) + "\",duration:" + std::string((char*) itoa(ffargs->omedia->segmentDuration)) + ",endex:" + std::string((char*) itoa(index)) + "}";
+        *packet += buf = "FFESCSTR,time:\"" + std::string((char*) itoa((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000))) + "\",duration:" + std::string((char*) itoa(ffargs->omedia->segmentDuration)) + ",endex:" + std::string((char*) itoa(index)) + "}";
         //cs->send(buf); //, MSG_MORE);
         //        ClientSocket::AftermathObj* afmo = new ClientSocket::AftermathObj();
         //        afmo->aftermath = &MediaManager::fmp_feeder_aftermath;
@@ -345,14 +353,23 @@ connect:
             goto connect;
         }
         ffargs->csm.unlock();
-        clock_gettime(CLOCK_MONOTONIC, &tend);
-        if ((tend.tv_sec - tstart.tv_sec) < ffargs->omedia->segmentDuration) {
-            tend.tv_nsec /= 1000;
-            tstart.tv_nsec /= 1000;
-            tend.tv_nsec += (tend.tv_sec * (1000000));
-            tstart.tv_nsec += (tstart.tv_sec * (1000000));
-            usleep((ffargs->omedia->segmentDuration * 1000000)-(tend.tv_nsec - tstart.tv_nsec) - 100);
+        //        clock_gettime(CLOCK_MONOTONIC, &tend);
+        //        if ((tend.tv_sec - tstart.tv_sec) < ffargs->omedia->segmentDuration) {
+        //            tend.tv_nsec /= 1000;
+        //            tstart.tv_nsec /= 1000;
+        //            tend.tv_nsec += (tend.tv_sec * (1000000));
+        //            tstart.tv_nsec += (tstart.tv_sec * (1000000));
+        //            usleep((ffargs->omedia->segmentDuration * 1000000)-(tend.tv_nsec - tstart.tv_nsec) - 100);
+        //        }
+nsleep:
+        ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, NULL);
+        if (ret) {
+            perror("clock_nanosleep");
+            goto nsleep;
+        } else {
+            printf("clock_nanosleep successfully slept till %ld sec,%ld nanosec \n", tstart.tv_sec, tstart.tv_nsec);
         }
+
     }
     pthread_cleanup_pop(1);
 }
