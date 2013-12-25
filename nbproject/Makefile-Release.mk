@@ -86,78 +86,78 @@ ${TESTDIR}/TestFiles/f5: ${OBJECTFILES}
 
 ${OBJECTDIR}/ClientSocket.o: ClientSocket.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/ClientSocket.o ClientSocket.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ClientSocket.o ClientSocket.cpp
 
 ${OBJECTDIR}/MediaManager.o: MediaManager.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/MediaManager.o MediaManager.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MediaManager.o MediaManager.cpp
 
 ${OBJECTDIR}/Multimedia.o: Multimedia.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/Multimedia.o Multimedia.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Multimedia.o Multimedia.cpp
 
 ${OBJECTDIR}/ServerSocket.o: ServerSocket.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/ServerSocket.o ServerSocket.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ServerSocket.o ServerSocket.cpp
 
 ${OBJECTDIR}/Socket.o: Socket.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/Socket.o Socket.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Socket.o Socket.cpp
 
 ${OBJECTDIR}/capture.o: capture.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/capture.o capture.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/capture.o capture.cpp
 
 ${OBJECTDIR}/debug.o: debug.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/debug.o debug.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/debug.o debug.cpp
 
 ${OBJECTDIR}/libavcodec_util.o: libavcodec_util.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/libavcodec_util.o libavcodec_util.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/libavcodec_util.o libavcodec_util.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 ${OBJECTDIR}/myconverters.o: myconverters.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/myconverters.o myconverters.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/myconverters.o myconverters.cpp
 
 ${OBJECTDIR}/mycurl.o: mycurl.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/mycurl.o mycurl.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mycurl.o mycurl.cpp
 
 ${OBJECTDIR}/mypcm.o: mypcm.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/mypcm.o mypcm.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mypcm.o mypcm.cpp
 
 ${OBJECTDIR}/mystdlib.o: mystdlib.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/mystdlib.o mystdlib.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mystdlib.o mystdlib.cpp
 
 ${OBJECTDIR}/myxml.o: myxml.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/myxml.o myxml.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/myxml.o myxml.cpp
 
 ${OBJECTDIR}/test-echo.o: test-echo.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.c) -O2 -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/test-echo.o test-echo.c
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo.o test-echo.c
 
 # Subprojects
 .build-subprojects:
@@ -179,20 +179,20 @@ ${TESTDIR}/TestFiles/f3: ${TESTDIR}/tests/pcm_test.o ${OBJECTFILES:%.o=%_nomain.
 
 ${TESTDIR}/tests/libav_encode_decode.o: tests/libav_encode_decode.cpp 
 	${MKDIR} -p ${TESTDIR}/tests
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${TESTDIR}/tests/libav_encode_decode.o tests/libav_encode_decode.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/libav_encode_decode.o tests/libav_encode_decode.cpp
 
 
 ${TESTDIR}/ffmpeg_build/tests/libavcodec_example_test.o: ffmpeg_build/tests/libavcodec_example_test.cpp 
 	${MKDIR} -p ${TESTDIR}/ffmpeg_build/tests
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${TESTDIR}/ffmpeg_build/tests/libavcodec_example_test.o ffmpeg_build/tests/libavcodec_example_test.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/ffmpeg_build/tests/libavcodec_example_test.o ffmpeg_build/tests/libavcodec_example_test.cpp
 
 
 ${TESTDIR}/tests/pcm_test.o: tests/pcm_test.cpp 
 	${MKDIR} -p ${TESTDIR}/tests
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -I. -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${TESTDIR}/tests/pcm_test.o tests/pcm_test.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -I. -I. -I. -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/pcm_test.o tests/pcm_test.cpp
 
 
 ${OBJECTDIR}/ClientSocket_nomain.o: ${OBJECTDIR}/ClientSocket.o ClientSocket.cpp 
@@ -202,8 +202,8 @@ ${OBJECTDIR}/ClientSocket_nomain.o: ${OBJECTDIR}/ClientSocket.o ClientSocket.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/ClientSocket_nomain.o ClientSocket.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ClientSocket_nomain.o ClientSocket.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/ClientSocket.o ${OBJECTDIR}/ClientSocket_nomain.o;\
 	fi
@@ -215,8 +215,8 @@ ${OBJECTDIR}/MediaManager_nomain.o: ${OBJECTDIR}/MediaManager.o MediaManager.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/MediaManager_nomain.o MediaManager.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MediaManager_nomain.o MediaManager.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/MediaManager.o ${OBJECTDIR}/MediaManager_nomain.o;\
 	fi
@@ -228,8 +228,8 @@ ${OBJECTDIR}/Multimedia_nomain.o: ${OBJECTDIR}/Multimedia.o Multimedia.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/Multimedia_nomain.o Multimedia.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Multimedia_nomain.o Multimedia.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/Multimedia.o ${OBJECTDIR}/Multimedia_nomain.o;\
 	fi
@@ -241,8 +241,8 @@ ${OBJECTDIR}/ServerSocket_nomain.o: ${OBJECTDIR}/ServerSocket.o ServerSocket.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/ServerSocket_nomain.o ServerSocket.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ServerSocket_nomain.o ServerSocket.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/ServerSocket.o ${OBJECTDIR}/ServerSocket_nomain.o;\
 	fi
@@ -254,8 +254,8 @@ ${OBJECTDIR}/Socket_nomain.o: ${OBJECTDIR}/Socket.o Socket.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/Socket_nomain.o Socket.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Socket_nomain.o Socket.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/Socket.o ${OBJECTDIR}/Socket_nomain.o;\
 	fi
@@ -267,8 +267,8 @@ ${OBJECTDIR}/capture_nomain.o: ${OBJECTDIR}/capture.o capture.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/capture_nomain.o capture.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/capture_nomain.o capture.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/capture.o ${OBJECTDIR}/capture_nomain.o;\
 	fi
@@ -280,8 +280,8 @@ ${OBJECTDIR}/debug_nomain.o: ${OBJECTDIR}/debug.o debug.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/debug_nomain.o debug.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/debug_nomain.o debug.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/debug.o ${OBJECTDIR}/debug_nomain.o;\
 	fi
@@ -293,8 +293,8 @@ ${OBJECTDIR}/libavcodec_util_nomain.o: ${OBJECTDIR}/libavcodec_util.o libavcodec
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/libavcodec_util_nomain.o libavcodec_util.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/libavcodec_util_nomain.o libavcodec_util.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/libavcodec_util.o ${OBJECTDIR}/libavcodec_util_nomain.o;\
 	fi
@@ -306,8 +306,8 @@ ${OBJECTDIR}/main_nomain.o: ${OBJECTDIR}/main.o main.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/main_nomain.o main.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main_nomain.o main.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/main.o ${OBJECTDIR}/main_nomain.o;\
 	fi
@@ -319,8 +319,8 @@ ${OBJECTDIR}/myconverters_nomain.o: ${OBJECTDIR}/myconverters.o myconverters.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/myconverters_nomain.o myconverters.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/myconverters_nomain.o myconverters.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/myconverters.o ${OBJECTDIR}/myconverters_nomain.o;\
 	fi
@@ -332,8 +332,8 @@ ${OBJECTDIR}/mycurl_nomain.o: ${OBJECTDIR}/mycurl.o mycurl.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/mycurl_nomain.o mycurl.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mycurl_nomain.o mycurl.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/mycurl.o ${OBJECTDIR}/mycurl_nomain.o;\
 	fi
@@ -345,8 +345,8 @@ ${OBJECTDIR}/mypcm_nomain.o: ${OBJECTDIR}/mypcm.o mypcm.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/mypcm_nomain.o mypcm.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mypcm_nomain.o mypcm.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/mypcm.o ${OBJECTDIR}/mypcm_nomain.o;\
 	fi
@@ -358,8 +358,8 @@ ${OBJECTDIR}/mystdlib_nomain.o: ${OBJECTDIR}/mystdlib.o mystdlib.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/mystdlib_nomain.o mystdlib.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mystdlib_nomain.o mystdlib.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/mystdlib.o ${OBJECTDIR}/mystdlib_nomain.o;\
 	fi
@@ -371,8 +371,8 @@ ${OBJECTDIR}/myxml_nomain.o: ${OBJECTDIR}/myxml.o myxml.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/myxml_nomain.o myxml.cpp;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/myxml_nomain.o myxml.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/myxml.o ${OBJECTDIR}/myxml_nomain.o;\
 	fi
@@ -384,8 +384,8 @@ ${OBJECTDIR}/test-echo_nomain.o: ${OBJECTDIR}/test-echo.o test-echo.c
 	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.c) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/test-echo_nomain.o test-echo.c;\
+	    ${RM} "$@.d";\
+	    $(COMPILE.c) -O2 -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo_nomain.o test-echo.c;\
 	else  \
 	    ${CP} ${OBJECTDIR}/test-echo.o ${OBJECTDIR}/test-echo_nomain.o;\
 	fi
