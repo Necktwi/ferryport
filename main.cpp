@@ -302,14 +302,14 @@ public:
 
     static void parseLocalGPSProtocol(FILE* f, time_t& gpsReadStart, time_t& gpsReadEnd, std::string& gpsCoordinates) {
         int c = getc(f);
-        char buf[48];
+        char buf[100];
         int i = 0;
         while (c != EOF) {
             if (c == '@') {
                 time(&gpsReadStart);
                 i = 0;
                 c = getc(f);
-                while (c != '#') {
+                while (c != '#' && i < 100) {
                     if (c == EOF) {
                         break;
                     }
@@ -317,12 +317,19 @@ public:
                     i++;
                     c = getc(f);
                 }
-                time(&gpsReadEnd);
-                buf[i] = '\0';
-                gpsCoordinates = gpsDevice + ":" + string(buf);
-                if ((debug & 8) == 8) {
-                    cout << "\n" + getTime() + " gpsManager: gpsCoordinates : " + gpsCoordinates + ".\n";
-                    fflush(stdout);
+                if (i < 100) {
+                    time(&gpsReadEnd);
+                    buf[i] = '\0';
+                    gpsCoordinates = gpsDevice + ":" + string(buf, i);
+                    if ((debug & 8) == 8) {
+                        cout << "\n" + getTime() + " gpsManager: gpsCoordinates : " + gpsCoordinates + ".\n";
+                        fflush(stdout);
+                    }
+                } else {
+                    if ((debug & 1) == 1) {
+                        cout << "\n" + getTime() + " gpsManager: illegal string from GPS device.\n";
+                        fflush(stdout);
+                    }
                 }
             } else if (c == EOF) {
                 break;
