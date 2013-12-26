@@ -200,8 +200,6 @@ void *MediaManager::fmp_feeder(void* args) {
     pthread_cleanup_push(deallocate_fmp_feeder_args, args);
     int index = 0;
     struct timespec tstart = {0, 0}, tend = {0, 0};
-    struct timespec req;
-    time_t waketime;
     int ret = 0;
     int cpos = ffargs->omedia->identifier.find(":", 10);
     int ppos = ffargs->omedia->identifier.find("/", 10);
@@ -262,10 +260,7 @@ connect:
     sleep(ffargs->omedia->segmentDuration);
     while (ffargs->iaudiomedia->state>-1 || ffargs->ivideomedia->state>-1) {
         clock_gettime(CLOCK_MONOTONIC, &tstart);
-        //time(&waketime);
-        //waketime+=ffargs->omedia->segmentDuration;
         tstart.tv_sec += ffargs->omedia->segmentDuration;
-        //req.tv_sec=waketime;
         if (ffargs->ivideomedia->state != -1) {
             videoframesPfloat = videoframesCfloat;
             videoframesCfloat = ffargs->ivideomedia->bufferfloat;
@@ -368,6 +363,7 @@ void* MediaManager::raw_mjpeg_mp3_dump(void* args) { //#rmmd
     int index = 0;
     struct timespec tstart = {0, 0}, tend = {0, 0};
     struct stat ptr;
+    int ret = 0;
     if (stat(rmmdargs->omedia->identifier.c_str(), &ptr) == -1) {
         rmmdargs->rmmdr.error = "Destination folder not found";
         rmmdargs->rmmdr.errorcode = -1;
@@ -399,7 +395,8 @@ void* MediaManager::raw_mjpeg_mp3_dump(void* args) { //#rmmd
     lavea.input_buffer.periodbuffer = rmmdargs->iaudiomedia->buffer.periodbuffer;
     lavea.output_buffer = NULL;
     while (rmmdargs->iaudiomedia->state>-1 || rmmdargs->ivideomedia->state>-1) {
-        clock_gettime(CLOCK_MONOTONIC, &tstart);
+        clock_gettime(CLOCK_REALTIME, &tstart);
+        tstart.tv_sec += rmmdargs->omedia->segmentDuration;
         if (rmmdargs->ivideomedia->state != -1) {
             videoframesPfloat = videoframesCfloat;
             videoframesCfloat = rmmdargs->ivideomedia->bufferfloat;
@@ -429,13 +426,29 @@ void* MediaManager::raw_mjpeg_mp3_dump(void* args) { //#rmmd
             write(audio_fd, lavea.output_buffer, lavea.output_buffer_size);
             free(lavea.output_buffer);
         }
-        clock_gettime(CLOCK_MONOTONIC, &tend);
-        if ((tend.tv_sec - tstart.tv_sec) < rmmdargs->omedia->segmentDuration) {
-            tend.tv_nsec /= 1000;
-            tstart.tv_nsec /= 1000;
-            tend.tv_nsec += (tend.tv_sec * (1000000));
-            tstart.tv_nsec += (tstart.tv_sec * (1000000));
-            usleep((rmmdargs->omedia->segmentDuration * 1000000)-(tend.tv_nsec - tstart.tv_nsec) - 100);
+        //        clock_gettime(CLOCK_MONOTONIC, &tend);
+        //        if ((tend.tv_sec - tstart.tv_sec) < rmmdargs->omedia->segmentDuration) {
+        //            tend.tv_nsec /= 1000;
+        //            tstart.tv_nsec /= 1000;
+        //            tend.tv_nsec += (tend.tv_sec * (1000000));
+        //            tstart.tv_nsec += (tstart.tv_sec * (1000000));
+        //            usleep((rmmdargs->omedia->segmentDuration * 1000000)-(tend.tv_nsec - tstart.tv_nsec) - 100);
+        //        }
+
+nsleep:
+        ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, NULL);
+        if (ret) {
+            std::cout << "\n" << getTime() << " MediaManeger: ";
+            perror("clock_nanosleep");
+            std::cout << "\n";
+            goto nsleep;
+        } else {
+            if ((debug && 16) == 16) {
+                std::cout << "\n" << getTime()
+                        << "MediaManeger: Clock_nanosleep successfully slept for " << tstart.tv_sec
+                        << "sec and " << tstart.tv_nsec << "\n";
+            }
+
         }
     }
     close(audio_fd);
