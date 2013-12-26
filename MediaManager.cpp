@@ -269,7 +269,7 @@ connect:
     lavea.output_buffer = NULL;
     sleep(ffargs->omedia->segmentDuration);
     while (ffargs->iaudiomedia->state>-1 || ffargs->ivideomedia->state>-1) {
-        clock_gettime(CLOCK_MONOTONIC, &tstart);
+        clock_gettime(CLOCK_REALTIME, &tstart);
         //time(&waketime);
         //waketime+=ffargs->omedia->segmentDuration;
         tstart.tv_sec += ffargs->omedia->segmentDuration;
@@ -364,10 +364,15 @@ connect:
 nsleep:
         ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, NULL);
         if (ret) {
+            std::cout << "\n" << getTime() << " MediaManager:\n";
             perror("clock_nanosleep");
+            std::cout << "\n";
             goto nsleep;
         } else {
-            printf("clock_nanosleep successfully slept till %ld sec,%ld nanosec \n", tstart.tv_sec, tstart.tv_nsec);
+            if ((debug & 16) == 16) {
+                std::cout << "\n" << getTime() << " MediaManager: clock_nanosleep successfully slept till " << tstart.tv_sec << " sec," << tstart.tv_nsec << " nanosec.\n";
+                fflush(stdout);
+            }
         }
 
     }
