@@ -207,6 +207,10 @@ void *MediaManager::fmp_feeder(void* args) {
     std::string path = ppos > 0 ? ffargs->omedia->identifier.substr(ppos, ffargs->omedia->identifier.length()) : "";
     std::string url = ffargs->omedia->identifier.substr(7, cpos > 0 ? cpos - 7 : (ppos > 0 ? ppos - 7 : ffargs->omedia->identifier.length() - 7));
 connect:
+    if ((debug & 16) == 16) {
+        std::cout << "\n" << getTime() << " MediaManager: connecting to " << url << ":" << port << ".\n";
+        fflush(stdout);
+    }
     try {
         ffargs->cs = new ClientSocket(url, port);
     } catch (SocketException&) {
@@ -227,6 +231,10 @@ connect:
     try {
         *ffargs->cs << beacon;
     } catch (SocketException e) {
+        if ((debug & 16) == 16) {
+            std::cout << "\n" << getTime() << " MediaManager: unable to send initpack to " << url << ":" << port << ".\n";
+            fflush(stdout);
+        }
         if (ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnect) {
             delete ffargs->cs;
             sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
@@ -259,7 +267,7 @@ connect:
     lavea.output_buffer = NULL;
     sleep(ffargs->omedia->segmentDuration);
     while (ffargs->iaudiomedia->state>-1 || ffargs->ivideomedia->state>-1) {
-        clock_gettime(CLOCK_MONOTONIC, &tstart);
+        clock_gettime(CLOCK_REALTIME, &tstart);
         tstart.tv_sec += ffargs->omedia->segmentDuration;
         if (ffargs->ivideomedia->state != -1) {
             videoframesPfloat = videoframesCfloat;
@@ -333,6 +341,10 @@ connect:
         } catch (SocketException e) {
             ffargs->csm.unlock();
             delete ffargs->cs;
+            if ((debug & 16) == 16) {
+                std::cout << "\n" << getTime() << " MediaManager: unable to send packet to " << url << ":" << port << ".\n";
+                fflush(stdout);
+            }
             goto connect;
         }
         ffargs->csm.unlock();
@@ -347,10 +359,15 @@ connect:
 nsleep:
         ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, NULL);
         if (ret) {
+            std::cout << "\n" << getTime() << " MediaManager:\n";
             perror("clock_nanosleep");
+            std::cout << "\n";
             goto nsleep;
         } else {
-            printf("clock_nanosleep successfully slept till %ld sec,%ld nanosec \n", tstart.tv_sec, tstart.tv_nsec);
+            if ((debug & 16) == 16) {
+                std::cout << "\n" << getTime() << " MediaManager: clock_nanosleep successfully slept till " << tstart.tv_sec << " sec," << tstart.tv_nsec << " nanosec.\n";
+                fflush(stdout);
+            }
         }
 
     }
