@@ -357,11 +357,11 @@ connect:
         //            usleep((ffargs->omedia->segmentDuration * 1000000)-(tend.tv_nsec - tstart.tv_nsec) - 100);
         //        }
 nsleep:
-        ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, NULL);
+        ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, &tend);
         if (ret) {
             std::cout << "\n" << getTime() << " MediaManager:\n";
             perror("clock_nanosleep");
-            std::cout << "\n";
+            std::cout << "; remaining " << tend.tv_sec << "sec " << tend.tv_nsec << "nsec\n";
             goto nsleep;
         } else {
             if ((debug & 16) == 16) {
@@ -453,11 +453,11 @@ void* MediaManager::raw_mjpeg_mp3_dump(void* args) { //#rmmd
         //        }
 
 nsleep:
-        ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, NULL);
+        ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, &tend);
         if (ret) {
             std::cout << "\n" << getTime() << " MediaManeger: ";
             perror("clock_nanosleep");
-            std::cout << "\n";
+            std::cout << "; remaining " << tend.tv_sec << "sec " << tend.tv_nsec << "nsec\n";
             goto nsleep;
         } else {
             if ((debug && 16) == 16) {
