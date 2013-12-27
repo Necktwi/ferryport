@@ -4,11 +4,27 @@
         <activeConfTypeElem>1</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
+<<<<<<< HEAD
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/gowtham/NetBeansProjects/remotedevicecontroller/config.xml</file>
             <file>file:/home/gowtham/NetBeansProjects/remotedevicecontroller/MediaManager.cpp</file>
+=======
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+        <file>
+            <url>main.cpp</url>
+            <bookmark id="1">
+                <name/>
+                <line>1977</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>rfs://santhosh@newmek7.newmeksolutions.com:22/home/santhosh/remotedevicecontroller/MediaManager.cpp</file>
+>>>>>>> cd770cb57f8a42f86e0a86d0fe68641b93aac6b6
         </group>
     </open-files>
 </project-private>
