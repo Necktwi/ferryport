@@ -211,40 +211,48 @@ bool Socket::connect(const std::string host, const int port) {
     struct hostent* hent;
     struct in_addr **addr_list;
     hent = gethostbyname(host.c_str());
-    addr_list = (struct in_addr **) hent->h_addr_list;
-    if ((debug & 4) == 4) {
-        int i = 0;
-        std::cout << "\n" + getTime() + " Socket::connect gethostbyname : ";
-        while (addr_list[i] != NULL) {
-            printf("%s ", inet_ntoa(*addr_list[i]));
-            i++;
+    if (hent != NULL) {
+        addr_list = (struct in_addr **) hent->h_addr_list;
+        if ((debug & 4) == 4) {
+            int i = 0;
+            std::cout << "\n" + getTime() + " Socket::connect gethostbyname : ";
+            while (addr_list[i] != NULL) {
+                printf("%s ", inet_ntoa(*addr_list[i]));
+                i++;
+            }
+            std::cout << "\n";
+            fflush(stdout);
         }
-        std::cout << "\n";
-        fflush(stdout);
-    }
-    int status = inet_pton(AF_INET, inet_ntoa(*addr_list[0]), &m_addr.sin_addr);
+        int status = inet_pton(AF_INET, inet_ntoa(*addr_list[0]), &m_addr.sin_addr);
 
-    if (errno == EAFNOSUPPORT) return false;
+        if (errno == EAFNOSUPPORT) return false;
 
-    status = ::connect(m_sock, (sockaddr *) & m_addr, sizeof ( m_addr));
+        status = ::connect(m_sock, (sockaddr *) & m_addr, sizeof ( m_addr));
 
-    if (status == 0) {
-        if (socketType != DEFAULT) {
-            int err = SSL_connect(cSSL);
-            if (SSL_get_peer_certificate(cSSL) != NULL) {
-                if (SSL_get_verify_result(cSSL) == X509_V_OK) {
-                    return true;
+        if (status == 0) {
+            if (socketType != DEFAULT) {
+                int err = SSL_connect(cSSL);
+                if (SSL_get_peer_certificate(cSSL) != NULL) {
+                    if (SSL_get_verify_result(cSSL) == X509_V_OK) {
+                        return true;
+                    }
+                }
+                if (err <= 0) {
+                    //log and close down ssl
+                    int sslerr = SSL_get_error(cSSL, err);
+                    ShutdownSSL(cSSL);
                 }
             }
-            if (err <= 0) {
-                //log and close down ssl
-                int sslerr = SSL_get_error(cSSL, err);
-                ShutdownSSL(cSSL);
-            }
+            return true;
+        } else {
+            return false;
         }
-        return true;
     } else {
-        return false;
+        if ((debug & 4) == 4) {
+            std::cout << "\n" + getTime() + " Socket::connect: unable to resolve hostname " << host << "\n";
+            fflush(stdout);
+            return false;
+        }
     }
 }
 

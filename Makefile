@@ -145,7 +145,7 @@ install:
 	install -D certs/ferryfair.cert $(DESTDIR)/etc/ssl/certs/ferryfair.cert
 	install -D certs/ferryport.ferryfair.cert $(DESTDIR)/etc/ssl/certs/${CND_ARTIFACT_NAME_${CONF}}.ferryfair.cert
 	install -D certs/ferryport.ferryfair.key $(DESTDIR)/etc/ssl/certs/${CND_ARTIFACT_NAME_${CONF}}.ferryfair.key
-	install -D ttyO1_armhf.com-00A0.dtbo $(DESTDIR)/lib/firmware/
+	install -D ttyO1_armhf.com-00A0.dtbo $(DESTDIR)/lib/firmware/ttyO1_armhf.com-00A0.dtbo
 	install -m755 -D ${CND_ARTIFACT_PATH_${CONF}} $(DESTDIR)/usr/bin/${APPNAME}
 	
 install-exec-hook:
