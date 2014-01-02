@@ -118,10 +118,12 @@ static void process_image(const void *p, int size) {
         *buf_float = (*buf_float + 1) % (*buffer_size);
     }
     fflush(stderr);
+#ifdef DEBUG
     if ((debug & 16) == 16) {
         fprintf(stdout, ".");
         fflush(stdout);
     }
+#endif
     final_frame_count++;
 }
 
@@ -470,11 +472,12 @@ static void init_device(void) {
             errno_exit("VIDIOC_QUERYCAP");
         }
     }
-
+#ifdef DEBUG
     if ((debug & 16) == 16) {
         //std::cout << "\ndriver:" << cap.driver << "\ncard:" << cap.card << "\nbus_info:" << cap.bus_info << "\nversion:" << cap.version << "\ncapabilities:" << cap.capabilities << "\ndevice_caps:" << cap.device_caps << "\nreserved:" << cap.reserved << "\n";
         fflush(stdout);
     }
+#endif
 
     if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
         //        fprintf(stderr, "%s is no video capture device\n", dev_name);
@@ -526,10 +529,12 @@ static void init_device(void) {
     } else {
         /* Errors ignored. */
     }
+#ifdef DEBUG
     if ((debug & 16) == 16) {
         //std::cout << "\ncropcap.bounds:" << (const unsigned char*)cropcap.bounds << "\ndefract:" << cropcap.defrect << "\npixelaspect:" << cropcap.pixelaspect << "\ntype:" << cropcap.type << "\n";
         fflush(stdout);
     }
+#endif
     argp.index = 5;
     argp.width = 320;
     argp.height = 240;
@@ -542,10 +547,12 @@ static void init_device(void) {
     CLEAR(fmt);
 
     fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+#ifdef DEBUG
     if ((debug & 16) == 16) {
         std::cout << "\n" << getTime() << " caputure: input_format=" << force_format << "\n";
         fflush(stdout);
     }
+#endif
     if (force_format) {
         fmt.fmt.pix.width = width;
         fmt.fmt.pix.height = height;
@@ -694,10 +701,12 @@ void* videocapture(void * voidarg) {
     int j = 0;
     struct capture_args* arg = (capture_args*) voidarg;
     *arg->returnObj.state = 0;
+#ifdef DEBUG
     if ((debug & 16) == 16) {
         std::cout << "\n" << getTime() << " videocapture: arg->device=" << arg->device << "\n";
         fflush(stdout);
     }
+#endif
     //arg->framebuffer->resize(arg->buffersize); //(ferryframe*) calloc(arg->buffersize, sizeof (ferryframe));
     pthread_cleanup_push(deallocate_vcarg, arg);
     readerscount = arg->readerscount;
@@ -739,11 +748,13 @@ void* videocapture(void * voidarg) {
     close(ofd);
     dup2(stdoutfd, 1);
     arg->framerate = framerate;
+#ifdef DEBUG
     if ((debug & 16) == 16) {
         std::cout << "\n" << getTime() << " videocapture:\n";
         print_videoparams();
         fflush(stdout);
     }
+#endif
     pthread_cleanup_pop(1);
     return NULL;
 }

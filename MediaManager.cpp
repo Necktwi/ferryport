@@ -136,10 +136,12 @@ int MediaManager::capture(std::valarray<MediaManager::media> inputs, std::valarr
         }
         i++;
     }
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         std::cout << "\n" << getTime() << " MediaManager::capture: waiting for output threads to join.\n";
         fflush(stdout);
     }
+#endif
     i = 0;
     while (oupthreads.size() > 0) {
         pthread_t* thread = oupthreads[oupthreads.size() - 1];
@@ -147,20 +149,24 @@ int MediaManager::capture(std::valarray<MediaManager::media> inputs, std::valarr
         oupthreads.pop_back();
         delete thread;
     }
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         std::cout << "\n" << getTime() << " MediaManager::capture: terminating input threads.\n";
         fflush(stdout);
     }
+#endif
     i = 0;
     while (inpthreads.size() > 0) {
         pthread_cancel(*inpthreads[inpthreads.size() - 1]);
         pthread_join(*inpthreads[inpthreads.size() - 1], NULL);
         inpthreads.pop_back();
     }
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         std::cout << "\n" << getTime() << " MediaManager::capture: freeing up buffers.\n";
         fflush(stdout);
     }
+#endif
     i = 0;
     while (i < inputs.size()) {
         if (inputs[i].type == VIDEO)delete inputs[i].buffer.framebuffer;
@@ -207,18 +213,22 @@ void *MediaManager::fmp_feeder(void* args) {
     std::string path = ppos > 0 ? ffargs->omedia->identifier.substr(ppos, ffargs->omedia->identifier.length()) : "";
     std::string url = ffargs->omedia->identifier.substr(7, cpos > 0 ? cpos - 7 : (ppos > 0 ? ppos - 7 : ffargs->omedia->identifier.length() - 7));
 connect:
+#ifdef DEBUG
     if ((debug & 16) == 16) {
         std::cout << "\n" << getTime() << " MediaManager: connecting to " << url << ":" << port << ".\n";
         fflush(stdout);
     }
+#endif
     try {
         ffargs->cs = new ClientSocket(url, port);
     } catch (SocketException&) {
         if (ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnect) {
+#ifdef DEBUG
             if ((debug & 16) == 16) {
                 std::cout << "\n" << getTime() << " MediaManager: connection to " << url << ":" << port << " failed. sleeping for " << ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec << "sec.\n";
                 fflush(stdout);
             }
+#endif
             sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
             goto connect;
         }
@@ -231,10 +241,12 @@ connect:
     try {
         *ffargs->cs << beacon;
     } catch (SocketException e) {
+#ifdef DEBUG
         if ((debug & 16) == 16) {
             std::cout << "\n" << getTime() << " MediaManager: unable to send initpack to " << url << ":" << port << ".\n";
             fflush(stdout);
         }
+#endif
         if (ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnect) {
             delete ffargs->cs;
             sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
@@ -341,10 +353,12 @@ connect:
         } catch (SocketException e) {
             ffargs->csm.unlock();
             delete ffargs->cs;
+#ifdef DEBUG
             if ((debug & 16) == 16) {
                 std::cout << "\n" << getTime() << " MediaManager: unable to send packet to " << url << ":" << port << ".\n";
                 fflush(stdout);
             }
+#endif
             goto connect;
         }
         ffargs->csm.unlock();
@@ -364,10 +378,12 @@ nsleep:
             std::cout << "; remaining " << tend.tv_sec << "sec " << tend.tv_nsec << "nsec\n";
             goto nsleep;
         } else {
+#ifdef DEBUG
             if ((debug & 16) == 16) {
                 std::cout << "\n" << getTime() << " MediaManager: clock_nanosleep successfully slept till " << tstart.tv_sec << " sec," << tstart.tv_nsec << " nanosec.\n";
                 fflush(stdout);
             }
+#endif
         }
 
     }
@@ -460,11 +476,13 @@ nsleep:
             std::cout << "; remaining " << tend.tv_sec << "sec " << tend.tv_nsec << "nsec\n";
             goto nsleep;
         } else {
+#ifdef DEBUG
             if ((debug && 16) == 16) {
                 std::cout << "\n" << getTime()
                         << "MediaManeger: Clock_nanosleep successfully slept for " << tstart.tv_sec
                         << "sec and " << tstart.tv_nsec << "\n";
             }
+#endif
 
         }
     }

@@ -61,6 +61,18 @@
       <logicalFolder name="f3" displayName="pcm_test" projectFiles="true" kind="TEST">
         <itemPath>tests/pcm_test.cpp</itemPath>
       </logicalFolder>
+      <logicalFolder name="f5"
+                     displayName="Shared pointer"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/newsimpletest.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f4"
+                     displayName="shared_ptr_test"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/shared_ptr_test.cpp</itemPath>
+      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -258,6 +270,36 @@
           <output>${TESTDIR}/TestFiles/f3</output>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f4">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f4</output>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f5">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f5</output>
+        </linkerTool>
+      </folder>
       <item path="ffmpeg_build/tests/libavcodec_example_test.cpp"
             ex="false"
             tool="1"
@@ -293,7 +335,11 @@
       </item>
       <item path="tests/libav_encode_decode.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="tests/newsimpletest.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="tests/pcm_test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/shared_ptr_test.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="webm_container.html" ex="false" tool="3" flavor2="0">
       </item>
@@ -413,6 +459,36 @@
           <output>${TESTDIR}/TestFiles/f3</output>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f4">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f4</output>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f5">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f5</output>
+        </linkerTool>
+      </folder>
       <item path="ffmpeg_build/tests/libavcodec_example_test.cpp"
             ex="false"
             tool="1"
@@ -448,7 +524,11 @@
       </item>
       <item path="tests/libav_encode_decode.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="tests/newsimpletest.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="tests/pcm_test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/shared_ptr_test.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="webm_container.html" ex="false" tool="3" flavor2="0">
       </item>

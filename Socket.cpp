@@ -213,6 +213,7 @@ bool Socket::connect(const std::string host, const int port) {
     hent = gethostbyname(host.c_str());
     if (hent != NULL) {
         addr_list = (struct in_addr **) hent->h_addr_list;
+#ifdef DEBUG
         if ((debug & 4) == 4) {
             int i = 0;
             std::cout << "\n" + getTime() + " Socket::connect gethostbyname : ";
@@ -223,10 +224,9 @@ bool Socket::connect(const std::string host, const int port) {
             std::cout << "\n";
             fflush(stdout);
         }
+#endif
         int status = inet_pton(AF_INET, inet_ntoa(*addr_list[0]), &m_addr.sin_addr);
-
         if (errno == EAFNOSUPPORT) return false;
-
         status = ::connect(m_sock, (sockaddr *) & m_addr, sizeof ( m_addr));
 
         if (status == 0) {
@@ -248,11 +248,13 @@ bool Socket::connect(const std::string host, const int port) {
             return false;
         }
     } else {
+#ifdef DEBUG
         if ((debug & 4) == 4) {
             std::cout << "\n" + getTime() + " Socket::connect: unable to resolve hostname " << host << "\n";
             fflush(stdout);
             return false;
         }
+#endif
     }
 }
 
