@@ -189,10 +189,12 @@ spawn::spawn(std::string command, bool daemon, void (*onStopHandler)(spawn*), bo
         } else {
             processMap[this->cpid] = this;
             this->childExitStatus = child_exit_status;
+#ifdef DEBUG
             if ((debug & 32) == 32) {
                 std::cout << "\n" << getTime() << " spawn: process " << getpid() << " spawned " << this->cmdName << " with pid:" << this->cpid << "\n";
                 fflush(stdout);
             }
+#endif
             this->onStopHandler = onStopHandler;
             close(this->cpstdinp[0]);
             this->cpstdin = this->cpstdinp[1];
@@ -209,17 +211,21 @@ wait_till_child_exit:
                 pid = waitpid(this->cpid, &this->childExitStatus, 0);
                 if (pid == -1) {
                     if (waitpid(this->cpid, &this->childExitStatus, WNOHANG) == 0) {
+#ifdef DEBUG
                         if ((debug & 32) == 32) {
                             std::cout << "\n" << getTime() << " spawn: process " << getpid() << " received a signal during cmd: " << this->cmdName << "\n";
                             fflush(stdout);
                         }
+#endif
                         goto wait_till_child_exit;
                     }
                 }
+#ifdef DEBUG
                 if ((debug & 32) == 32) {
                     std::cout << "\n" << getTime() << " spawn: process " << getpid() << "'s child \"" << this->cmdName << "\" with pid " << pid << " exited.\n";
                     fflush(stdout);
                 }
+#endif
                 onStopHandler(this);
             }
             if (pthread_sigmask(SIG_UNBLOCK, &chldmask, NULL) == -1) {
@@ -435,15 +441,19 @@ int poke(std::string ip) {
         return -1;
     }
     return connect(mysocket, (sockaddr*) & sip, sizeof (sip));*/
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         std::cout << "\n" + getTime() + " poking " + ip + "....";
         fflush(stdout);
     }
+#endif
     ip = GetPrimaryIp();
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         std::cout << "with ipadress: " + ip + "\n";
         fflush(stdout);
     }
+#endif
     if (ip.length() == 0) {
         return 1;
     } else {

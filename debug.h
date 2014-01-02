@@ -4,7 +4,6 @@
  *
  * Created on 7 June, 2013, 4:07 PM
  */
-
 #ifndef DEBUG_H
 #define	DEBUG_H
 #include "mystdlib.h"
@@ -12,6 +11,7 @@
 #include <utility>
 #include <sys/types.h>
 
+#define DEBUG
 extern int debug;
 extern int stdinfd;
 extern int stdoutfd;

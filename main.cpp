@@ -255,18 +255,21 @@ public:
     static void bye_rfspawn(spawn* rfspawn) {
         bt_respawn = true;
         if (initConnectTrials > 0) {
+#ifdef DEBUG
             if ((debug & 8) == 8) {
                 cout << "\n" + getTime() + " gpsManager: No bluetooth gps found; sleeping for 20 seconds\n";
                 fflush(stdout);
             }
+#endif
             sleep(20);
             initConnectTrials--;
         } else {
+#ifdef DEBUG
             if ((debug & 8) == 8) {
                 cout << "\n" + getTime() + " gpsManager: No bluetooth gps found; sleeping for 120 seconds\n";
                 fflush(stdout);
             }
-
+#endif
             sleep(120);
         }
     };
@@ -287,10 +290,12 @@ public:
                 if ((int) gpsphrase.find("GPRMC", 0) > 0) {
                     GPRMCphrases = explode(",", gpsphrase);
                     gpsCoordinates = GPRMCphrases[3].length() > 0 ? gpsDevice + ":" + "Latitude,Longitude:-" + GPRMCphrases[3] + GPRMCphrases[4] + "," + GPRMCphrases[5] + GPRMCphrases[6] : gpsDevice + ":" + "Latitude,Longitude:-0000.0000,0000.0000";
+#ifdef DEBUG
                     if ((debug & 8) == 8) {
                         cout << "\n" + getTime() + " gpsManager: gpsCoordinates : " + gpsCoordinates + ".\n";
                         fflush(stdout);
                     }
+#endif
                 }
             }
             if (gpsphrase_start) {
@@ -321,15 +326,19 @@ public:
                     time(&gpsReadEnd);
                     buf[i] = '\0';
                     gpsCoordinates = gpsDevice + ":" + string(buf, i);
+#ifdef BEDUG
                     if ((debug & 8) == 8) {
                         cout << "\n" + getTime() + " gpsManager: gpsCoordinates : " + gpsCoordinates + ".\n";
                         fflush(stdout);
                     }
+#endif
                 } else {
+#ifdef DEBUG
                     if ((debug & 1) == 1) {
                         cout << "\n" + getTime() + " gpsManager: illegal string from GPS device.\n";
                         fflush(stdout);
                     }
+#endif
                 }
             } else if (c == EOF) {
                 break;
@@ -352,26 +361,32 @@ public:
 rerfspawn:
             string cmd = "rfcomm connect " + gpsDevice.substr(devno, gpsDevice.length());
             spawn * rfspawn = new spawn(cmd, true, &GPSManager::bye_rfspawn, false, false);
+#ifdef DEBUG
             if ((debug & 1) == 1) {
                 cout << "\n" + getTime() + " gpsManager: connecting to bluetooth gps device...\n";
                 fflush(stdout);
             }
+#endif
             sleep(6);
         }
 opendevice:
         FILE *f = fopen(gpsDevice.c_str(), "r");
+#ifdef DEBUG
         if ((debug & 1) == 1) {
             cout << "\n" + getTime() + " gpsManager: reading gpsdevice:" + gpsDevice + "\n";
             fflush(stdout);
         }
+#endif
         if (gt == RS232 && f && gpsSDeviceBaudrate.length() > 0) {
             cmd = "stty -F " + gpsDevice + " " + gpsSDeviceBaudrate;
             spawn *gpsdbrsetter = new spawn(cmd, false, NULL, false, true);
             delete gpsdbrsetter;
+#ifdef DEBUG
             if ((debug & 1) == 1) {
                 cout << "\n" + getTime() + " gpsManager: baudrate set:cmd:" + cmd + "\n";
                 fflush(stdout);
             }
+#endif
         } else if (gt == BT && f == NULL) {
             sleep(30);
             if (bt_respawn) {
@@ -396,18 +411,22 @@ opendevice:
                 } else {
                     parseLocalGPSProtocol(f, gpsReadStart, gpsReadEnd, gpsCoordinates);
                 }
+#ifdef DEBUG
                 if ((debug & 1) == 1) {
                     cout << "\n" + getTime() + " gpsManager: gps device disconnected. sleeping for 10 secs.\n";
                     fflush(stdout);
                 }
+#endif
                 sleep(10);
                 goto opendevice;
             }
         }
+#ifdef DEBUG
         if ((debug & 1) == 1) {
             cout << "\n" + getTime() + " gpsManager: no gps device found. sleeping for 60 secs.\n";
             fflush(stdout);
         }
+#endif
         sleep(60);
         goto opendevice;
     }
@@ -572,10 +591,12 @@ public:
             stopRecord(rIndex);
             string cmd = "ffmpeg -re -i " + rfa + " -r " + streamfps + " -s " + streamResolution + " -f flv " + sa;
             records[rIndex].recorder = spawn(cmd, true, NULL, false);
+#ifdef DEBUG
             if ((debug & 1) == 1) {
                 cout << "\n" + getTime() + " setRecordState: " + cmd + " :" + string(itoa(records[rIndex].recorder.cpid)) + "\n";
                 fflush(stdout);
             }
+#endif
             records[rIndex].spid = records[rIndex].recorder.cpid;
             records[rIndex].newState = RECORD_PREVIOUS_STATE;
             records[rIndex].state = RECORD_STREAM;
@@ -607,10 +628,12 @@ void ffmpegOnStopHandler(spawn* process) {
     ffmpegerr[0] = '\0';
     read(process->cpstderr, ffmpegerr, 100);
     string ffmpegerrstr = string(ffmpegerr);
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         cout << "\n" << getTime() << " ffmpegOnStopHandler: ffmpeg->pid=" << process->cpid << ", ffmpeg->exitcode=" << (int) process->getChildExitStatus() << ",ffmpegerr->error=" << ffmpegerr << "\n";
         fflush(stdout);
     }
+#endif
     if ((int) ffmpegerrstr.find("No space left on device", 0) > 0) {
         cleanRecords(1);
     } else if ((int) ffmpegerrstr.find("Device or resource busy", 0) > 0) {
@@ -638,10 +661,12 @@ void correctTimeStampFileNames() {
     time_t t;
     string path;
     string fname;
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         cout << "\n" + getTime() + " correctTimeStampFileNames: correcting timestamps ...\n";
         fflush(stdout);
     }
+#endif
     while (recordedFileNames.size() != 0) {
         fileName = recordedFileNames[recordedFileNames.size() - 1];
         recordedFileNames.pop_back();
@@ -667,10 +692,12 @@ void correctTimeStampFileNames() {
         fname = path + "/" + fn;
         copyfile(fileName, fname);
         unlink((char*) fileName.c_str());
+#ifdef DEBUG
         if ((debug & 1) == 1) {
             cout << "\n" + getTime() + " correctTimeStampFileNames: renamed " << fileName << " to " << fname << "\n";
             fflush(stdout);
         }
+#endif
     }
 }
 
@@ -806,10 +833,12 @@ public:
                 cmd = "ffmpeg -loglevel error -f video4linux2 " + (camcaptureCompression ? string("-vcodec mjpeg ") : string("")) + "-r " + recordfps + " -s " + recordResolution + " -i " + dev + " " + cs.recordPath;
                 csList::stopCam(cam);
                 process = new spawn(cmd, true, &ffmpegOnStopHandler, false);
+#ifdef DEBUG
                 if ((debug & 1) == 1) {
                     cout << "\n" + getTime() + " setCamState: " + cmd + " :" + string(itoa(process->cpid)) + "\n";
                     fflush(stdout);
                 }
+#endif
                 fcpid = process->cpid;
                 ns = CAM_RECORD;
                 recordedFileNames.push_back(cs.recordPath);
@@ -817,20 +846,24 @@ public:
                 cmd = "ffmpeg -loglevel error -f video4linux2 " + (camcaptureCompression ? string("-vcodec mjpeg ") : string("")) + "-r " + recordfps + " -s " + recordResolution + " -i " + dev + " -r " + streamfps + " -s " + streamResolution + " -f flv " + cs.streamPath;
                 csList::stopCam(cam);
                 process = new spawn(cmd, true, &ffmpegOnStopHandler, false);
+#ifdef DEBUG
                 if ((debug & 1) == 1) {
                     cout << "\n" + getTime() + " setCamState: " + cmd + " :" + string(itoa(process->cpid)) + "\n";
                     fflush(stdout);
                 }
+#endif
                 fcpid = process->cpid;
                 ns = CAM_STREAM;
             } else if (cs.newState == CAM_STREAM_N_RECORD) {
                 cmd = "ffmpeg -loglevel error -f video4linux2 " + (camcaptureCompression ? string("-vcodec mjpeg ") : string("")) + "-r " + recordfps + " -s " + recordResolution + " -i " + dev + " -r " + streamfps + " -s " + streamResolution + " -f flv " + cs.streamPath + " " + cs.recordPath;
                 csList::stopCam(cam);
                 process = new spawn(cmd, true, &ffmpegOnStopHandler, false);
+#ifdef DEBUG
                 if ((debug & 1) == 1) {
                     cout << "\n" + getTime() + " setCamState: " + cmd + " :" + string(itoa(process->cpid)) + "\n";
                     fflush(stdout);
                 }
+#endif
                 fcpid = process->cpid;
                 ns = CAM_STREAM_N_RECORD;
                 if (!CMOSWorking&&!updateTimeStamps) {
@@ -1032,6 +1065,7 @@ void readConfig() {
     xmlXPathContext *xc = xmlXPathNewContext(xd);
     xmlXPathObject* xo = xmlXPathEvalExpression((xmlChar*) "/config/server-addr", xc);
     xmlNode* node;
+    xo = xmlXPathEvalExpression((xmlChar*) "/config/server-addr", xc);
     node = xo->nodesetval->nodeTab[0];
     serverAddr = string((char*) xmlNodeGetContent(node));
     xo = xmlXPathEvalExpression((xmlChar*) "/config/server-port", xc);
@@ -1340,10 +1374,12 @@ camState systemStateChange() {
     }
     string strNetwork = "ip:" + currentIP + ",signalstrength:-1";
     string content = "<GetDataChangeBySystemId xmlns=\"" + xmlnamespace + "\"><SystemName>" + getMachineName() + "</SystemName><SecurityKey>" + securityKey + "</SecurityKey><Cameras>" + strCameras + "</Cameras><GPS>" + strGPS + "</GPS><network>" + strNetwork + "</network></GetDataChangeBySystemId>";
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         cout << "\n" + getTime() + " systemStateChange: SOAPRequest " + string(itoa(SOAPServiceReqCount)) + ": " + content + "\n";
         fflush(stdout);
     }
+#endif
     string response = reqSOAPService("GetDataChangeBySystemId", (xmlChar*) content.c_str());
     if (response.compare("CONNECTION ERROR") == 0) {
         cerr << "\n" + getTime() + " systemStateChange: unable to connect server CONNECTION ERROR.\n";
@@ -1351,10 +1387,12 @@ camState systemStateChange() {
         cs = CAM_NEW_STATE;
         return cs;
     }
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         cout << "\n" + getTime() + " systemStateChange: SOAPResponse: " + response + "\n";
         fflush(stdout);
     }
+#endif
     xmlChar *res = (xmlChar*) response.c_str();
     xmlDoc *xd = xmlParseDoc(res);
     xmlXPathContext *xpathCtx = xmlXPathNewContext(xd);
@@ -1464,10 +1502,12 @@ void print_usage(FILE* stream, int exit_code, char* program_name) {
 void internetTimeUpdater(void *arg) {
     time_t oldTimeStamp;
     time(&oldTimeStamp);
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         cout << "\n" + getTime() + " internetTimeUpdater: spawning ntpdate\n";
         fflush(stdout);
     }
+#endif
     spawn *ntpdate = new spawn("ntpdate ntp.ubuntu.com", true, NULL, false, true);
     if ((int) ntpdate->getChildExitStatus() == 0) {
         time_t newTimeStamp;
@@ -1483,17 +1523,21 @@ void internetTimeUpdater(void *arg) {
         }
         correctAllTimeVariables();
     }
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         cout << "\n" + getTime() + " internetTimeUpdater: ntpdate: ces: " << (int) ntpdate->getChildExitStatus() << " cout: " + get_fd_contents(ntpdate->cpstdout) + " cerr: " + get_fd_contents(ntpdate->cpstderr) + " \n";
         fflush(stdout);
     }
+#endif
     delete ntpdate;
 }
 
 void correctAllTimeVariables() {
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         cout << "\n" << getTime() << " correctAllTimeVariables: process " << getpid() << " is correcting timestamps.\n";
     }
+#endif
     GPSManager::gpsReadStart += timeGapToCorrectTime;
     GPSManager::gpsReadEnd += timeGapToCorrectTime;
     nm_presentCheckTime += timeGapToCorrectTime;
@@ -1862,9 +1906,11 @@ struct networkManagerCleanUpBuffers {
 } nMCUB;
 
 void networkManagerCleanUp(void* buffers) {
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         cout << "\n" << getTime() << " " << getpid() << " networkManagerCleanUp: setting networkManagerRunning to false.\n";
     }
+#endif
     networkManagerCleanUpBuffers *b = (networkManagerCleanUpBuffers*) buffers;
     *b->networkManagerRunning = false;
 }
@@ -1882,9 +1928,11 @@ wait_till_child_dead:
         if (deadpid == -1 && waitpid(secondChild, &status, WNOHANG) == 0) {
             goto wait_till_child_dead;
         }
+#ifdef DEBUG
         if ((debug & 1) == 1) {
             cout << "\n" << getTime() << " secondFork: " << deadpid << "process exited!\n";
         }
+#endif
         secondFork();
     } else {
         secondChild = getpid();
@@ -1897,12 +1945,14 @@ wait_till_child_dead:
 void firstFork() {
     readConfig();
     if (runMode.compare("daemon") == 0) {
+#ifdef DEBUG
         if ((debug & 1) == 1) {
             dup2(ferr, 1);
             stdoutfd = ferr;
         } else {
             close(1);
         }
+#endif
     }
     firstChild = fork();
     if (firstChild != 0) {
@@ -1912,9 +1962,11 @@ wait_till_child_dead:
         if (deadpid == -1 && waitpid(firstChild, &status, WNOHANG) == 0) {
             goto wait_till_child_dead;
         }
-        if ((debug & 1) == 1) {
+#ifdef DEBUG      
+if ((debug & 1) == 1) {
             cout << "\n" << getTime() << " firstFork: " << deadpid << "process exited!\n";
         }
+#endif
         firstFork();
     } else {
         firstChild = getpid();
@@ -1939,9 +1991,11 @@ int log(string prefix, string msg) {
 }
 
 void signalHandler(int signal_number) {
+#ifdef DEBUG 
     if ((debug & 32) == 32) {
         cout << "\n" << getTime() << " signalHandler: process " << getpid() << " received signal " << signal_number << "\n";
     }
+#endif
     if (signal_number == SIGUSR1) {
         int fd;
         void* file_memory;
@@ -1971,10 +2025,12 @@ void signalHandler(int signal_number) {
             child_exit_status = status;
             if (processMap[pid] != NULL) {
                 spawn *process = processMap[pid];
+#ifdef DEBUG
                 if ((debug & 32) == 32) {
                     cout << "\n" << getTime() << " signalHandler: process " << getpid() << "'s child \"" << process->cmdName << "\" with pid " << pid << " exited.\n";
                     fflush(stdout);
                 }
+#endif
                 process->childExitStatus = status;
                 process->onStopHandler(process);
             }
@@ -2107,32 +2163,32 @@ void* test(void *) {
     //    }
     //    cout << "\nExiting the thread!\n";
     /*Testing MediaManager*/
-    debug = 17;
-    readConfig();
-    valarray<MediaManager::media> imedia(2);
-    imedia[0].audioSamplingFrequency = 44100;
-    imedia[0].duration = 0;
-    imedia[0].identifier = "default";
-    imedia[0].type = MediaManager::AUDIO;
-    imedia[1].duration = 0;
-    imedia[1].encoding = MediaManager::MJPEG;
-    imedia[1].height = 240;
-    imedia[1].identifier = "/dev/video0";
-    imedia[1].type = MediaManager::VIDEO;
-    imedia[1].videoframerate = 0.4;
-    imedia[1].width = 320;
-    valarray<MediaManager::media> omedia(1);
-    omedia[0].identifier = "fmsp://fms.newmeksolutions.com:92711/" + appName + "/1780";
-    //    omedia[0].identifier = "ferrymediacapture1/";
-    omedia[0].segmentDuration = 2;
-    omedia[0].duration = 0;
-    omedia[0].videoframerate = 0.5;
-    omedia[0].audioBitrate = 64000;
-    omedia[0].duration = 10;
-    omedia[0].encoding = MediaManager::MP2;
-    omedia[0].splMediaProps.fmpFeederSplProps.reconnect = true;
-    omedia[0].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
-    MediaManager::capture(imedia, omedia);
+    //    debug = 17;
+    //    readConfig();
+    //    valarray<MediaManager::media> imedia(2);
+    //    imedia[0].audioSamplingFrequency = 44100;
+    //    imedia[0].duration = 0;
+    //    imedia[0].identifier = "default";
+    //    imedia[0].type = MediaManager::AUDIO;
+    //    imedia[1].duration = 0;
+    //    imedia[1].encoding = MediaManager::MJPEG;
+    //    imedia[1].height = 240;
+    //    imedia[1].identifier = "/dev/video0";
+    //    imedia[1].type = MediaManager::VIDEO;
+    //    imedia[1].videoframerate = 0.4;
+    //    imedia[1].width = 320;
+    //    valarray<MediaManager::media> omedia(1);
+    //    omedia[0].identifier = "fmsp://fms.newmeksolutions.com:92711/" + appName + "/1780";
+    //    //    omedia[0].identifier = "ferrymediacapture1/";
+    //    omedia[0].segmentDuration = 2;
+    //    omedia[0].duration = 0;
+    //    omedia[0].videoframerate = 0.5;
+    //    omedia[0].audioBitrate = 64000;
+    //    omedia[0].duration = 10;
+    //    omedia[0].encoding = MediaManager::MP2;
+    //    omedia[0].splMediaProps.fmpFeederSplProps.reconnect = true;
+    //    omedia[0].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
+    //    MediaManager::capture(imedia, omedia);
 
     /*stat*/
     //    struct stat statbuf;
@@ -2180,10 +2236,12 @@ void* test(void *) {
     //        if (rc < 0) {
     //            cerr << "\n" << getTime() << " test: Error in ioctl\n";
     //        } else {
+    //        #ifdef DEBUG
     //            if ((debug & 1) == 1) {
     //                cout << "\n" << getTime() << " test: ioctl reset successful\n";
     //                fflush(stdout);
     //            }
+//             #endif
     //        }
     //        close(fd);
     //    }
@@ -2227,7 +2285,15 @@ void* test(void *) {
     //    debug = 9;
     //    readConfig();
     //    GPSManager::gpsLocationUpdater(NULL);
-    fflush(stdout);
+
+    /*ValGrind Tool in ReadConfig*/
+    //    readConfig();
+    //    fflush(stdout);
+
+    /*Conditional Compilation*/
+#ifdef DEBUG
+    std::cout << "MakeFile Chnages Reflected\n";
+#endif
 }
 
 void set_bus_device_file_name(string vpid, string& bus_device_file_name) { //#vpid-vendor product id
@@ -2241,10 +2307,12 @@ void set_bus_device_file_name(string vpid, string& bus_device_file_name) { //#vp
         string device_no = wvdialerrstr.substr(ref - 8, 3);
         string bus_no = wvdialerrstr.substr(ref - 19, 3);
         bus_device_file_name = "/dev/bus/usb/" + bus_no + "/" + device_no;
+#ifdef DEBUG
         if ((debug & 1) == 1) {
             cout << "\n" << getTime() << " set_bus_device_file_name: lsusb: bud_device_file_name of  vendor:product  " << vpid << " device is " << bus_device_file_name << "\n";
             fflush(stdout);
         }
+#endif
     } else {
         //if ((debug & 1) == 1) {
         cout << "\n" << getTime() << " set_bus_device_file_name: lsusb detected no device with vendor:product id " << vpid << "\n";
@@ -2261,10 +2329,12 @@ void usb_reset(string device) {
             volatile_usb_hub_reset_interval = 10;
             cerr << "\n" << getTime() << " usb_reset: Error in ioctl on " << device << ".\n";
         } else {
+#ifdef DEBUG
             if ((debug & 1) == 1) {
                 cout << "\n" << getTime() << " usb_reset: ioctl reset on " << device << " successful\n";
                 fflush(stdout);
             }
+#endif
         }
         close(fd);
     } else {
@@ -2278,10 +2348,13 @@ void usb_reset(string device) {
 void* networkManager(void* arg) {
     networkManagerRunning = true;
     pthread_cleanup_push(&networkManagerCleanUp, &nMCUB);
+#ifdef DEBUG
     if ((debug & 1) == 1) {
         cout << "\n" + getTime() + " networkManager: started.\n";
         fflush(stdout);
     }
+#endif
+    
     time_t waitInterval = reconnectDuration;
     spawn *wvdial = NULL;
     spawn *wvdialconf;
@@ -2291,9 +2364,11 @@ void* networkManager(void* arg) {
     while (true) {
         remainingSleepTime = reconnectDuration - waitInterval;
         remainingSleepTime = remainingSleepTime < 0 ? 0 : remainingSleepTime;
+#ifdef DEBUG
         if ((debug & 1) == 1) {
             cout << "\n" << getTime() << " " << getpid() << " networkManager: sleeping for " << remainingSleepTime << ".\n";
         }
+#endif
 sleep_enough_time:
         sleep((int) remainingSleepTime);
         time(&nm_presentCheckTime);
@@ -2312,11 +2387,14 @@ sleep_enough_time:
                                 memset(wvdialerr, 0, 500);
                                 read(wvdial->cpstderr, wvdialerr, 500);
                                 string wvdialerrstr = string(wvdialerr);
+#ifdef DEBUG
                                 if ((debug & 1) == 1) {
                                     cout << "\n" + getTime() + " networkManager: wvdial killed; wvdial->pid=" << wvdial->cpid << ", wvdial->exitcode=" + string(itoa(wvdial->getChildExitStatus())) + ",wvdialerr->error=" + wvdialerrstr + ". \n";
                                     cout << "\n" + getTime() + " networkManager: Gonna re-spawn wvdial :) don worry I will connect u to the network!...If u've given me what I need (;\n";
                                     fflush(stdout);
                                 }
+#endif
+                                
                                 waitpid(wvdial->cpid, NULL, WNOHANG);
                                 delete wvdial;
                                 if ((int) wvdialerrstr.find("Cannot open /dev/CDMAModem:", 0) > 0) {
@@ -2340,33 +2418,41 @@ sleep_enough_time:
                                 sleep(30);
                                 if (configModem) {
                                     wvdialconf = new spawn("wvdialconf", true, NULL, true, true);
+#ifdef DEBUG
                                     if ((debug & 1) == 1) {
                                         char wvdialconferr[500];
                                         read(wvdialconf->cpstderr, wvdialconferr, 500);
                                         cout << "\n" + getTime() + " networkManager: wvdialconf->exitcode=" + string(itoa(wvdialconf->getChildExitStatus())) + ",wvdialconferr->error=" + string(wvdialconferr) + ". sleeping 10 seconds...\n";
                                         fflush(stdout);
                                     }
+#endif
                                     sleep(10);
                                 }
                                 spawn("pkill wvdial", false, NULL, false, true);
                                 wvdial = new spawn("wvdial", true, NULL, true, false);
+#ifdef DEBUG
                                 if ((debug & 1) == 1) {
                                     cout << "\n" + getTime() + " networkManager: wvdialed(" << wvdial->cpid << ") for the 1st time.\n";
                                     fflush(stdout);
                                 }
+#endif
                             }
                         } else {
                             spawn *ifup = new spawn("nmcli con up id " + mobileBroadbandCon + " --timeout 30", false, NULL, false, true);
                             if (ifup->getChildExitStatus() != 0) {
+#ifdef DEBUG
                                 if ((debug & 1) == 1) {
                                     char ifuperr[100];
                                     read(ifup->cpstderr, ifuperr, 100);
                                     cout << "\n" + getTime() + " networkManager: ifup->exitcode=" + string(itoa(ifup->getChildExitStatus())) + ",ifup->error=" + string(ifuperr) + ". sleeping 10 seconds...\n";
                                     fflush(stdout);
                                 }
+#endif
+                                
                                 sleep(30);
                                 spawn *ifup2 = new spawn("nmcli con up id " + mobileBroadbandCon, false, NULL, false, true);
                                 if (ifup2->getChildExitStatus() != 0) {
+#ifdef DEBUG
                                     if ((debug & 1) == 1) {
                                         cout << "\n" + getTime() + " networkManager: nmcli stderror:";
                                         char buf[100];
@@ -2375,20 +2461,26 @@ sleep_enough_time:
                                         cout << ". Exitcode=" + string(itoa(ifup2->getChildExitStatus())) + ".\n";
                                         fflush(stdout);
                                     }
+#endif
+#ifdef DEBUG
                                     if ((debug & 1) == 1) {
                                         cout << "\n" + getTime() + " networkManager: disabling wwan." + "\n";
                                         fflush(stdout);
                                     }
+#endif
                                     spawn *disableCon = new spawn("nmcli nm wwan off", false, NULL, false, true);
                                     sleep(10);
+#ifdef DEBUG
                                     if ((debug & 1) == 1) {
                                         cout << "\n" + getTime() + " networkManager: enabling wwan." + "\n";
                                         fflush(stdout);
                                     }
+#endif
                                     spawn *enableCon = new spawn("nmcli nm wwan on", false, NULL, false, true);
                                     delete enableCon;
                                     delete disableCon;
                                 } else {
+#ifdef DEBUG
                                     if ((debug & 1) == 1) {
                                         cout << "\n" + getTime() + "networkManager: nmcli:";
                                         char buf[200];
@@ -2397,13 +2489,16 @@ sleep_enough_time:
                                         cout << "\n";
                                         fflush(stdout);
                                     }
+#endif
                                 }
                                 delete ifup2;
                             } else {
+#ifdef DEBUG
                                 if ((debug & 1) == 1) {
                                     cout << "\n" + getTime() + " networkManager: ifup: connected." + "\n";
                                     fflush(stdout);
                                 }
+#endif
                             }
                             delete ifup;
                         }

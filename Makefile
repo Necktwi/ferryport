@@ -49,7 +49,7 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 APPNAME=remotedevicecontroller
-
+DEBUG=true
 
 
 # build

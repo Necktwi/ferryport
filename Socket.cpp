@@ -212,6 +212,7 @@ bool Socket::connect(const std::string host, const int port) {
     struct in_addr **addr_list;
     hent = gethostbyname(host.c_str());
     addr_list = (struct in_addr **) hent->h_addr_list;
+#ifdef DEBUG
     if ((debug & 4) == 4) {
         int i = 0;
         std::cout << "\n" + getTime() + " Socket::connect gethostbyname : ";
@@ -222,6 +223,7 @@ bool Socket::connect(const std::string host, const int port) {
         std::cout << "\n";
         fflush(stdout);
     }
+#endif
     int status = inet_pton(AF_INET, inet_ntoa(*addr_list[0]), &m_addr.sin_addr);
 
     if (errno == EAFNOSUPPORT) return false;
