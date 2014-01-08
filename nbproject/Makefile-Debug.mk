@@ -58,7 +58,9 @@ TESTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tests
 TESTFILES= \
 	${TESTDIR}/TestFiles/f2 \
 	${TESTDIR}/TestFiles/f1 \
-	${TESTDIR}/TestFiles/f3
+	${TESTDIR}/TestFiles/f3 \
+	${TESTDIR}/TestFiles/f5 \
+	${TESTDIR}/TestFiles/f4
 
 # C Compiler Flags
 CFLAGS=`cppunit-config --cflags` 
@@ -196,6 +198,14 @@ ${TESTDIR}/TestFiles/f3: ${TESTDIR}/tests/pcm_test.o ${OBJECTFILES:%.o=%_nomain.
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc}   -o ${TESTDIR}/TestFiles/f3 $^ ${LDLIBSOPTIONS} 
 
+${TESTDIR}/TestFiles/f5: ${TESTDIR}/tests/newsimpletest.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc}   -o ${TESTDIR}/TestFiles/f5 $^ ${LDLIBSOPTIONS} 
+
+${TESTDIR}/TestFiles/f4: ${TESTDIR}/tests/shared_ptr_test.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc}   -o ${TESTDIR}/TestFiles/f4 $^ ${LDLIBSOPTIONS} 
+
 
 ${TESTDIR}/tests/libav_encode_decode.o: tests/libav_encode_decode.cpp 
 	${MKDIR} -p ${TESTDIR}/tests
@@ -213,6 +223,18 @@ ${TESTDIR}/tests/pcm_test.o: tests/pcm_test.cpp
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I. `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/pcm_test.o tests/pcm_test.cpp
+
+
+${TESTDIR}/tests/newsimpletest.o: tests/newsimpletest.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I. `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/newsimpletest.o tests/newsimpletest.cpp
+
+
+${TESTDIR}/tests/shared_ptr_test.o: tests/shared_ptr_test.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I. `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/shared_ptr_test.o tests/shared_ptr_test.cpp
 
 
 ${OBJECTDIR}/ClientSocket_nomain.o: ${OBJECTDIR}/ClientSocket.o ClientSocket.cpp 
@@ -417,6 +439,8 @@ ${OBJECTDIR}/test-echo_nomain.o: ${OBJECTDIR}/test-echo.o test-echo.c
 	    ${TESTDIR}/TestFiles/f2 || true; \
 	    ${TESTDIR}/TestFiles/f1 || true; \
 	    ${TESTDIR}/TestFiles/f3 || true; \
+	    ${TESTDIR}/TestFiles/f5 || true; \
+	    ${TESTDIR}/TestFiles/f4 || true; \
 	else  \
 	    ./${TEST} || true; \
 	fi

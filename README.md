@@ -55,7 +55,7 @@ iface wlan0 inet static
 13. sudo apt-get install remotedevicecontroller
 14. sudo remotedevicecontroller -i
 15. exit, connect wifi modem, connect 3g modem, connect camera, connect gps-device and ssh using wifi
-16. ssh ubuntu@192.168.2.121
+16. ssh ubuntu@192.168.2.121  #TO CHECK WIFI CONNECTION. SKIP IF NOT REQUIRED
 17. sudo vi /etc/wvdial.conf
 # for reliance netconnect+ modem
 [Dialer Defaults]
@@ -66,8 +66,8 @@ ISDN = 0
 New PPPD = yes
 Phone = #777
 Modem = /dev/CDMAModem
-Username = 9393279369
-Password = 9393279369
+Username = net
+Password = net
 Baud = 9600
 
 18. sudo init 6

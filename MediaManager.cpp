@@ -334,7 +334,9 @@ connect:
             lavea.initptr = audioperiodPfloat;
             lavea.termptr = audioperiodCfloat;
             audio_encode(lavea);
-            *packet += buf = std::string(lavea.output_buffer);
+            if (lavea.output_buffer != NULL) {
+                packet->append(lavea.output_buffer);
+            }
             //cs->send(buf, MSG_MORE);
             free(lavea.output_buffer);
         }

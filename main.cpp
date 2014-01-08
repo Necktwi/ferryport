@@ -2180,9 +2180,8 @@ void* test(void *) {
     valarray<MediaManager::media> omedia(1);
     omedia[0].identifier = "fmsp://fms.newmeksolutions.com:92711/" + appName + "/1780";
     //    omedia[0].identifier = "ferrymediacapture1/";
-    omedia[0].segmentDuration = 2;
-    omedia[0].duration = 0;
-    omedia[0].videoframerate = 0.5;
+    omedia[0].segmentDuration = 3;
+    omedia[0].videoframerate = 1;
     omedia[0].audioBitrate = 64000;
     omedia[0].duration = 10;
     omedia[0].encoding = MediaManager::MP2;
