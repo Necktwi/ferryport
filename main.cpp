@@ -396,10 +396,11 @@ opendevice:
             goto opendevice;
         } else if ((devno = (int) gpsDevice.find("/dev/ttyO1", 0)) >= 0) {
             sleep(30);
-            int slots = open("/sys/devices/bone_capemgr.9/slots", O_WRONLY);
-            char dto[] = "ttyO1_armhf.com";
-            write(slots, dto, 15);
-            close(slots);
+            //int slots = open("/sys/devices/bone_capemgr.9/slots", O_WRONLY);
+            //char dto[] = "ttyO1_armhf.com";
+            //write(slots, dto, 15);
+            //close(slots);
+            system("echo ttyO1_armhf.com > /sys/devices/bone_capemgr*/slots");
             goto opendevice;
         }
         if (f) {
