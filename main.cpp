@@ -400,6 +400,12 @@ opendevice:
             //char dto[] = "ttyO1_armhf.com";
             //write(slots, dto, 15);
             //close(slots);
+#ifdef DEBUG
+            if ((debug & 1) == 1) {
+                cout << "\n" + getTime() + " gpsManager: enabling serial port ttyO1\n";
+                fflush(stdout);
+            }
+#endif
             system("echo ttyO1_armhf.com > /sys/devices/bone_capemgr*/slots");
             goto opendevice;
         }
