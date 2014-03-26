@@ -1839,7 +1839,7 @@ void configure() {
     cout << "\ninternet-test-url:\t" + internetTestURL;
     cout << "\nmobile-broadband-connection:\t" + mobileBroadbandCon;
     cout << "\nmobile-modem-vendor-product-id:\t" + mobileModemVendorProductID;
-    cout << "\nmobile-modem-vendor-product-id:\t" + usbHubVendorProductID;
+    cout << "\nusb-hub-vendor-product-id:\t" + usbHubVendorProductID;
     cout << "\nconfig-modem:\t" + readConfigValue("config-modem");
     cout << "\ncorporate-network-gateway:\t" + corpNWGW;
     cout << "\ngps-device:\t" + gpsDevice;
