@@ -406,7 +406,22 @@ opendevice:
                 fflush(stdout);
             }
 #endif
-            system("echo ttyO1_armhf.com > /sys/devices/bone_capemgr*/slots");
+            DIR *dpdf;
+            dirent *epdf;
+            dpdf = opendir("/sys/devices");
+            char search_string[]="bone_capemgr";
+            if(dpdf!=NULL){
+                while (epdf = readdir(dpdf)){
+                    if(strstr(epdf->d_name,search_string)!=NULL){
+                        string slots = string("/sys/devices/")+string(epdf->d_name)+string("/slots");
+                        int slots = open((char*)slots.c_str(), O_WRONLY);
+                        char dto[] = "ttyO1_armhf.com";
+                        write(slots, dto, 15);
+                        close(slots);
+                    }
+                }
+            }
+            //system("echo ttyO1_armhf.com > /sys/devices/bone_capemgr*/slots");
             goto opendevice;
         }
         if (f) {
