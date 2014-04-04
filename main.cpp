@@ -414,10 +414,10 @@ opendevice:
                 while (epdf = readdir(dpdf)){
                     if(strstr(epdf->d_name,search_string)!=NULL){
                         string slots = string("/sys/devices/")+string(epdf->d_name)+string("/slots");
-                        int slots = open((char*)slots.c_str(), O_WRONLY);
+                        int slotsf = open((char*)slots.c_str(), O_WRONLY);
                         char dto[] = "ttyO1_armhf.com";
-                        write(slots, dto, 15);
-                        close(slots);
+                        write(slotsf, dto, 15);
+                        close(slotsf);
                     }
                 }
             }
