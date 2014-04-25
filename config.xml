@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <config>
-    <app-name>viewyourworld</app-name>
-    <server-addr>183.82.98.147</server-addr>
+    <app-name></app-name>
+    <server-addr>demo.viewyourworld.com</server-addr>
     <server-port>80</server-port>
     <stream-addr>183.82.98.147</stream-addr>
     <stream-port>25222</stream-port>

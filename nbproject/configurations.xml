@@ -9,6 +9,8 @@
       <itemPath>ServerSocket.h</itemPath>
       <itemPath>Socket.h</itemPath>
       <itemPath>SocketException.h</itemPath>
+      <itemPath>audio.cpp</itemPath>
+      <itemPath>audio.h</itemPath>
       <itemPath>capture.h</itemPath>
       <itemPath>debug.h</itemPath>
       <itemPath>libavcodec_util.h</itemPath>
@@ -46,32 +48,17 @@
                    displayName="Test Files"
                    projectFiles="false"
                    kind="TEST_LOGICAL_FOLDER">
-      <logicalFolder name="f2"
-                     displayName="libav_encode_decode"
-                     projectFiles="true"
-                     kind="TEST">
-        <itemPath>tests/libav_encode_decode.cpp</itemPath>
-      </logicalFolder>
       <logicalFolder name="f1"
-                     displayName="libavcodec_example_test"
+                     displayName="audioTest"
                      projectFiles="true"
                      kind="TEST">
-        <itemPath>ffmpeg_build/tests/libavcodec_example_test.cpp</itemPath>
+        <itemPath>tests/audioTest.cpp</itemPath>
       </logicalFolder>
-      <logicalFolder name="f3" displayName="pcm_test" projectFiles="true" kind="TEST">
-        <itemPath>tests/pcm_test.cpp</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f5"
-                     displayName="Shared pointer"
+      <logicalFolder name="f2"
+                     displayName="rawPlayer"
                      projectFiles="true"
                      kind="TEST">
-        <itemPath>tests/newsimpletest.cpp</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f4"
-                     displayName="shared_ptr_test"
-                     projectFiles="true"
-                     kind="TEST">
-        <itemPath>tests/shared_ptr_test.cpp</itemPath>
+        <itemPath>tests/rawPlayer.cpp</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -111,6 +98,11 @@
           <incDir>
             <pElem>/usr/local/ffmpeg_build/include</pElem>
             <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
           <commandLine>`cppunit-config --cflags`</commandLine>
         </cTool>
@@ -121,11 +113,16 @@
             <pElem>/usr/include/libxml2</pElem>
             <pElem>/usr/local/ffmpeg_build/include</pElem>
             <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
           <commandLine>`cppunit-config --cflags` -D__STDC_CONSTANT_MACROS</commandLine>
         </ccTool>
         <linkerTool>
-          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller</output>
+          <output>${TESTDIR}/TestFiles/f6</output>
           <linkerAddLib>
             <pElem>/usr/lib/i386-linux-gnu</pElem>
           </linkerAddLib>
@@ -159,6 +156,8 @@
             <linkerOptionItem>`pkg-config --cflags --libs libv4l2`</linkerOptionItem>
             <linkerOptionItem>-lasound</linkerOptionItem>
             <linkerOptionItem>-ludev</linkerOptionItem>
+            <linkerOptionItem>-lpulse-simple</linkerOptionItem>
+            <linkerOptionItem>-lpulse</linkerOptionItem>
           </linkerLibItems>
           <commandLine>-Wall</commandLine>
         </linkerTool>
@@ -217,6 +216,10 @@
       </item>
       <item path="SocketException.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="audio.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="audio.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="capture.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="capture.h" ex="false" tool="3" flavor2="0">
@@ -229,10 +232,12 @@
         <cTool>
           <incDir>
             <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
         </cTool>
         <ccTool>
           <incDir>
+            <pElem>.</pElem>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
@@ -255,56 +260,6 @@
           <output>${TESTDIR}/TestFiles/f2</output>
         </linkerTool>
       </folder>
-      <folder path="TestFiles/f3">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f3</output>
-        </linkerTool>
-      </folder>
-      <folder path="TestFiles/f4">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f4</output>
-        </linkerTool>
-      </folder>
-      <folder path="TestFiles/f5">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f5</output>
-        </linkerTool>
-      </folder>
-      <item path="ffmpeg_build/tests/libavcodec_example_test.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
       <item path="libavcodec_util.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="libavcodec_util.h" ex="false" tool="3" flavor2="0">
@@ -333,13 +288,9 @@
       </item>
       <item path="test-echo.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="tests/libav_encode_decode.cpp" ex="false" tool="1" flavor2="0">
+      <item path="tests/audioTest.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="tests/newsimpletest.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="tests/pcm_test.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="tests/shared_ptr_test.cpp" ex="false" tool="1" flavor2="0">
+      <item path="tests/rawPlayer.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="webm_container.html" ex="false" tool="3" flavor2="0">
       </item>
@@ -358,12 +309,22 @@
             <pElem>.</pElem>
             <pElem>.</pElem>
             <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
           <commandLine>`cppunit-config --cflags`</commandLine>
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
           <incDir>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
             <pElem>.</pElem>
             <pElem>.</pElem>
             <pElem>.</pElem>
@@ -378,7 +339,7 @@
           <developmentMode>5</developmentMode>
         </asmTool>
         <linkerTool>
-          <output>${TESTDIR}/TestFiles/f5</output>
+          <output>${TESTDIR}/TestFiles/f6</output>
           <linkerLibItems>
             <linkerOptionItem>`cppunit-config --libs`</linkerOptionItem>
           </linkerLibItems>
@@ -406,6 +367,10 @@
       </item>
       <item path="SocketException.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="audio.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="audio.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="capture.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="capture.h" ex="false" tool="3" flavor2="0">
@@ -418,10 +383,12 @@
         <cTool>
           <incDir>
             <pElem>.</pElem>
+            <pElem>.</pElem>
           </incDir>
         </cTool>
         <ccTool>
           <incDir>
+            <pElem>.</pElem>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
@@ -444,56 +411,6 @@
           <output>${TESTDIR}/TestFiles/f2</output>
         </linkerTool>
       </folder>
-      <folder path="TestFiles/f3">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f3</output>
-        </linkerTool>
-      </folder>
-      <folder path="TestFiles/f4">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f4</output>
-        </linkerTool>
-      </folder>
-      <folder path="TestFiles/f5">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f5</output>
-        </linkerTool>
-      </folder>
-      <item path="ffmpeg_build/tests/libavcodec_example_test.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
       <item path="libavcodec_util.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="libavcodec_util.h" ex="false" tool="3" flavor2="0">
@@ -522,13 +439,9 @@
       </item>
       <item path="test-echo.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="tests/libav_encode_decode.cpp" ex="false" tool="1" flavor2="0">
+      <item path="tests/audioTest.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="tests/newsimpletest.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="tests/pcm_test.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="tests/shared_ptr_test.cpp" ex="false" tool="1" flavor2="0">
+      <item path="tests/rawPlayer.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="webm_container.html" ex="false" tool="3" flavor2="0">
       </item>

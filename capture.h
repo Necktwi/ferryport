@@ -35,20 +35,20 @@ public:
 
 class capture_args {
 public:
-    std::string device;
-    bool mmap;
-    bool read;
-    bool userp;
+    std::string device;//*< name of device e.g. /dev/video0
+    bool mmap;//*< use mapped memory access or not. prefer true if device supports it. //to be deprecated
+    bool read;//*< prefer false //to be deprecated
+    bool userp;//*< prefer false //to be deprecated
     std::string format;
-    int duration;
-    int Width;
-    int Height;
-    std::valarray<ferryframe> *framebuffer;
-    int* buffersize;
-    int* bufferfloat;
-    int readerscount;
-    int framerate;
-    capture_return returnObj;
+    int duration; //*< duration of recording
+    int Width; //*< width of the image
+    int Height; //*< height of the image
+    std::valarray<ferryframe> *framebuffer; //*< pointer to array that holds frames
+    int* buffersize; //*< pointer to buffer size. It should be less than or eaqual to frame buffer true size
+    int* bufferfloat; //*< pointer to frame index above the newly written frame
+    int readerscount; //*< count of consumers grabbing a copy of produced count
+    int framerate; //*< frames per second
+    capture_return returnObj; //*< output data
 };
 
 void deallocate_vcarg(void* buffer);

@@ -30,14 +30,15 @@ Installation instructions for ubuntu
 7. sudo route add default gw 192.168.7.1
 8. sudo vi /etc/resolv.conf
 9. change nameserver 192.168.1.1 to 192.168.7.1
-10. sudo ntpdate ntp.ubuntu.com
-11. sudo vi /etc/udev/rules.d/70-persistent-net.rules add at EOF
+10. sudo dpkg-reconfigure tzdata  # to set time-zone
+11. sudo ntpdate ntp.ubuntu.com
+12. sudo vi /etc/udev/rules.d/70-persistent-net.rules add at EOF
 
 # USB device 0x0bda:0x8189 (usb)
 SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="wlan*", NAME="wlan0"
 
 
-11. sudo vi /etc/network/interfaces  and replace #wifi example section with the below
+13. sudo vi /etc/network/interfaces  and replace #wifi example section with the below
 
 # WiFi Example
 auto wlan0
@@ -50,13 +51,13 @@ iface wlan0 inet static
 #    gateway 192.168.2.1
     dns-nameservers 192.168.2.21 8.8.8.8
 
-11. sudo apt-get update
-12. sudo apt-get dist-upgrade
-13. sudo apt-get install remotedevicecontroller
-14. sudo remotedevicecontroller -i
-15. exit, connect wifi modem, connect 3g modem, connect camera, connect gps-device and ssh using wifi
-16. ssh ubuntu@192.168.2.121  #TO CHECK WIFI CONNECTION. SKIP IF NOT REQUIRED
-17. sudo vi /etc/wvdial.conf
+14. sudo apt-get update
+15. sudo apt-get dist-upgrade
+16. sudo apt-get install remotedevicecontroller
+17. sudo remotedevicecontroller -i
+18. exit, connect wifi modem, connect 3g modem, connect camera, connect gps-device and ssh using wifi
+19. ssh ubuntu@192.168.2.121  #TO CHECK WIFI CONNECTION. SKIP IF NOT REQUIRED
+20. sudo vi /etc/wvdial.conf
 # for reliance netconnect+ modem
 [Dialer Defaults]
 Init1 = ATZ
@@ -70,8 +71,14 @@ Username = net
 Password = net
 Baud = 9600
 
-18. sudo init 6
+21. sudo init 6
 
+
+Preparing the image
+----------------------------------------------------------------------------------------------------------
+1. sudo cp -Rrf --preserve=all /media/gowtham/BOOT/* BOOT/
+2. sudo cp -Rrf --preserve=all /media/gowtham/rootfs/* rootfs/
+3. sudo dd if=/dev/sdb of=bbb_mbr_08-13.img bs=446 count=1
 
 Copying image:
 ----------------------------------------------------------------------------------------------------------

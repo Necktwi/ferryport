@@ -95,7 +95,14 @@ static int select_channel_layout(AVCodec *codec) {
 /*
  * Audio encoding example
  */
-void audio_encode(libav_encode_args args) {
+
+/**
+ * encodes raw audio to various encodings like mp3
+ * @param args it holds various parameters like desired output encoding
+ * @see libav_encode_args
+ */
+void audio_encode(libav_encode_args* a) {
+    libav_encode_args& args = *a;
     avcodec_register_all();
     AVCodec *codec;
     AVCodecContext *c = NULL;
@@ -103,9 +110,9 @@ void audio_encode(libav_encode_args args) {
     AVPacket pkt;
     int i, j, k, ret, got_output;
     int max_input_buffer_size = args.input_buffer.periodbuffer->size();
-    int input_buffer_size = args.initptr < args.termptr ? (args.termptr - args.initptr) : (args.termptr + args.input_buffer.periodbuffer->size() - args.initptr);
+    int input_buffer_size = args.initptr < args.termptr ? (args.termptr - args.initptr + 1) : (args.termptr + args.input_buffer.periodbuffer->size() - args.initptr + 1);
     FILE *f;
-    char *samples;
+    uint16_t *samples;
     float t, tincr;
     //    printf("Encode audio file %s\n", filename);
     /* find the MP2 encoder */
@@ -155,11 +162,11 @@ void audio_encode(libav_encode_args args) {
     /* the codec gives us the frame size, in samples,
      * we calculate the size of the samples buffer in bytes */
     int computed_buffer_size = av_samples_get_buffer_size(NULL, c->channels, c->frame_size, c->sample_fmt, 0);
-    //samples = (uint16_t*) av_malloc(buffer_size);
-    //    if (!samples) {
-    //        fprintf(stderr, "Could not allocate %d bytes for samples buffer\n", buffer_size);
-    //        exit(1);
-    //    }
+    samples = (uint16_t*) av_malloc(computed_buffer_size);
+    if (!samples) {
+        fprintf(stderr, "Could not allocate %d bytes for samples buffer\n", computed_buffer_size);
+        exit(1);
+    }
     /* setup the data pointers in the AVFrame */
     if (computed_buffer_size != (*args.input_buffer.periodbuffer)[(args.initptr) % max_input_buffer_size].length) {
         std::cout << "\n" << getTime() << " libavcodec_util: buffer statement mismatch. Encoder exited.\n";
@@ -188,7 +195,14 @@ void audio_encode(libav_encode_args args) {
         //            t += tincr;
         //        }
         /* setup the data pointers in the AVFrame */
-        samples = (*args.input_buffer.periodbuffer)[i % input_buffer_size].period;
+        int k = 0;
+        int l = computed_buffer_size / 4;
+        uint16_t* obuffer = (uint16_t*) ((*args.input_buffer.periodbuffer)[i % max_input_buffer_size].period);
+        for (j = 0; j < computed_buffer_size / 2; j++) {
+            samples[k++] = obuffer[j];
+            j++;
+            samples[l++] = obuffer[j];
+        }
         /* encode the samples */
         ret = avcodec_encode_audio2(c, &pkt, frame, &got_output);
         if (ret < 0) {
@@ -218,7 +232,7 @@ void audio_encode(libav_encode_args args) {
         }
     }
     //    fclose(f);
-    //    av_freep(&samples);
+    av_freep(&samples);
     avcodec_free_frame(&frame);
     avcodec_close(c);
     av_free(c);

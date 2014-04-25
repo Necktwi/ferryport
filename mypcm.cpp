@@ -27,6 +27,23 @@ ferryperiod::~ferryperiod() {
     free(period);
 }
 
+void VFerryPeriod::initferryperiod(int length, short wordsize) {
+    free(period.iov_base);
+    this->period.iov_base = (char*) malloc(length);
+    this->period.iov_len = length;
+    this->wordsize = wordsize;
+}
+
+VFerryPeriod::VFerryPeriod() {
+    period.iov_base = NULL;
+    period.iov_len = 0;
+    wordsize = 1;
+}
+
+VFerryPeriod::~VFerryPeriod() {
+    free(period.iov_base);
+}
+
 int pcm_types_n_formats() {
     int val;
 
@@ -209,7 +226,7 @@ to the default PCM device for 5 seconds of data.
 /* Use the newer ALSA API */
 
 
-int playback() {
+int playback(char* inputFileName) {
     long loops;
     int rc;
     int size;
@@ -219,7 +236,10 @@ int playback() {
     int dir;
     snd_pcm_uframes_t frames;
     char *buffer;
-
+    int f = 0;
+    if (strlen(inputFileName)) {
+        f = open(inputFileName, O_RDONLY);
+    }
     /* Open PCM device for playback. */
     rc = snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
     if (rc < 0) {
@@ -268,11 +288,11 @@ int playback() {
     snd_pcm_hw_params_get_period_time(params, &val, &dir);
     /* 5 seconds in microseconds divided by
      * period time */
-    loops = 5000000 / val;
+    loops = 10 * 30000000 / val;
 
     while (loops > 0) {
         loops--;
-        rc = read(0, buffer, size);
+        rc = read(f, buffer, size);
         if (rc == 0) {
             fprintf(stderr, "end of file on input\n");
             break;
@@ -296,7 +316,7 @@ int playback() {
     snd_pcm_drain(handle);
     snd_pcm_close(handle);
     free(buffer);
-
+    if (f)close(f);
     return 0;
 }
 
@@ -337,7 +357,7 @@ void * snd_record(void* voidargs) {
     /* Set the desired hardware parameters. */
 
     /* Interleaved mode */
-    snd_pcm_hw_params_set_access(handle, params, SND_PCM_ACCESS_RW_NONINTERLEAVED);
+    snd_pcm_hw_params_set_access(handle, params, SND_PCM_ACCESS_RW_INTERLEAVED);
 
     /* Signed 16-bit little-endian format */
     snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_S16_LE);
@@ -350,7 +370,7 @@ void * snd_record(void* voidargs) {
     snd_pcm_hw_params_set_rate_near(handle, params, &val, &dir);
 
     /* Set period size to 32 frames. */
-    frames = 1152; //32;
+    frames = 1152; //32; //
     snd_pcm_hw_params_set_period_size_near(handle, params, &frames, &dir);
 
     /* Write the parameters to the driver */
@@ -371,7 +391,7 @@ void * snd_record(void* voidargs) {
     loops = args->duration * 1000000 / val;
     while (loops > 0 || continuous_capture) {
         loops--;
-        rc = snd_pcm_readn(handle, (void**) buffer, frames);
+        rc = snd_pcm_readi(handle, (void**) buffer, frames);
         if (rc == -EPIPE) {
             /* EPIPE means overrun */
             fprintf(stderr, "overrun occurred\n");

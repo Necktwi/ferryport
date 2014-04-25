@@ -719,7 +719,7 @@ void* videocapture(void * voidarg) {
         io = IO_METHOD_MMAP;
     }
     if (arg->read) {
-        io = IO_METHOD_MMAP;
+        io = IO_METHOD_READ;
     }
     if (arg->userp) {
         io = IO_METHOD_USERPTR;

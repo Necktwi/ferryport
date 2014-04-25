@@ -409,12 +409,12 @@ opendevice:
             DIR *dpdf;
             dirent *epdf;
             dpdf = opendir("/sys/devices");
-            char search_string[]="bone_capemgr";
-            if(dpdf!=NULL){
-                while (epdf = readdir(dpdf)){
-                    if(strstr(epdf->d_name,search_string)!=NULL){
-                        string slots = string("/sys/devices/")+string(epdf->d_name)+string("/slots");
-                        int slotsf = open((char*)slots.c_str(), O_WRONLY);
+            char search_string[] = "bone_capemgr";
+            if (dpdf != NULL) {
+                while (epdf = readdir(dpdf)) {
+                    if (strstr(epdf->d_name, search_string) != NULL) {
+                        string slots = string("/sys/devices/") + string(epdf->d_name) + string("/slots");
+                        int slotsf = open((char*) slots.c_str(), O_WRONLY);
                         char dto[] = "ttyO1_armhf.com";
                         write(slotsf, dto, 15);
                         close(slotsf);
@@ -2185,6 +2185,7 @@ void* test(void *) {
     //    }
     //    cout << "\nExiting the thread!\n";
     /*Testing MediaManager*/
+    setuid(1000);
     debug = 17;
     readConfig();
     valarray<MediaManager::media> imedia(2);

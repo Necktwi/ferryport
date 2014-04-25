@@ -24,6 +24,7 @@
 #include <libavcodec/avcodec.h>
 #include <unistd.h>
 #include<time.h>
+#include <fstream>
 
 MediaManager::MediaManager() {
 
@@ -88,9 +89,11 @@ int MediaManager::capture(std::valarray<MediaManager::media> inputs, std::valarr
             audioTypeInputs[atic++] = i;
             pthread_t *snd_record_thread = (pthread_t*) malloc(sizeof (pthread_t));
             inpthreads.push_back(snd_record_thread);
-            inputs[i].buffer.periodbuffer = new std::valarray<ferryperiod>(200);
+            inputs[i].buffer.periodbuffer = new std::valarray<ferryperiod>(500);
             snd_record_args* srargs = new snd_record_args();
             //memset((void*) &srargs, 0, sizeof (snd_record_args));
+            inputs[i].bufferfloat = 0;
+            inputs[i].buffersize = 500;
             srargs->samplingFrequency = inputs[i].audioSamplingFrequency;
             srargs->duration = inputs[i].duration;
             srargs->dev_name = inputs[i].identifier;
@@ -98,8 +101,6 @@ int MediaManager::capture(std::valarray<MediaManager::media> inputs, std::valarr
             srargs->periodbufferfloat = &inputs[i].bufferfloat;
             srargs->periodbufferlength = &inputs[i].buffersize;
             srargs->returnObj.state = &inputs[i].state;
-            inputs[i].bufferfloat = 0;
-            inputs[i].buffersize = 200;
             expired_objs.push_back((void*) srargs);
             if (pthread_create(snd_record_thread, NULL, &snd_record, srargs) != 0)return -1;
             //snd_record(srargs);
@@ -282,7 +283,7 @@ connect:
         clock_gettime(CLOCK_REALTIME, &tstart);
         tstart.tv_sec += ffargs->omedia->segmentDuration;
         if (ffargs->ivideomedia->state != -1) {
-            videoframesPfloat = videoframesCfloat;
+            videoframesPfloat = videoframesCfloat + 1;
             videoframesCfloat = ffargs->ivideomedia->bufferfloat;
         }
         if (ffargs->iaudiomedia->state != -1) {
@@ -319,7 +320,6 @@ connect:
                     //cs->send(buf, MSG_MORE);
                 }
             }
-
         }
         *packet += buf = "],framesizes:[";
         for (int i = 0; i < framesizes.size(); i++) {
@@ -332,10 +332,22 @@ connect:
         //cs->send(buf, MSG_MORE);
         if (ffargs->iaudiomedia->state != -1) {
             lavea.initptr = audioperiodPfloat;
-            lavea.termptr = audioperiodCfloat;
-            audio_encode(lavea);
+            lavea.termptr = audioperiodCfloat - 1;
+#ifdef DEBUG
+            if ((debug & 16) == 16) {
+                std::cout << "\n" << getTime() << " MediaManager: collected sound samples at " << audioperiodPfloat << " to " << audioperiodCfloat << ".\n";
+                fflush(stdout);
+            }
+#endif
+            audio_encode(&lavea);
             if (lavea.output_buffer != NULL) {
-                packet->append(lavea.output_buffer);
+                packet->append(lavea.output_buffer, lavea.output_buffer_size);
+#ifdef DEBUG
+                if ((debug & 16) == 16) {
+                    std::cout << "\n" << getTime() << " MediaManager: mp3 encoded packet size: " << lavea.output_buffer_size << ".\n";
+                    fflush(stdout);
+                }
+#endif
             }
             //cs->send(buf, MSG_MORE);
             free(lavea.output_buffer);
@@ -419,8 +431,10 @@ void* MediaManager::raw_mjpeg_mp3_dump(void* args) { //#rmmd
     int frame_fd;
     int frame_seq_no = 0;
     std::string frame_fn;
-    std::string audio_fn = rmmdargs->omedia->identifier + "audio.mp2";
-    int audio_fd = open(audio_fn.c_str(), O_WRONLY | O_CREAT);
+    std::string audio_fn = rmmdargs->omedia->identifier + "audio.mp3";
+    std::string rawaudio_fn = rmmdargs->omedia->identifier + "audio.swav";
+    int audio_fd = open(audio_fn.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666);
+    //    int rawaudio_fd = open(rawaudio_fn.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666);
     sleep(rmmdargs->omedia->segmentDuration);
     libav_encode_args lavea;
     lavea.codecID = AV_CODEC_ID_MP3;
@@ -441,35 +455,46 @@ void* MediaManager::raw_mjpeg_mp3_dump(void* args) { //#rmmd
             audioperiodCfloat = rmmdargs->iaudiomedia->bufferfloat;
         }
         if (rmmdargs->ivideomedia->state != -1) {
-            received_frames_per_segment_duration = videoframesCfloat > videoframesPfloat ? (videoframesCfloat - videoframesPfloat + 1) : (videoframesCfloat + 200 - videoframesPfloat);
+            received_frames_per_segment_duration = videoframesCfloat > videoframesPfloat ? (videoframesCfloat - videoframesPfloat) : (videoframesCfloat + 200 - videoframesPfloat);
             if (transmitted_frames_per_segment_duration == 0)transmitted_frames_per_segment_duration = received_frames_per_segment_duration;
+            int frameSkipLength = received_frames_per_segment_duration / transmitted_frames_per_segment_duration;
             cf = videoframesPfloat;
             for (int i = 0; i < transmitted_frames_per_segment_duration; i++) {
                 pf = cf;
-                cf = (videoframesPfloat + (i * received_frames_per_segment_duration / transmitted_frames_per_segment_duration)) % rmmdargs->ivideomedia->buffer.framebuffer->size();
+                cf = (videoframesPfloat + (i * frameSkipLength)) % rmmdargs->ivideomedia->buffer.framebuffer->size();
                 ++frame_seq_no;
                 frame_fn = rmmdargs->omedia->identifier + std::string(itoa(frame_seq_no)) + ".jpeg";
-                frame_fd = open(frame_fn.c_str(), O_WRONLY | O_CREAT | O_TRUNC);
+                frame_fd = open(frame_fn.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666);
                 write(frame_fd, (*rmmdargs->ivideomedia->buffer.framebuffer)[cf].frame, (*rmmdargs->ivideomedia->buffer.framebuffer)[cf].length);
                 close(frame_fd);
             }
         }
         if (rmmdargs->iaudiomedia->state != -1) {
             lavea.initptr = audioperiodPfloat;
-            lavea.termptr = audioperiodCfloat;
-            audio_encode(lavea);
-            write(audio_fd, lavea.output_buffer, lavea.output_buffer_size);
+            lavea.termptr = audioperiodCfloat - 1;
+            //            int input_buffer_size = lavea.initptr < lavea.termptr ? (lavea.termptr - lavea.initptr + 1) : (lavea.termptr + lavea.input_buffer.periodbuffer->size() - lavea.initptr + 1);
+            //            int non_cycled_termptr = lavea.initptr + input_buffer_size;
+            //            for (int i = lavea.initptr; i < non_cycled_termptr; i++) {
+            //                write(rawaudio_fd, (*lavea.input_buffer.periodbuffer)[i % lavea.input_buffer.periodbuffer->size()].period, (*lavea.input_buffer.periodbuffer)[i % lavea.input_buffer.periodbuffer->size()].length);
+            //            }
+#ifdef DEBUG
+            if ((debug & 16) == 16) {
+                std::cout << "\n" << getTime() << " MediaManager: collected sound samples at " << lavea.initptr << " to " << lavea.termptr << ".\n";
+                fflush(stdout);
+            }
+#endif
+            audio_encode(&lavea);
+            if (lavea.output_buffer != NULL) {
+                write(audio_fd, lavea.output_buffer, lavea.output_buffer_size);
+#ifdef DEBUG
+                if ((debug & 16) == 16) {
+                    std::cout << "\n" << getTime() << " MediaManager: mp3 encoded packet size: " << lavea.output_buffer_size << ".\n";
+                    fflush(stdout);
+                }
+#endif                
+            }
             free(lavea.output_buffer);
         }
-        //        clock_gettime(CLOCK_MONOTONIC, &tend);
-        //        if ((tend.tv_sec - tstart.tv_sec) < rmmdargs->omedia->segmentDuration) {
-        //            tend.tv_nsec /= 1000;
-        //            tstart.tv_nsec /= 1000;
-        //            tend.tv_nsec += (tend.tv_sec * (1000000));
-        //            tstart.tv_nsec += (tstart.tv_sec * (1000000));
-        //            usleep((rmmdargs->omedia->segmentDuration * 1000000)-(tend.tv_nsec - tstart.tv_nsec) - 100);
-        //        }
-
 nsleep:
         ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, &tend);
         if (ret) {
