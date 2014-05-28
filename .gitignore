@@ -5,3 +5,5 @@ ferrymediacapture1/
 dist/
 nbproject/private/private.xml
 remotedevicecontroller
+var/tmp/
+
