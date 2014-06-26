@@ -17,6 +17,7 @@
 #include "libavcodec_util.h"
 #include "capture.h"
 #include "mypcm.h"
+#include "logger.h"
 #include <cstdlib>
 #include <stdio.h>
 #include <string.h>
@@ -160,6 +161,14 @@ time_t nm_previousCheckTime;
 
 string mobile_modem_bus_device_file_name;
 string usb_hub_bus_device_file_name;
+
+enum FPOL_LEVEL {
+    FPOL_MAIN = 1 << 0,
+    FPOL_GPS = 1 << 1
+};
+int ff_log_type = FFL_NOTICE | FFL_WARN | FFL_ERR;
+
+int ff_log_level = FPOL_MAIN;
 
 union family_message {
     int timestampdiff;

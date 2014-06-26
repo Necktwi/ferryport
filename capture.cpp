@@ -11,6 +11,7 @@
  * see http://linuxtv.org/docs.php for more information
  */
 
+#include "JPEGImage.h"
 #include "capture.h"
 #include "debug.h"
 #include "mystdlib.h"
@@ -53,6 +54,8 @@ struct buffer {
     size_t length;
 };
 
+//bool analyzedInitImage = false;
+//bool analyzed2ndImage = false;
 static char dev_name[20];
 static enum io_method io = IO_METHOD_MMAP;
 static int fd = -1;
@@ -120,6 +123,27 @@ static void process_image(const void *p, int size) {
     fflush(stderr);
 #ifdef DEBUG
     if ((debug & 16) == 16) {
+        //        if (!analyzedInitImage) {
+        //            analyzedInitImage = true;
+        //            JPEGImage i((char*) p, size);
+        //            std::string fn = "initialFrame.jpg";
+        //            int s=i.saveImage(fn);
+        //            if(s>0){
+        //                fprintf(stdout,"successfully written %d bytes to initialFrame.jpg\n",s);
+        //            }else{
+        //                fprintf(stdout,"failed to save init image\n");
+        //            };
+        //        } else if(!analyzed2ndImage){
+        //            analyzed2ndImage = true;
+        //            JPEGImage i((char*) p, size);
+        //            std::string fn = "secondFrame.jpg";
+        //            int s=i.saveImage(fn);
+        //            if(s>0){
+        //                fprintf(stdout,"successfully written %d bytes to secondFrame.jpg\n",s);
+        //            }else{
+        //                fprintf(stdout,"failed to save 2nd image\n");
+        //            };
+        //        }
         fprintf(stdout, ".");
         fflush(stdout);
     }

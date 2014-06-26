@@ -4,44 +4,29 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>ClientSocket.h</itemPath>
+      <itemPath>MediaManager.h</itemPath>
       <itemPath>Multimedia.h</itemPath>
-      <itemPath>ServerSocket.h</itemPath>
-      <itemPath>Socket.h</itemPath>
-      <itemPath>SocketException.h</itemPath>
       <itemPath>audio.cpp</itemPath>
       <itemPath>audio.h</itemPath>
       <itemPath>capture.h</itemPath>
       <itemPath>debug.h</itemPath>
       <itemPath>libavcodec_util.h</itemPath>
-      <itemPath>myconverters.h</itemPath>
-      <itemPath>mycurl.h</itemPath>
       <itemPath>mypcm.h</itemPath>
-      <itemPath>mystdlib.h</itemPath>
-      <itemPath>myxml.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
-      <itemPath>ClientSocket.cpp</itemPath>
-      <itemPath>MediaManager.cpp</itemPath>
-      <itemPath>MediaManager.h</itemPath>
-      <itemPath>Multimedia.cpp</itemPath>
-      <itemPath>ServerSocket.cpp</itemPath>
-      <itemPath>Socket.cpp</itemPath>
-      <itemPath>capture.cpp</itemPath>
-      <itemPath>debug.cpp</itemPath>
-      <itemPath>libavcodec_util.cpp</itemPath>
-      <itemPath>myconverters.cpp</itemPath>
-      <itemPath>mycurl.cpp</itemPath>
-      <itemPath>mypcm.cpp</itemPath>
-      <itemPath>mystdlib.cpp</itemPath>
-      <itemPath>myxml.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>MediaManager.cpp</itemPath>
+      <itemPath>Multimedia.cpp</itemPath>
+      <itemPath>capture.cpp</itemPath>
+      <itemPath>debug.cpp</itemPath>
+      <itemPath>libavcodec_util.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
+      <itemPath>mypcm.cpp</itemPath>
       <itemPath>test-echo.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -113,16 +98,11 @@
             <pElem>/usr/include/libxml2</pElem>
             <pElem>/usr/local/ffmpeg_build/include</pElem>
             <pElem>.</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
+            <pElem>../base</pElem>
           </incDir>
           <commandLine>`cppunit-config --cflags` -D__STDC_CONSTANT_MACROS</commandLine>
         </ccTool>
         <linkerTool>
-          <output>${TESTDIR}/TestFiles/f6</output>
           <linkerAddLib>
             <pElem>/usr/lib/i386-linux-gnu</pElem>
           </linkerAddLib>
@@ -158,6 +138,7 @@
             <linkerOptionItem>-ludev</linkerOptionItem>
             <linkerOptionItem>-lpulse-simple</linkerOptionItem>
             <linkerOptionItem>-lpulse</linkerOptionItem>
+            <linkerLibFileItem>../base/dist/Debug/GNU-Linux-x86/libbase.so</linkerLibFileItem>
           </linkerLibItems>
           <commandLine>-Wall</commandLine>
         </linkerTool>
@@ -194,10 +175,6 @@
           <packInfoListElem name="Description" value="..." mandatory="false"/>
         </packInfoList>
       </packaging>
-      <item path="ClientSocket.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="ClientSocket.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MediaManager.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MediaManager.h" ex="false" tool="3" flavor2="0">
@@ -205,16 +182,6 @@
       <item path="Multimedia.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Multimedia.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="ServerSocket.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="ServerSocket.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Socket.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Socket.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="SocketException.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="audio.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -266,25 +233,9 @@
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="myconverters.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="myconverters.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="mycurl.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="mycurl.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="mypcm.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="mypcm.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="mystdlib.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="mystdlib.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="myxml.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="myxml.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="test-echo.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -345,10 +296,6 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="ClientSocket.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="ClientSocket.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MediaManager.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MediaManager.h" ex="false" tool="3" flavor2="0">
@@ -356,16 +303,6 @@
       <item path="Multimedia.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Multimedia.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="ServerSocket.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="ServerSocket.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Socket.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Socket.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="SocketException.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="audio.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -417,25 +354,9 @@
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="myconverters.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="myconverters.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="mycurl.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="mycurl.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="mypcm.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="mypcm.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="mystdlib.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="mystdlib.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="myxml.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="myxml.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="test-echo.c" ex="false" tool="0" flavor2="0">
       </item>

@@ -203,6 +203,11 @@ void deallocate_fmp_feeder_args(void* args) {
 }
 
 void *MediaManager::fmp_feeder(void* args) {
+
+    /**
+     * It contains length of initial bytes common in frames captured by the video source.
+     */
+    int headerLength = 0;
     fmp_feeder_args * ffargs = (fmp_feeder_args *) args;
     pthread_cleanup_push(deallocate_fmp_feeder_args, args);
     int index = 0;
@@ -279,6 +284,12 @@ connect:
     lavea.input_buffer.periodbuffer = ffargs->iaudiomedia->buffer.periodbuffer;
     lavea.output_buffer = NULL;
     sleep(ffargs->omedia->segmentDuration);
+    bool initPck = true;
+
+    /**
+     * It holds the last byte of the video head to check its same for all frames. 
+     */
+    char headerLastByte;
     while (ffargs->iaudiomedia->state>-1 || ffargs->ivideomedia->state>-1) {
         clock_gettime(CLOCK_REALTIME, &tstart);
         tstart.tv_sec += ffargs->omedia->segmentDuration;
@@ -291,7 +302,8 @@ connect:
             audioperiodCfloat = ffargs->iaudiomedia->bufferfloat;
         }
         index++;
-        packet = new std::string("{index:" + std::string((char*) itoa(index)) + ",ferryframes:[");
+        packet = new std::string("{index:" + std::string((char*) itoa(index)));
+        *packet += ",ferryframes:[";
         //cs->send(*packet, MSG_MORE);
         std::vector<int> framesizes;
         if (ffargs->ivideomedia->state != -1) {
@@ -305,7 +317,7 @@ connect:
                 cf = (videoframesPfloat + (i * received_frames_per_segment_duration / transmitted_frames_per_segment_duration)) % ffargs->ivideomedia->buffer.framebuffer->size();
                 *packet += "FFESCSTR";
                 //cs->send(buf, MSG_MORE);
-                buf.assign((char*) (*ffargs->ivideomedia->buffer.framebuffer)[cf].frame, (*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
+                buf.assign((char*) (((char*) (*ffargs->ivideomedia->buffer.framebuffer)[cf].frame)), (*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
                 *packet += buf;
                 framesizes.push_back((*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
                 //                frame_fn = ffargs->omedia->identifier + std::string(itoa(i)) + ".jpeg";

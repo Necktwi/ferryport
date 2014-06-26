@@ -11,12 +11,13 @@
 #include <utility>
 #include <sys/types.h>
 
+#define NELEMS(x)  (sizeof(x) / sizeof(x[0]))
 #define DEBUG
 extern int debug;
 extern int stdinfd;
 extern int stdoutfd;
 extern int stderrfd;
-extern std::map<pid_t, spawn*> processMap;
+//extern std::map<pid_t, spawn*> processMap;
 extern int child_exit_status;
 
 
