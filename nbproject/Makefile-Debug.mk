@@ -102,42 +102,42 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ${OBJECTFILES
 ${OBJECTDIR}/MediaManager.o: MediaManager.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MediaManager.o MediaManager.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MediaManager.o MediaManager.cpp
 
 ${OBJECTDIR}/Multimedia.o: Multimedia.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Multimedia.o Multimedia.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Multimedia.o Multimedia.cpp
 
 ${OBJECTDIR}/audio.o: audio.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/audio.o audio.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/audio.o audio.cpp
 
 ${OBJECTDIR}/capture.o: capture.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/capture.o capture.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/capture.o capture.cpp
 
 ${OBJECTDIR}/debug.o: debug.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/debug.o debug.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/debug.o debug.cpp
 
 ${OBJECTDIR}/libavcodec_util.o: libavcodec_util.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/libavcodec_util.o libavcodec_util.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/libavcodec_util.o libavcodec_util.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 ${OBJECTDIR}/mypcm.o: mypcm.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mypcm.o mypcm.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mypcm.o mypcm.cpp
 
 ${OBJECTDIR}/test-echo.o: test-echo.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -161,13 +161,13 @@ ${TESTDIR}/TestFiles/f2: ${TESTDIR}/tests/rawPlayer.o ${OBJECTFILES:%.o=%_nomain
 ${TESTDIR}/tests/audioTest.o: tests/audioTest.cpp 
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base -I. -I. `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/audioTest.o tests/audioTest.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base -I. -I. `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/audioTest.o tests/audioTest.cpp
 
 
 ${TESTDIR}/tests/rawPlayer.o: tests/rawPlayer.cpp 
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base -I. `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/rawPlayer.o tests/rawPlayer.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base -I. `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/rawPlayer.o tests/rawPlayer.cpp
 
 
 ${OBJECTDIR}/MediaManager_nomain.o: ${OBJECTDIR}/MediaManager.o MediaManager.cpp 
@@ -178,7 +178,7 @@ ${OBJECTDIR}/MediaManager_nomain.o: ${OBJECTDIR}/MediaManager.o MediaManager.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MediaManager_nomain.o MediaManager.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MediaManager_nomain.o MediaManager.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/MediaManager.o ${OBJECTDIR}/MediaManager_nomain.o;\
 	fi
@@ -191,7 +191,7 @@ ${OBJECTDIR}/Multimedia_nomain.o: ${OBJECTDIR}/Multimedia.o Multimedia.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Multimedia_nomain.o Multimedia.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Multimedia_nomain.o Multimedia.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/Multimedia.o ${OBJECTDIR}/Multimedia_nomain.o;\
 	fi
@@ -204,7 +204,7 @@ ${OBJECTDIR}/audio_nomain.o: ${OBJECTDIR}/audio.o audio.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/audio_nomain.o audio.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/audio_nomain.o audio.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/audio.o ${OBJECTDIR}/audio_nomain.o;\
 	fi
@@ -217,7 +217,7 @@ ${OBJECTDIR}/capture_nomain.o: ${OBJECTDIR}/capture.o capture.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/capture_nomain.o capture.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/capture_nomain.o capture.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/capture.o ${OBJECTDIR}/capture_nomain.o;\
 	fi
@@ -230,7 +230,7 @@ ${OBJECTDIR}/debug_nomain.o: ${OBJECTDIR}/debug.o debug.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/debug_nomain.o debug.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/debug_nomain.o debug.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/debug.o ${OBJECTDIR}/debug_nomain.o;\
 	fi
@@ -243,7 +243,7 @@ ${OBJECTDIR}/libavcodec_util_nomain.o: ${OBJECTDIR}/libavcodec_util.o libavcodec
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/libavcodec_util_nomain.o libavcodec_util.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/libavcodec_util_nomain.o libavcodec_util.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/libavcodec_util.o ${OBJECTDIR}/libavcodec_util_nomain.o;\
 	fi
@@ -256,7 +256,7 @@ ${OBJECTDIR}/main_nomain.o: ${OBJECTDIR}/main.o main.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main_nomain.o main.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main_nomain.o main.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/main.o ${OBJECTDIR}/main_nomain.o;\
 	fi
@@ -269,7 +269,7 @@ ${OBJECTDIR}/mypcm_nomain.o: ${OBJECTDIR}/mypcm.o mypcm.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mypcm_nomain.o mypcm.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I/usr/local/ffmpeg_build/include -I. -I../base `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mypcm_nomain.o mypcm.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/mypcm.o ${OBJECTDIR}/mypcm_nomain.o;\
 	fi

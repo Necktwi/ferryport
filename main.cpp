@@ -162,13 +162,9 @@ time_t nm_previousCheckTime;
 string mobile_modem_bus_device_file_name;
 string usb_hub_bus_device_file_name;
 
-enum FPOL_LEVEL {
-    FPOL_MAIN = 1 << 0,
-    FPOL_GPS = 1 << 1
-};
-int ff_log_type = FFL_NOTICE | FFL_WARN | FFL_ERR;
+int ff_log_type = FFL_NOTICE | FFL_WARN | FFL_ERR | FFL_DEBUG;
 
-int ff_log_level = FPOL_MAIN;
+int ff_log_level = FPOL_MAIN | FPOL_PCM;
 
 union family_message {
     int timestampdiff;
@@ -2207,17 +2203,28 @@ void* test(void *) {
     imedia[0].height = 240;
     imedia[0].identifier = "/dev/video0";
     imedia[0].type = MediaManager::VIDEO;
-    imedia[0].videoframerate = 0.4;
+    imedia[0].videoframerate = 10;
     imedia[0].width = 320;
     imedia[1].audioSamplingFrequency = 44100;
     imedia[1].duration = 0;
-    imedia[1].identifier = "default";
+    imedia[1].identifier = "plughw:0";
     imedia[1].type = MediaManager::AUDIO;
+    //    imedia[2].duration = 0;
+    //    imedia[2].encoding = MediaManager::MJPEG;
+    //    imedia[2].height = 240;
+    //    imedia[2].identifier = "/dev/video2";
+    //    imedia[2].type = MediaManager::VIDEO;
+    //    imedia[2].videoframerate = 0.4;
+    //    imedia[2].width = 320;
+    //    imedia[3].audioSamplingFrequency = 44100;
+    //    imedia[3].duration = 0;
+    //    imedia[3].identifier = "default";
+    //    imedia[3].type = MediaManager::AUDIO;
     valarray<MediaManager::media> omedia(1);
     omedia[0].identifier = "fmsp://fms.newmeksolutions.com:92711/" + appName + "1780";
     //    omedia[0].identifier = "ferrymediacapture1/";
     omedia[0].segmentDuration = 3;
-    omedia[0].videoframerate = 1;
+    omedia[0].videoframerate = 10;
     omedia[0].audioBitrate = 64000;
     omedia[0].duration = 10;
     omedia[0].encoding = MediaManager::MP2;

@@ -308,7 +308,7 @@ connect:
         std::vector<int> framesizes;
         if (ffargs->ivideomedia->state != -1) {
             received_frames_per_segment_duration = videoframesCfloat > videoframesPfloat ? (videoframesCfloat - videoframesPfloat + 1) : (videoframesCfloat + 200 - videoframesPfloat);
-            if (transmitted_frames_per_segment_duration == 0)transmitted_frames_per_segment_duration = received_frames_per_segment_duration;
+            if (transmitted_frames_per_segment_duration == 0 || transmitted_frames_per_segment_duration > received_frames_per_segment_duration)transmitted_frames_per_segment_duration = received_frames_per_segment_duration;
             cf = videoframesPfloat;
             //            std::string frame_fn;
             //            int frame_fd;

@@ -21,7 +21,7 @@ public:
     MediaManager();
     MediaManager(const MediaManager& orig);
     virtual ~MediaManager();
-    static void* fmp_feeder_aftermath(void* args,bool isSucess);
+    static void* fmp_feeder_aftermath(void* args, bool isSucess);
 
     enum MediaType {
         AUDIO, VIDEO
@@ -48,6 +48,9 @@ public:
         MediaType type;
         int width = 320;
         int height = 240;
+        /**
+         * give in fps i.e. number of frames per second
+         */
         float videoframerate = 5;
         int audioBitrate = 64000;
         int audioSamplingFrequency = 44100;
@@ -89,7 +92,7 @@ public:
         fmp_feeder_return ffr;
         ClientSocket * cs;
         std::mutex csm; //#csm mutex for creating deleting ClientSocket cs;
-        FerryTimeStamp lastconnectFTS;//#fts FerryTimeStamep to store last connect time;
+        FerryTimeStamp lastconnectFTS; //#fts FerryTimeStamep to store last connect time;
     };
 
     struct fmp_feeder_aftermath_args {

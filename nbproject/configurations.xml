@@ -101,6 +101,9 @@
             <pElem>../base</pElem>
           </incDir>
           <commandLine>`cppunit-config --cflags` -D__STDC_CONSTANT_MACROS</commandLine>
+          <preprocessorList>
+            <Elem>_DEBUG</Elem>
+          </preprocessorList>
         </ccTool>
         <linkerTool>
           <linkerAddLib>

@@ -3,6 +3,7 @@
 #include "mypcm.h"
 #include "debug.h"
 #include "mystdlib.h"
+#include "logger.h"
 #include <alsa/asoundlib.h>
 #include <alsa/pcm.h>
 #include <stdio.h>
@@ -342,7 +343,8 @@ void * snd_record(void* voidargs) {
     /* Open PCM device for recording (capture). */
     rc = snd_pcm_open(&handle, (const char*) args->dev_name.c_str(), SND_PCM_STREAM_CAPTURE, 0);
     if (rc < 0) {
-        std::cout << "\n" << getTime() << " snd_record: unable to open pcm device " << snd_strerror(rc) << "\n";
+        ffl_err(FPOL_PCM, "unable to open pcm device: %s", snd_strerror(rc));
+        ffl_debug(FPOL_PCM, "dev_name: %s", (char*) args->dev_name.c_str());
         args->returnObj.errorcode = 1;
         //pthread_cleanup_pop(1);
         //return NULL;
