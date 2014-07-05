@@ -58,6 +58,7 @@
 #include <stdint.h>
 #include <libudev.h>
 #include <list>
+#include <thread>
 
 #define MAX_CAMS 10
 #define APP_NAME "remotedevicecontroller"
@@ -94,6 +95,10 @@ string camFolder = "/dev/";
 bool camcaptureCompression;
 string recordResolution;
 string streamResolution;
+int recordWidth = 0;
+int recordHeight = 0;
+int streamWidth = 0;
+int streamHeight = 0;
 string recordfps;
 string streamfps;
 string mobileBroadbandCon;
@@ -133,6 +138,7 @@ vector<string> recordedFileNames;
 bool CMOSWorking;
 time_t timeGapToCorrectTime;
 bool internetTimeUpdated = false;
+bool enable_mic = false;
 
 bool allCams = false;
 string reqCam;
@@ -163,8 +169,17 @@ string mobile_modem_bus_device_file_name;
 string usb_hub_bus_device_file_name;
 
 int ff_log_type = FFL_NOTICE | FFL_WARN | FFL_ERR | FFL_DEBUG;
+int ff_log_level = FPOL_MAIN | FPOL_MM;
 
-int ff_log_level = FPOL_MAIN | FPOL_PCM;
+enum StreamType {
+    FMSP,
+    RTMP
+} stream_type;
+
+char stream_type_str[][10] = {
+    "FFMP",
+    "RTMP"
+};
 
 union family_message {
     int timestampdiff;
@@ -227,6 +242,8 @@ void checkCMOSWorking() {
 class camService {
 public:
     pid_t pid;
+    pthread_t* t; //*> thread pointer for media streaming code if its a function rather than a program E.g. Used by MediaManager::capture function but not by ffmpeg program
+    MediaManager::capture_thread_iargs * cti; //*> input arguments pointer
     int stdio[2];
     string cam;
     camState state;
@@ -438,22 +455,12 @@ opendevice:
                 } else {
                     parseLocalGPSProtocol(f, gpsReadStart, gpsReadEnd, gpsCoordinates);
                 }
-#ifdef DEBUG
-                if ((debug & 1) == 1) {
-                    cout << "\n" + getTime() + " gpsManager: gps device disconnected. sleeping for 10 secs.\n";
-                    fflush(stdout);
-                }
-#endif
+                ffl_notice(FPOL_GPS, "gpsManager: gps device disconnected. sleeping for 10 secs.");
                 sleep(10);
                 goto opendevice;
             }
         }
-#ifdef DEBUG
-        if ((debug & 1) == 1) {
-            cout << "\n" + getTime() + " gpsManager: no gps device found. sleeping for 60 secs.\n";
-            fflush(stdout);
-        }
-#endif
+        ffl_notice(FPOL_GPS, "gpsManager: no gps device found. sleeping for 60 secs.");
         sleep(60);
         goto opendevice;
     }
@@ -616,14 +623,12 @@ public:
         string rfa = records[rIndex].recordFile;
         if (records[rIndex].newState == RECORD_STREAM) {
             stopRecord(rIndex);
-            string cmd = "ffmpeg -re -i " + rfa + " -r " + streamfps + " -s " + streamResolution + " -f flv " + sa;
-            records[rIndex].recorder = spawn(cmd, true, NULL, false);
-#ifdef DEBUG
-            if ((debug & 1) == 1) {
-                cout << "\n" + getTime() + " setRecordState: " + cmd + " :" + string(itoa(records[rIndex].recorder.cpid)) + "\n";
-                fflush(stdout);
+            if (stream_type == FMSP) {
+            } else {
+                string cmd = "ffmpeg -re -i " + rfa + " -r " + streamfps + " -s " + streamResolution + " -f flv " + sa;
+                records[rIndex].recorder = spawn(cmd, true, NULL, false);
             }
-#endif
+            ffl_debug(FPOL_MAIN, "%s : %d", cmd.c_str(), records[rIndex].recorder.cpid);
             records[rIndex].spid = records[rIndex].recorder.cpid;
             records[rIndex].newState = RECORD_PREVIOUS_STATE;
             records[rIndex].state = RECORD_STREAM;
@@ -688,12 +693,7 @@ void correctTimeStampFileNames() {
     time_t t;
     string path;
     string fname;
-#ifdef DEBUG
-    if ((debug & 1) == 1) {
-        cout << "\n" + getTime() + " correctTimeStampFileNames: correcting timestamps ...\n";
-        fflush(stdout);
-    }
-#endif
+    ffl_debug(FPOL_MAIN, "correcting timestamps ...");
     while (recordedFileNames.size() != 0) {
         fileName = recordedFileNames[recordedFileNames.size() - 1];
         recordedFileNames.pop_back();
@@ -701,14 +701,22 @@ void correctTimeStampFileNames() {
         fold = fileName.substr(0, lastslashpos);
         camName = fold.substr(fold.rfind('/', fileName.length()) + 1);
         timestamp = fileName.substr(lastslashpos + 1);
-        strptime(timestamp.c_str(), "%Y-%m-%d_%H:%M:%S.flv", &tms);
+        if (stream_type == FMSP) {
+            strptime(timestamp.c_str(), "%Y-%m-%d_%H:%M:%S.fp", &tms);
+        } else if (stream_type == RTMP) {
+            strptime(timestamp.c_str(), "%Y-%m-%d_%H:%M:%S.flv", &tms);
+        }
         t = mktime(&tms);
         t += timeGapToCorrectTime;
         struct tm * timeinfo;
         char fn [80];
         char dn [80];
         timeinfo = localtime(&t);
-        strftime(fn, 80, "%Y-%m-%d_%H:%M:%S.flv", timeinfo);
+        if (stream_type == FMSP) {
+            strftime(fn, 80, "%Y-%m-%d_%H:%M:%S.fp", timeinfo);
+        } else if (stream_type == RTMP) {
+            strftime(fn, 80, "%Y-%m-%d_%H:%M:%S.flv", timeinfo);
+        }
         strftime(dn, 80, "%Y-%m-%d", timeinfo);
         string path = "/var/" + string(APP_NAME) + "records/" + string(dn) + "/";
         struct stat st = {0};
@@ -719,12 +727,7 @@ void correctTimeStampFileNames() {
         fname = path + "/" + fn;
         copyfile(fileName, fname);
         unlink((char*) fileName.c_str());
-#ifdef DEBUG
-        if ((debug & 1) == 1) {
-            cout << "\n" + getTime() + " correctTimeStampFileNames: renamed " << fileName << " to " << fname << "\n";
-            fflush(stdout);
-        }
-#endif
+        ffl_debug(FPOL_MAIN, "renamed %s to %s", fileName.c_str(), fname.c_str());
     }
 }
 
@@ -853,44 +856,64 @@ public:
         if (!cs.disable) {
             string dev = camFolder + cam;
             pid_t fcpid = cs.pid;
+            pthread_t* t = cs.t;
             camState ns = cs.state;
             spawn *process;
             string cmd;
+            MediaManager::capture_thread_iargs* args = cs.cti;
             if (cs.newState == CAM_RECORD) {
-                cmd = "ffmpeg -loglevel error -f video4linux2 " + (camcaptureCompression ? string("-vcodec mjpeg ") : string("")) + "-r " + recordfps + " -s " + recordResolution + " -i " + dev + " " + cs.recordPath;
-                csList::stopCam(cam);
-                process = new spawn(cmd, true, &ffmpegOnStopHandler, false);
-#ifdef DEBUG
-                if ((debug & 1) == 1) {
-                    cout << "\n" + getTime() + " setCamState: " + cmd + " :" + string(itoa(process->cpid)) + "\n";
-                    fflush(stdout);
+                if (stream_type == FMSP) {
+                    if (t == NULL) {
+                        args = new MediaManager::capture_thread_iargs();
+                        args->inputs = new std::valarray<MediaManager::media>(enable_mic ? 2 : 1);
+                        (*args->inputs)[0].duration = 0;
+                        (*args->inputs)[0].encoding = MediaManager::MJPEG;
+                        (*args->inputs)[0].height = recordHeight > streamHeight ? recordHeight : streamHeight;
+                        (*args->inputs)[0].identifier = dev;
+                        (*args->inputs)[0].type = MediaManager::VIDEO;
+                        (*args->inputs)[0].videoframerate = 10;
+                        (*args->inputs)[0].width = recordWidth > streamWidth ? recordWidth : streamWidth;
+                        if (enable_mic) {
+                            (*args->inputs)[1].audioSamplingFrequency = 44100;
+                            (*args->inputs)[1].duration = 0;
+                            (*args->inputs)[1].identifier = "plughw:1";
+                            (*args->inputs)[1].type = MediaManager::AUDIO;
+                        }
+                        args->outputs = new std::valarray<MediaManager::media>(1);
+                        //(*args->outputs)[0].identifier = "fmsp://fms.newmeksolutions.com:92711/" + appName + "1780";
+                        //    (*args->output)[0].identifier = "ferrymediacapture1/";
+                        (*args->outputs)[0].identifier = cs.recordPath;
+                        (*args->outputs)[0].segmentDuration = 1;
+                        (*args->outputs)[0].videoframerate = 10;
+                        (*args->outputs)[0].audioBitrate = 64000;
+                        (*args->outputs)[0].duration = 10;
+                        (*args->outputs)[0].encoding = MediaManager::MP2;
+                        (*args->outputs)[0].splMediaProps.fmpFeederSplProps.reconnect = true;
+                        (*args->outputs)[0].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
+                        (*args->outputs)[0].start_stop = new bool();
+                        pthread_create(t, NULL, &MediaManager::capture, (void*));
+                    }
+                } else {
+                    csList::stopCam(cam);
+                    cmd = "ffmpeg -loglevel error -f video4linux2 " + (camcaptureCompression ? string("-vcodec mjpeg ") : string("")) + "-r " + recordfps + " -s " + recordResolution + " -i " + dev + " " + cs.recordPath;
+                    process = new spawn(cmd, true, &ffmpegOnStopHandler, false);
+                    ffl_debug(FPOL_MAIN, "%s :%d", cmd.c_str(), process->cpid);
+                    fcpid = process->cpid;
                 }
-#endif
-                fcpid = process->cpid;
                 ns = CAM_RECORD;
                 recordedFileNames.push_back(cs.recordPath);
             } else if (cs.newState == CAM_STREAM) {
                 cmd = "ffmpeg -loglevel error -f video4linux2 " + (camcaptureCompression ? string("-vcodec mjpeg ") : string("")) + "-r " + recordfps + " -s " + recordResolution + " -i " + dev + " -r " + streamfps + " -s " + streamResolution + " -f flv " + cs.streamPath;
                 csList::stopCam(cam);
                 process = new spawn(cmd, true, &ffmpegOnStopHandler, false);
-#ifdef DEBUG
-                if ((debug & 1) == 1) {
-                    cout << "\n" + getTime() + " setCamState: " + cmd + " :" + string(itoa(process->cpid)) + "\n";
-                    fflush(stdout);
-                }
-#endif
+                ffl_debug(FPOL_MAIN, "%s :%d", cmd.c_str(), process->cpid);
                 fcpid = process->cpid;
                 ns = CAM_STREAM;
             } else if (cs.newState == CAM_STREAM_N_RECORD) {
                 cmd = "ffmpeg -loglevel error -f video4linux2 " + (camcaptureCompression ? string("-vcodec mjpeg ") : string("")) + "-r " + recordfps + " -s " + recordResolution + " -i " + dev + " -r " + streamfps + " -s " + streamResolution + " -f flv " + cs.streamPath + " " + cs.recordPath;
                 csList::stopCam(cam);
                 process = new spawn(cmd, true, &ffmpegOnStopHandler, false);
-#ifdef DEBUG
-                if ((debug & 1) == 1) {
-                    cout << "\n" + getTime() + " setCamState: " + cmd + " :" + string(itoa(process->cpid)) + "\n";
-                    fflush(stdout);
-                }
-#endif
+                ffl_debug(FPOL_MAIN, "%s :%d", cmd.c_str(), process->cpid);
                 fcpid = process->cpid;
                 ns = CAM_STREAM_N_RECORD;
                 if (!CMOSWorking&&!updateTimeStamps) {
@@ -912,12 +935,16 @@ public:
         int i = 0;
         int csIndex;
         camService cs = csList::getCamService(cam, &csIndex);
-        string proc = "/proc/" + string(itoa(cs.pid));
-        struct stat ptr;
-        if (stat(proc.c_str(), &ptr) != -1) {
-            pkilled = false;
-            i = kill(cs.pid, SIGKILL);
-            while (!pkilled);
+        if (stream_type == RTMP) {
+            string proc = "/proc/" + string(itoa(cs.pid));
+            struct stat ptr;
+            if (stat(proc.c_str(), &ptr) != -1) {
+                pkilled = false;
+                i = kill(cs.pid, SIGKILL);
+                while (!pkilled);
+            }
+        } else if (stream_type == FMSP) {
+            delete cs.t;
         }
         cs.state = CAM_OFF;
         return i;
@@ -1126,12 +1153,18 @@ void readConfig() {
     xo = xmlXPathEvalExpression((xmlChar*) "/config/record-resolution", xc);
     node = xo->nodesetval->nodeTab[0];
     recordResolution = string((char*) xmlNodeGetContent(node));
+    int p = recordResolution.find("x");
+    recordWidth = atoi(recordResolution.substr(0, p).c_str());
+    recordHeight = atoi(recordResolution.substr(p + 1).c_str());
     xo = xmlXPathEvalExpression((xmlChar*) "/config/stream-fps", xc);
     node = xo->nodesetval->nodeTab[0];
     streamfps = string((char*) xmlNodeGetContent(node));
     xo = xmlXPathEvalExpression((xmlChar*) "/config/stream-resolution", xc);
     node = xo->nodesetval->nodeTab[0];
     streamResolution = string((char*) xmlNodeGetContent(node));
+    p = streamResolution.find("x");
+    streamWidth = atoi(streamResolution.substr(0, p).c_str());
+    streamHeight = atoi(streamResolution.substr(p + 1).c_str());
     xo = xmlXPathEvalExpression((xmlChar*) "/config/manage-network", xc);
     node = xo->nodesetval->nodeTab[0];
     manageNetwork = atoi((char*) xmlNodeGetContent(node));
@@ -1180,6 +1213,14 @@ void readConfig() {
         xo = xmlXPathEvalExpression((xmlChar*) "/config/videoStreamingType", xc);
         node = xo->nodesetval->nodeTab[0];
         videoStreamingType = string((char*) xmlNodeGetContent(node));
+        if (videoStreamingType.compare("FMSP") == 0) {
+            stream_type = FMSP;
+        } else if (videoStreamingType.compare("RTMP") == 0) {
+            stream_type = RTMP;
+        }
+        xo = xmlXPathEvalExpression((xmlChar*) "/config/enable-mic", xc);
+        node = xo->nodesetval->nodeTab[0];
+        enable_mic = (string((char*) xmlNodeGetContent(node)).compare("true") == 0);
         xo = xmlXPathEvalExpression((xmlChar*) "/config/pollInterval", xc);
         node = xo->nodesetval->nodeTab[0];
         pollInterval = string((char*) xmlNodeGetContent(node));
@@ -1856,7 +1897,8 @@ void configure() {
     cout << "\nstream-resolution:\t" + streamResolution;
     cout << "\nbootup:\t" + readConfigValue("bootup");
     cout << "\nsystem-id:\t" + systemId;
-    cout << "\nvideoStreamingType:\t" + videoStreamingType;
+    cout << "\nvideoStreamingType:\t" << stream_type_str[stream_type];
+    cout << "\nenable-mic:\t" << (enable_mic ? "true" : "false");
     cout << "\nautoInsertCameras:\t" + autoInsertCameras;
     cout << "\npollInterval:\t" + pollInterval;
     cout << "\nmanage-network:\t" + string(itoa(manageNetwork));
@@ -2207,7 +2249,7 @@ void* test(void *) {
     imedia[0].width = 320;
     imedia[1].audioSamplingFrequency = 44100;
     imedia[1].duration = 0;
-    imedia[1].identifier = "plughw:0";
+    imedia[1].identifier = "plughw:1";
     imedia[1].type = MediaManager::AUDIO;
     //    imedia[2].duration = 0;
     //    imedia[2].encoding = MediaManager::MJPEG;
@@ -2223,15 +2265,16 @@ void* test(void *) {
     valarray<MediaManager::media> omedia(1);
     omedia[0].identifier = "fmsp://fms.newmeksolutions.com:92711/" + appName + "1780";
     //    omedia[0].identifier = "ferrymediacapture1/";
-    omedia[0].segmentDuration = 3;
+    omedia[0].segmentDuration = 1;
     omedia[0].videoframerate = 10;
     omedia[0].audioBitrate = 64000;
     omedia[0].duration = 10;
     omedia[0].encoding = MediaManager::MP2;
     omedia[0].splMediaProps.fmpFeederSplProps.reconnect = true;
     omedia[0].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
+    omedia[0].start_stop = new bool();
     MediaManager::capture(imedia, omedia);
-
+    delete omedia[0].start_stop;
     /*stat*/
     //    struct stat statbuf;
     //    struct passwd *pwd;

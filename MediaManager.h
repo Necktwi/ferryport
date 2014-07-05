@@ -70,13 +70,14 @@ public:
         int bufferfloat;
         int buffersize;
         int priority;
+        bool* start_stop;
         short state = -1;
         media();
         ~media();
         media& operator=(media& m);
     };
 
-    static int capture(std::valarray<MediaManager::media> inputs, std::valarray<MediaManager::media> outputs);
+    static int capture(std::valarray<MediaManager::media> inputs, std::valarray<MediaManager::media> outputs, bool *= NULL);
 
     static void * fmp_feeder(void *);
 
@@ -93,6 +94,7 @@ public:
         ClientSocket * cs;
         std::mutex csm; //#csm mutex for creating deleting ClientSocket cs;
         FerryTimeStamp lastconnectFTS; //#fts FerryTimeStamep to store last connect time;
+        bool * start_stop;
     };
 
     struct fmp_feeder_aftermath_args {
@@ -108,6 +110,7 @@ public:
     struct capture_thread_iargs {
         std::valarray<media> * inputs;
         std::valarray<media> * outputs;
+        ~capture_thread_iargs();
     };
 
     struct capture_thread_rargs {
@@ -124,6 +127,7 @@ public:
         media *ivideomedia;
         media *omedia;
         raw_mjpeg_mp3_dump_return rmmdr;
+        bool* start_stop;
     };
     static void* raw_mjpeg_mp3_dump(void* args);
 private:

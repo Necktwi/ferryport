@@ -14,6 +14,7 @@
 #include "myconverters.h"
 #include "debug.h"
 #include "mystdlib.h"
+#include "logger.h"
 #include <string>
 #include <sys/socket.h>
 #include <stdlib.h>
@@ -37,6 +38,11 @@ MediaManager::MediaManager(const MediaManager& orig) {
 MediaManager::~MediaManager() {
 }
 
+MediaManager::capture_thread_iargs::~capture_thread_iargs(){
+    delete this->inputs;
+    delete this->outputs;
+}
+
 std::string MediaManager::MediaTypeString[] = {"AUDIO", "VIDEO"};
 std::string MediaManager::EncodingString[] = {"mjpeg", "mp3"};
 
@@ -47,7 +53,7 @@ void* MediaManager::capture(void * args) {
     return ctsr;
 }
 
-int MediaManager::capture(std::valarray<MediaManager::media> inputs, std::valarray<MediaManager::media> outputs) {
+int MediaManager::capture(std::valarray<MediaManager::media> inputs, std::valarray<MediaManager::media> outputs, bool* quit) {
     int i = 0;
     int audioTypeInputs[10];
     int videoTypeInputs[10];
@@ -137,12 +143,7 @@ int MediaManager::capture(std::valarray<MediaManager::media> inputs, std::valarr
         }
         i++;
     }
-#ifdef DEBUG
-    if ((debug & 1) == 1) {
-        std::cout << "\n" << getTime() << " MediaManager::capture: waiting for output threads to join.\n";
-        fflush(stdout);
-    }
-#endif
+    ffl_debug(FPOL_MM,"waiting for output threads to join");
     i = 0;
     while (oupthreads.size() > 0) {
         pthread_t* thread = oupthreads[oupthreads.size() - 1];
@@ -150,24 +151,14 @@ int MediaManager::capture(std::valarray<MediaManager::media> inputs, std::valarr
         oupthreads.pop_back();
         delete thread;
     }
-#ifdef DEBUG
-    if ((debug & 1) == 1) {
-        std::cout << "\n" << getTime() << " MediaManager::capture: terminating input threads.\n";
-        fflush(stdout);
-    }
-#endif
+    ffl_debug(FPOL_MM,"terminating input threads");
     i = 0;
     while (inpthreads.size() > 0) {
         pthread_cancel(*inpthreads[inpthreads.size() - 1]);
         pthread_join(*inpthreads[inpthreads.size() - 1], NULL);
         inpthreads.pop_back();
     }
-#ifdef DEBUG
-    if ((debug & 1) == 1) {
-        std::cout << "\n" << getTime() << " MediaManager::capture: freeing up buffers.\n";
-        fflush(stdout);
-    }
-#endif
+    ffl_debug(FPOL_MM,"freeing up buffers");
     i = 0;
     while (i < inputs.size()) {
         if (inputs[i].type == VIDEO)delete inputs[i].buffer.framebuffer;
@@ -219,22 +210,17 @@ void *MediaManager::fmp_feeder(void* args) {
     std::string path = ppos > 0 ? ffargs->omedia->identifier.substr(ppos, ffargs->omedia->identifier.length()) : "";
     std::string url = ffargs->omedia->identifier.substr(7, cpos > 0 ? cpos - 7 : (ppos > 0 ? ppos - 7 : ffargs->omedia->identifier.length() - 7));
 connect:
-#ifdef DEBUG
-    if ((debug & 16) == 16) {
-        std::cout << "\n" << getTime() << " MediaManager: connecting to " << url << ":" << port << ".\n";
-        fflush(stdout);
+    if (!*ffargs->omedia->start_stop) {
+        ffl_debug(FPOL_MM, "waiting for start_stop set");
+        sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
+        goto connect;
     }
-#endif
+    ffl_notice(FPOL_MM, "MediaManager: connecting to %s:%d", url.c_str(), port);
     try {
         ffargs->cs = new ClientSocket(url, port);
     } catch (SocketException&) {
         if (ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnect) {
-#ifdef DEBUG
-            if ((debug & 16) == 16) {
-                std::cout << "\n" << getTime() << " MediaManager: connection to " << url << ":" << port << " failed. sleeping for " << ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec << "sec.\n";
-                fflush(stdout);
-            }
-#endif
+            ffl_err(FPOL_MM, "MediaManager: connection to %s:%d failed. sleeping for %d sec", url.c_str(), port, ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
             sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
             goto connect;
         }
@@ -247,12 +233,7 @@ connect:
     try {
         *ffargs->cs << beacon;
     } catch (SocketException e) {
-#ifdef DEBUG
-        if ((debug & 16) == 16) {
-            std::cout << "\n" << getTime() << " MediaManager: unable to send initpack to " << url << ":" << port << ".\n";
-            fflush(stdout);
-        }
-#endif
+        ffl_err(FPOL_MM, "MediaManager: unable to send initpack to %s:%d", url.c_str(), port);
         if (ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnect) {
             delete ffargs->cs;
             sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
@@ -307,7 +288,7 @@ connect:
         //cs->send(*packet, MSG_MORE);
         std::vector<int> framesizes;
         if (ffargs->ivideomedia->state != -1) {
-            received_frames_per_segment_duration = videoframesCfloat > videoframesPfloat ? (videoframesCfloat - videoframesPfloat + 1) : (videoframesCfloat + 200 - videoframesPfloat);
+            received_frames_per_segment_duration = videoframesCfloat > videoframesPfloat ? (videoframesCfloat - videoframesPfloat + 1) : (videoframesCfloat + 200 - videoframesPfloat + 1);
             if (transmitted_frames_per_segment_duration == 0 || transmitted_frames_per_segment_duration > received_frames_per_segment_duration)transmitted_frames_per_segment_duration = received_frames_per_segment_duration;
             cf = videoframesPfloat;
             //            std::string frame_fn;
@@ -379,15 +360,14 @@ connect:
         } catch (SocketException e) {
             ffargs->csm.unlock();
             delete ffargs->cs;
-#ifdef DEBUG
-            if ((debug & 16) == 16) {
-                std::cout << "\n" << getTime() << " MediaManager: unable to send packet to " << url << ":" << port << ".\n";
-                fflush(stdout);
-            }
-#endif
+            ffl_notice(FPOL_MM, "MediaManager: unable to send packet to %s:%d", url.c_str(), port);
             goto connect;
         }
         ffargs->csm.unlock();
+        if (!*ffargs->omedia->start_stop) {
+            ffargs->cs->disconnect();
+            goto connect;
+        }
         //        clock_gettime(CLOCK_MONOTONIC, &tend);
         //        if ((tend.tv_sec - tstart.tv_sec) < ffargs->omedia->segmentDuration) {
         //            tend.tv_nsec /= 1000;
@@ -399,17 +379,12 @@ connect:
 nsleep:
         ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, &tend);
         if (ret) {
-            std::cout << "\n" << getTime() << " MediaManager:\n";
+            ffl_err(FPOL_MM, "MediaManager:\n")
             perror("clock_nanosleep");
             std::cout << "; remaining " << tend.tv_sec << "sec " << tend.tv_nsec << "nsec\n";
             goto nsleep;
         } else {
-#ifdef DEBUG
-            if ((debug & 16) == 16) {
-                std::cout << "\n" << getTime() << " MediaManager: clock_nanosleep successfully slept till " << tstart.tv_sec << " sec," << tstart.tv_nsec << " nanosec.\n";
-                fflush(stdout);
-            }
-#endif
+            ffl_debug(FPOL_MM, "MediaManager: clock_nanosleep successfully slept till %l.%l", tstart.tv_sec, tstart.tv_nsec);
         }
 
     }

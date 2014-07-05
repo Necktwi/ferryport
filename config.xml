@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- be mindful of alphabetical case -->
 <config>
     <app-name></app-name>
     <server-addr>demo.viewyourworld.com</server-addr>
@@ -13,6 +14,7 @@
     <record-resolution>320x240</record-resolution>
     <stream-fps>8</stream-fps>
     <stream-resolution>240x180</stream-resolution>
+    <enable-mic description="captures sound from mic if its set to true">false</enable-mic>
     <manage-network>1</manage-network>
     <reconnect-duration description="time to reconnect in minutes when network disconnected">2</reconnect-duration>
     <reconnect-poll-count>2</reconnect-poll-count>
@@ -36,7 +38,8 @@
     <cmos-batt description="true if mainboard has cmos battery else false">false</cmos-batt>
     <!--properties fetched from server during installation-->
     <system-id>0</system-id>
-    <videoStreamingType>RTMP</videoStreamingType>
+    <videoStreamingType description="for ffmpeg and flash set to 'RTMP';
+                                     for FairPlay set to 'FPP'">RTMP</videoStreamingType>
     <autoInsertCameras>True</autoInsertCameras>
     <pollInterval>60000</pollInterval>
     <pid>4188</pid>

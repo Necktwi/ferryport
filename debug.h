@@ -22,8 +22,11 @@ extern int child_exit_status;
 
 enum FPOL_LEVEL {
     FPOL_MAIN = 1 << 0,
-    FPOL_GPS = 1 << 1,
-    FPOL_PCM = 1 << 2
+    FPOL_SPAWN = 1 << 1,
+    FPOL_SOCKET = 1 << 2,
+    FPOL_GPS = 1 << 3,
+    FPOL_MM = 1 << 4, //*< MediaManager
+    FPOL_LL = 1 << 32 //*< lowlevel calls like siganlHandler, spawn
 };
 
 #endif	/* DEBUG_H */
