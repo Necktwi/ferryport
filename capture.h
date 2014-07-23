@@ -15,7 +15,8 @@
 class ferryframe {
 public:
     int length;
-    void* frame;
+    void* frame = NULL;
+    void* intframeptr = NULL;
     int wordsize;
     int readerscount;
 
@@ -35,10 +36,10 @@ public:
 
 class capture_args {
 public:
-    std::string device;//*< name of device e.g. /dev/video0
-    bool mmap;//*< use mapped memory access or not. prefer true if device supports it. //to be deprecated
-    bool read;//*< prefer false //to be deprecated
-    bool userp;//*< prefer false //to be deprecated
+    std::string device; //*< name of device e.g. /dev/video0
+    bool mmap; //*< use mapped memory access or not. prefer true if device supports it. //to be deprecated
+    bool read; //*< prefer false //to be deprecated
+    bool userp; //*< prefer false //to be deprecated
     std::string format;
     int duration; //*< duration of recording
     int Width; //*< width of the image
@@ -49,6 +50,7 @@ public:
     int readerscount; //*< count of consumers grabbing a copy of produced count
     int framerate; //*< frames per second
     capture_return returnObj; //*< output data
+    int* signalNewState = NULL;
 };
 
 void deallocate_vcarg(void* buffer);

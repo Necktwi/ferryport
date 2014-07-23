@@ -60,6 +60,7 @@ public:
     int* periodbufferlength; //*< size of each period
     int* periodbufferfloat; //*< index above the new filled buffer
     snd_record_return returnObj; //*< return value. u find error code @see snd_record_return
+    int * signalNewState = NULL;
 };
 
 void deallocate_srarg(void* buffer);

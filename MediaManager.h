@@ -22,6 +22,7 @@ public:
     MediaManager(const MediaManager& orig);
     virtual ~MediaManager();
     static void* fmp_feeder_aftermath(void* args, bool isSucess);
+    static void* fPRecorderAftermath(void* args, bool isSuccess);
 
     enum MediaType {
         AUDIO, VIDEO
@@ -40,6 +41,13 @@ public:
     struct FmpFeederSplProps {
         bool reconnect;
         int reconnectIntervalSec;
+    };
+
+    /**
+     * exclusive properties for FairPlay recorder
+     */
+    struct FPRecorderExclProps {
+        int perFileDurationSec;
     };
 
     class media {
@@ -61,6 +69,7 @@ public:
 
         union SplMediaProps {
             MediaManager::FmpFeederSplProps fmpFeederSplProps;
+            MediaManager::FPRecorderExclProps fPRecorderExclProps;
         } splMediaProps;
 
         union ferrybuffer {
@@ -70,16 +79,17 @@ public:
         int bufferfloat;
         int buffersize;
         int priority;
-        bool* start_stop;
-        short state = -1;
+        int signalNewState; //*< set 1 to restart and 0 to stop the media and 2 to continue.
+        short state = -1; //*< it reflects the state of medias
         media();
         ~media();
         media& operator=(media& m);
     };
 
-    static int capture(std::valarray<MediaManager::media> inputs, std::valarray<MediaManager::media> outputs, bool *= NULL);
+    static int capture(std::valarray<MediaManager::media>& inputs, std::valarray<MediaManager::media>& outputs);
 
     static void * fmp_feeder(void *);
+    static void * fPRecorder(void *);
 
     struct fmp_feeder_return {
         std::string error;
@@ -94,7 +104,6 @@ public:
         ClientSocket * cs;
         std::mutex csm; //#csm mutex for creating deleting ClientSocket cs;
         FerryTimeStamp lastconnectFTS; //#fts FerryTimeStamep to store last connect time;
-        bool * start_stop;
     };
 
     struct fmp_feeder_aftermath_args {
@@ -103,6 +112,19 @@ public:
         std::mutex * csm;
         FerryTimeStamp * lastConnectFTS;
         int reconnectInterval;
+    };
+
+    struct fPRecorderAftermathArgs {
+        std::string * payload;
+        int fd;
+    };
+
+    struct fPRecorderArgs {
+        media *iaudiomedia;
+        media *ivideomedia;
+        media *omedia;
+        fPRecorderAftermathArgs fPRAA;
+        int fd;
     };
 
     static void* capture(void*);

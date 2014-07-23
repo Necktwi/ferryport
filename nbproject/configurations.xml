@@ -120,6 +120,7 @@
             <linkerLibFileItem>ffmpeg_build/lib/libswresample.a</linkerLibFileItem>
             <linkerLibFileItem>ffmpeg_build/lib/libpostproc.a</linkerLibFileItem>
             <linkerLibFileItem>ffmpeg_build/lib/libavutil.a</linkerLibFileItem>
+            <linkerLibFileItem>../base/dist/Debug/GNU-Linux-x86/libbase.so</linkerLibFileItem>
             <linkerOptionItem>-lxml2</linkerOptionItem>
             <linkerOptionItem>-lpthread</linkerOptionItem>
             <linkerOptionItem>-lssl</linkerOptionItem>
@@ -141,7 +142,6 @@
             <linkerOptionItem>-ludev</linkerOptionItem>
             <linkerOptionItem>-lpulse-simple</linkerOptionItem>
             <linkerOptionItem>-lpulse</linkerOptionItem>
-            <linkerLibFileItem>../base/dist/Debug/GNU-Linux-x86/libbase.so</linkerLibFileItem>
           </linkerLibItems>
           <commandLine>-Wall</commandLine>
         </linkerTool>

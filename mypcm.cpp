@@ -339,6 +339,7 @@ void * snd_record(void* voidargs) {
     int dir;
     snd_pcm_uframes_t frames;
     uint16_t *buffer;
+    int* signalNewState = args->signalNewState;
     bool continuous_capture = args->duration <= 0 ? true : false;
     /* Open PCM device for recording (capture). */
     rc = snd_pcm_open(&handle, (const char*) args->dev_name.c_str(), SND_PCM_STREAM_CAPTURE, 0);
@@ -391,7 +392,8 @@ void * snd_record(void* voidargs) {
     /* We want to loop for 5 seconds */
     snd_pcm_hw_params_get_period_time(params, &val, &dir);
     loops = args->duration * 1000000 / val;
-    while (loops > 0 || continuous_capture) {
+    *args->returnObj.state = 1;
+    while (*signalNewState >= 0 && (loops > 0 || continuous_capture)) {
         loops--;
         rc = snd_pcm_readi(handle, (void**) buffer, frames);
         if (rc == -EPIPE) {
@@ -413,6 +415,7 @@ void * snd_record(void* voidargs) {
         //            fprintf(stderr, "short write: wrote %d bytes\n", rc);
         //        }
     }
+    *args->returnObj.state = -1;
     snd_pcm_drain(handle);
     snd_pcm_close(handle);
     free(buffer);

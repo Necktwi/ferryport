@@ -41,6 +41,8 @@ extern "C" {
 
 #include "libavcodec_util.h"
 #include "mystdlib.h"
+#include "debug.h"
+#include "logger.h"
 #include <string>
 #include <iostream>
 
@@ -169,7 +171,7 @@ void audio_encode(libav_encode_args* a) {
     }
     /* setup the data pointers in the AVFrame */
     if (computed_buffer_size != (*args.input_buffer.periodbuffer)[(args.initptr) % max_input_buffer_size].length) {
-        std::cout << "\n" << getTime() << " libavcodec_util: buffer statement mismatch. Encoder exited.\n";
+        ffl_err(FPOL_LAV, "buffer statement mismatch. Encoder exited");
         return;
     }
     ret = avcodec_fill_audio_frame(frame, c->channels, c->sample_fmt, (const uint8_t*) samples, computed_buffer_size, 0);

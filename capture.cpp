@@ -15,6 +15,7 @@
 #include "capture.h"
 #include "debug.h"
 #include "mystdlib.h"
+#include "logger.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -73,14 +74,29 @@ static time_t stop_time;
 static int readerscount;
 static int framerate;
 static int duration;
+int* signalNewState = NULL;
 
 int *buffer_size;
 int *buf_float;
 std::valarray<ferryframe> *frameBuffer;
+std::map<v4l2_field, std::string> v4l2_field_str;
+
+void v4l2_field_str_init() {
+    v4l2_field_str[V4L2_FIELD_ANY] = "V4L2_FIELD_ANY";
+    v4l2_field_str[V4L2_FIELD_NONE] = "V4L2_FIELD_NONE";
+    v4l2_field_str[V4L2_FIELD_TOP] = "V4L2_FIELD_TOP";
+    v4l2_field_str[V4L2_FIELD_BOTTOM] = "V4L2_FIELD_BOTTOM";
+    v4l2_field_str[V4L2_FIELD_INTERLACED] = "V4L2_FIELD_INTERLACED";
+    v4l2_field_str[V4L2_FIELD_SEQ_TB] = "V4L2_FIELD_SEQ_TB";
+    v4l2_field_str[V4L2_FIELD_SEQ_BT] = "V4L2_FIELD_SEQ_BT";
+    v4l2_field_str[V4L2_FIELD_ALTERNATE] = "V4L2_FIELD_ALTERNATE";
+    v4l2_field_str[V4L2_FIELD_INTERLACED_TB] = "V4L2_FIELD_INTERLACED_TB";
+    v4l2_field_str[V4L2_FIELD_INTERLACED_BT] = "V4L2_FIELD_INTERLACED_BT";
+}
 
 void ferryframe::initferryframe(int length) {
     free(this->frame);
-    this->frame = malloc(length);
+    this->intframeptr = this->frame = malloc(length);
     this->length = length;
 }
 
@@ -96,7 +112,7 @@ ferryframe::~ferryframe() {
 }
 
 static void errno_exit(const char *s) {
-    fprintf(stderr, "%s error %d, %s\n", s, errno, strerror(errno));
+    ffl_err(FPOL_CAP, "%s: %s error %d: %s", dev_name, s, errno, strerror(errno));
     //exit(EXIT_FAILURE);
     pthread_exit(NULL);
 }
@@ -121,7 +137,8 @@ static void process_image(const void *p, int size) {
         *buf_float = (*buf_float + 1) % (*buffer_size);
     }
     fflush(stderr);
-#ifdef DEBUG
+    final_frame_count++;
+#ifdef _DEBUG
     if ((debug & 16) == 16) {
         //        if (!analyzedInitImage) {
         //            analyzedInitImage = true;
@@ -144,11 +161,13 @@ static void process_image(const void *p, int size) {
         //                fprintf(stdout,"failed to save 2nd image\n");
         //            };
         //        }
-        fprintf(stdout, ".");
-        fflush(stdout);
+        if (final_frame_count % framerate == 0) {
+            ffl_debug(FPOL_CAP, "%s", std::string(framerate, '.').c_str());
+        }
+        //fprintf(stdout, ".");
+        //fflush(stdout);
     }
 #endif
-    final_frame_count++;
 }
 
 static int read_frame(void) {
@@ -248,7 +267,7 @@ static void mainloop(void) {
     if (frame_count == 0) loopIsInfinite = 1; //infinite loop
     count = frame_count;
     time(&start_time);
-    while ((count-- > 0) || loopIsInfinite) {
+    while (*signalNewState >= 0 && ((count-- > 0) || loopIsInfinite)) {
         for (;;) {
             fd_set fds;
             struct timeval tv;
@@ -496,13 +515,7 @@ static void init_device(void) {
             errno_exit("VIDIOC_QUERYCAP");
         }
     }
-#ifdef DEBUG
-    if ((debug & 16) == 16) {
-        //std::cout << "\ndriver:" << cap.driver << "\ncard:" << cap.card << "\nbus_info:" << cap.bus_info << "\nversion:" << cap.version << "\ncapabilities:" << cap.capabilities << "\ndevice_caps:" << cap.device_caps << "\nreserved:" << cap.reserved << "\n";
-        fflush(stdout);
-    }
-#endif
-
+    ffl_debug(FPOL_CAP, "capabilities of %s:\n\tndriver: %s\n\tcard: %s\n\tbus_info: %s\n\tversion: %u\n\tcapabilities: %u\n\tdevice_caps: %u\n\treserved: %u,%u,%u", dev_name, cap.driver, cap.card, cap.bus_info, cap.version, cap.capabilities, cap.device_caps, cap.reserved[0], cap.reserved[1], cap.reserved[2]);
     if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
         //        fprintf(stderr, "%s is no video capture device\n", dev_name);
         //        exit(EXIT_FAILURE);
@@ -553,15 +566,10 @@ static void init_device(void) {
     } else {
         /* Errors ignored. */
     }
-#ifdef DEBUG
-    if ((debug & 16) == 16) {
-        //std::cout << "\ncropcap.bounds:" << (const unsigned char*)cropcap.bounds << "\ndefract:" << cropcap.defrect << "\npixelaspect:" << cropcap.pixelaspect << "\ntype:" << cropcap.type << "\n";
-        fflush(stdout);
-    }
-#endif
-    argp.index = 5;
-    argp.width = 320;
-    argp.height = 240;
+    ffl_debug(FPOL_CAP, "%s crop capabilities:\n\tbounds:\n\t\tleft: %d\n\t\ttop: %d\n\t\twidth: %d\n\t\theight: %d\n\tdefrect:\n\t\tleft: %d\n\t\ttop: %d\n\t\twidth: %d\n\t\theight: %d\n\tpixelaspect: %u/%u\n\ttype:%u", dev_name, cropcap.bounds.left, cropcap.bounds.top, cropcap.bounds.width, cropcap.bounds.height, cropcap.defrect.left, cropcap.defrect.top, cropcap.defrect.width, cropcap.defrect.height, cropcap.pixelaspect.numerator, cropcap.pixelaspect.denominator, cropcap.type);
+    argp.index = 0;
+    argp.width = width;
+    argp.height = height;
     argp.pixel_format = V4L2_PIX_FMT_MJPEG;
     if (ioctl(fd, VIDIOC_ENUM_FRAMEINTERVALS, &argp) < 0) {
         //exit(EXIT_FAILURE);
@@ -571,12 +579,7 @@ static void init_device(void) {
     CLEAR(fmt);
 
     fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-#ifdef DEBUG
-    if ((debug & 16) == 16) {
-        std::cout << "\n" << getTime() << " caputure: input_format=" << force_format << "\n";
-        fflush(stdout);
-    }
-#endif
+    ffl_debug(FPOL_CAP, "input_format=%s", force_format);
     if (force_format) {
         fmt.fmt.pix.width = width;
         fmt.fmt.pix.height = height;
@@ -589,14 +592,21 @@ static void init_device(void) {
             fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
         }
 
-        if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
+        if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt)) {
+            if (-1 < xioctl(fd, VIDIOC_G_FMT, &fmt)) {
+                ffl_debug(FPOL_CAP_L, "%s is set to pixel format:\n\tpixelformat:\t%s\n\tfield:\t\t%s\n\twidth:\t\t%d\n\theight:\t\t%d", dev_name, std::string((char*) &fmt.fmt.pix.pixelformat, 4).c_str(), v4l2_field_str[(v4l2_field) fmt.fmt.pix.field].c_str(), fmt.fmt.pix.width, fmt.fmt.pix.height);
+            }
             errno_exit("VIDIOC_S_FMT");
+        }
 
         /* Note VIDIOC_S_FMT may change width and height. */
     } else {
         /* Preserve original settings as set by v4l2-ctl for example */
-        if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt))
+        if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt)) {
             errno_exit("VIDIOC_G_FMT");
+        } else {
+
+        }
     }
 
     /* Buggy driver paranoia. */
@@ -725,12 +735,8 @@ void* videocapture(void * voidarg) {
     int j = 0;
     struct capture_args* arg = (capture_args*) voidarg;
     *arg->returnObj.state = 0;
-#ifdef DEBUG
-    if ((debug & 16) == 16) {
-        std::cout << "\n" << getTime() << " videocapture: arg->device=" << arg->device << "\n";
-        fflush(stdout);
-    }
-#endif
+    v4l2_field_str_init();
+    ffl_debug(FPOL_CAP, "arg->device=%s", arg->device.c_str());
     //arg->framebuffer->resize(arg->buffersize); //(ferryframe*) calloc(arg->buffersize, sizeof (ferryframe));
     pthread_cleanup_push(deallocate_vcarg, arg);
     readerscount = arg->readerscount;
@@ -760,9 +766,11 @@ void* videocapture(void * voidarg) {
     buf_float = arg->bufferfloat;
     framerate = arg->framerate;
     duration = arg->duration;
+    signalNewState = arg->signalNewState;
     strcpy(dev_name, arg->device.c_str());
     open_device();
     init_device();
+    *arg->returnObj.state = 1;
     start_capturing();
     mainloop();
     stop_capturing();
@@ -772,13 +780,14 @@ void* videocapture(void * voidarg) {
     close(ofd);
     dup2(stdoutfd, 1);
     arg->framerate = framerate;
-#ifdef DEBUG
-    if ((debug & 16) == 16) {
-        std::cout << "\n" << getTime() << " videocapture:\n";
+#ifdef _DEBUG    
+    ffl_debug(FPOL_CAP, "\n--------videoparams-------");
+    if (ffl_debug_lvl(FPOL_CAP)) {
         print_videoparams();
-        fflush(stdout);
     }
+    ffl_debug(FPOL_CAP, "\n--------videoparams-------");
 #endif
+    *arg->returnObj.state = -1;
     pthread_cleanup_pop(1);
     return NULL;
 }
