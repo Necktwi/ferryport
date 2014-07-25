@@ -46,14 +46,16 @@ MediaManager::capture_thread_iargs::~capture_thread_iargs() {
 std::string MediaManager::MediaTypeString[] = {"AUDIO", "VIDEO"};
 std::string MediaManager::EncodingString[] = {"mjpeg", "mp3"};
 
-void* MediaManager::capture(void * args) {
-    capture_thread_iargs * ctsa = (capture_thread_iargs*) args;
-    capture_thread_rargs * ctsr = new capture_thread_rargs;
+void* MediaManager::capture(std::valarray<MediaManager::media>& inputs, std::valarray<MediaManager::media>& outputs) {
     ctsr->retvalue = capture(*ctsa->inputs, *ctsa->outputs);
     return ctsr;
 }
 
-int MediaManager::capture(std::valarray<MediaManager::media>& inputs, std::valarray<MediaManager::media>& outputs) {
+int MediaManager::capture(void * args) {
+    capture_thread_iargs * ctsa = (capture_thread_iargs*) args;
+    capture_thread_rargs * ctsr = new capture_thread_rargs;
+    std::valarray<MediaManager::media>& inputs=*ctsa->inputs;
+    std::valarray<MediaManager::media>& outputs=*ctsa->outputs;
     int i = 0;
     int audioTypeInputs[10];
     int videoTypeInputs[10];
@@ -128,8 +130,8 @@ int MediaManager::capture(std::valarray<MediaManager::media>& inputs, std::valar
             fca->omedia = &outputs[i];
             pthread_t * fmp_feeder_thread = (pthread_t*) malloc(sizeof (pthread_t));
             oupthreads.push_back(fmp_feeder_thread);
-            //if (pthread_create(fmp_feeder_thread, NULL, &fmp_feeder, fca) != 0)return -1;
-            fmp_feeder(fca);
+            if (pthread_create(fmp_feeder_thread, NULL, &fmp_feeder, fca) != 0)return -1;
+            //fmp_feeder(fca);
             expired_objs.push_back(fca);
         } else if ((int) outputs[i].identifier.find(".mp3") == outputs[i].identifier.length() - 4) {
 
@@ -141,6 +143,7 @@ int MediaManager::capture(std::valarray<MediaManager::media>& inputs, std::valar
             pthread_t * rmmda_thread = (pthread_t*) malloc(sizeof (pthread_t));
             oupthreads.push_back(rmmda_thread);
             pthread_create(rmmda_thread, NULL, &fPRecorder, rmmda);
+            expired_objs.push_back(rmmda);
         } else if ((int) outputs[i].identifier[outputs[i].identifier.length() - 1] == '/') {
             raw_mjpeg_mp3_dump_args* rmmda = new raw_mjpeg_mp3_dump_args(); //(raw_mjpeg_mp3_dump_args*) malloc(sizeof (raw_mjpeg_mp3_dump_args));
             //memset((void*) rmmda, 0, sizeof (raw_mjpeg_mp3_dump_args));
@@ -317,7 +320,7 @@ connect:
             audioperiodCfloat = ffargs->iaudiomedia->bufferfloat;
         }
         index++;
-        packet = new std::string("{index:" + std::string((char*) itoa(index)));
+        packet = new std::string("{index:" + itoa(index));
         *packet += ",ferryframes:[";
         //cs->send(*packet, MSG_MORE);
         std::vector<int> framesizes;
@@ -369,7 +372,7 @@ connect:
             //cs->send(buf, MSG_MORE);
             free(lavea.output_buffer);
         }
-        *packet += buf = "FFESCSTR,time:\"" + std::string((char*) itoa((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000))) + "\",duration:" + std::string((char*) itoa(ffargs->omedia->segmentDuration)) + ",endex:" + std::string((char*) itoa(index)) + "}";
+        *packet += buf = "FFESCSTR,time:\"" + itoa((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + itoa(ffargs->omedia->segmentDuration) + ",endex:" + itoa(index) + "}";
         //cs->send(buf); //, MSG_MORE);
         //        ClientSocket::AftermathObj* afmo = new ClientSocket::AftermathObj();
         //        afmo->aftermath = &MediaManager::fmp_feeder_aftermath;
@@ -523,7 +526,7 @@ start_stop:
             audioperiodCfloat = ffargs->iaudiomedia->bufferfloat;
         }
         index++;
-        packet = new std::string("{index:" + std::string((char*) itoa(index)));
+        packet = new std::string("{index:" + std::to_string(index));
         *packet += ",ferryframes:[";
         if (ffargs->ivideomedia != NULL && ffargs->ivideomedia->state > 0) {
             received_frames_per_segment_duration = videoframesCfloat > videoframesPfloat ? (videoframesCfloat - videoframesPfloat + 1) : (videoframesCfloat + 200 - videoframesPfloat + 1);
@@ -553,7 +556,7 @@ start_stop:
             }
             free(lavea.output_buffer);
         }
-        *packet += buf = "FFESCSTR,time:\"" + std::string((char*) itoa((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000))) + "\",duration:" + std::string((char*) itoa(ffargs->omedia->segmentDuration)) + "},";
+        *packet += "FFESCSTR,time:\"" + itoa((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + itoa(ffargs->omedia->segmentDuration) + "},";
         write(ffargs->fd, (void*) packet->c_str(), packet->size());
         if (ffargs->omedia->signalNewState < 2) {
             close(ffargs->fd);

@@ -59,6 +59,7 @@
 #include <libudev.h>
 #include <list>
 #include <thread>
+#include <map>
 
 #define MAX_CAMS 10
 #define APP_NAME "remotedevicecontroller"
@@ -78,6 +79,15 @@ enum camState {
     CAM_STREAM_N_RECORD = 0b11
 };
 std::map<int, std::string> camStateString;
+
+static void camStateStringInit() {
+    camStateString[CAM_PREVIOUS_STATE] = "CAM_PREVIOUS_STATE";
+    camStateString[CAM_NEW_STATE] = "CAM_NEW_STATE";
+    camStateString[CAM_OFF] = "CAM_OFF";
+    camStateString[CAM_RECORD] = "CAM_RECORD";
+    camStateString[CAM_STREAM] = "CAM_STREAM";
+    camStateString[CAM_STREAM_N_RECORD] = "CAM_STREAM_N_RECORD";
+}
 
 string serverAddr;
 string serverPort;
@@ -252,13 +262,19 @@ public:
     MediaManager::capture_thread_iargs * cti; //*> input arguments pointer
     int stdio[2];
     string cam;
-    camState state;
-    camState newState;
+    camState state = CAM_OFF;
+    camState newState = CAM_PREVIOUS_STATE;
     string SId;
     bool disable;
     string recordPath;
     string streamPath;
+    ~camService();
 };
+
+camService::~camService() {
+    if (t != NULL)pthread_cancel(*t);
+    delete cti;
+}
 
 class GPSManager {
 public:
@@ -619,14 +635,12 @@ vector<RecordsManager::Record> RecordsManager::records;
 void ffmpegOnStopHandler(spawn* process) {
     char ffmpegerr[100];
     ffmpegerr[0] = '\0';
-    read(process->cpstderr, ffmpegerr, 100);
+    ffmpegerr[100] = '\0';
+    read(process->cpstderr, ffmpegerr, 99);
     string ffmpegerrstr = string(ffmpegerr);
-#ifdef DEBUG
-    if ((debug & 1) == 1) {
-        cout << "\n" << getTime() << " ffmpegOnStopHandler: ffmpeg->pid=" << process->cpid << ", ffmpeg->exitcode=" << (int) process->getChildExitStatus() << ",ffmpegerr->error=" << ffmpegerr << "\n";
-        fflush(stdout);
-    }
-#endif
+    ffl_debug(FPOL_MAIN, "ffmpeg->pid=%d, ffmpeg->exitcode=%d,"
+            "ffmpegerr->error=%s", (int) process->cpid,
+            process->getChildExitStatus(), ffmpegerr);
     if ((int) ffmpegerrstr.find("No space left on device", 0) > 0) {
         cleanRecords(1);
     } else if ((int) ffmpegerrstr.find("Device or resource busy", 0) > 0) {
@@ -637,7 +651,8 @@ void ffmpegOnStopHandler(spawn* process) {
     }
     /*resets hub only when recording breaks*/
     if (mobile_modem_disconnect_toggle) {
-        set_bus_device_file_name(usbHubVendorProductID, usb_hub_bus_device_file_name);
+        set_bus_device_file_name(usbHubVendorProductID,
+                usb_hub_bus_device_file_name);
         usb_reset(usb_hub_bus_device_file_name);
         mobile_modem_disconnect_toggle = false;
     }
@@ -695,52 +710,20 @@ void correctTimeStampFileNames() {
 class csList {
 private:
     static int s;
-    static camService csl[];
-    static int camCount;
+    static std::map<std::string, camService> csl;
 
-    static int moveCamService(int srcIndex, int dstIndex) {
-        if (csList::csl[srcIndex].cam.length() > 0) {
-            csList::copyCamService(srcIndex, dstIndex);
-            csList::cleanCamService(srcIndex);
-            return dstIndex;
-        } else {
-            return -1;
-        }
-    }
-
-    static int copyCamService(int srcIndex, int dstIndex) {
-        if (csList::csl[srcIndex].cam.length() > 0) {
-            csList::csl[dstIndex].cam = csList::csl[srcIndex].cam;
-            csList::csl[dstIndex].pid = csList::csl[srcIndex].pid;
-            csList::csl[dstIndex].SId = csList::csl[srcIndex].SId;
-            csList::csl[dstIndex].recordPath = csList::csl[srcIndex].recordPath;
-            csList::csl[dstIndex].state = csList::csl[srcIndex].state;
-            csList::csl[dstIndex].newState = csList::csl[srcIndex].newState;
-            csList::csl[dstIndex].disable = csList::csl[srcIndex].disable;
-            return srcIndex;
-        } else {
-            return -1;
-        }
-    }
-
-    static int cleanCamService(int srcIndex) {
-        if (srcIndex < MAX_CAMS && srcIndex>-1) {
-            csList::csl[srcIndex].cam = "";
-            csList::csl[srcIndex].SId = "";
-            csList::csl[srcIndex].disable = false;
-            csList::csl[srcIndex].newState = CAM_PREVIOUS_STATE;
-            csList::csl[srcIndex].pid = 0;
-            csList::csl[srcIndex].recordPath = "";
-            csList::csl[srcIndex].state = CAM_PREVIOUS_STATE;
-            csList::csl[srcIndex].streamPath = "";
-            csList::csl[srcIndex].t = NULL;
-            csList::csl[srcIndex].cti = NULL;
-        }
-    }
 public:
 
+    class Exception {
+    public:
+        Exception(string msg);
+        ~Exception();
+        string what();
+    private:
+        string msg;
+    };
+
     csList() {
-        camCount = 0;
         s = 0;
     }
 
@@ -751,18 +734,17 @@ public:
     static void addCamService(string cam) {
         int i = 0;
         bool camAdded = false;
-        while (csList::csl[i].cam.length() != 0) {
-            if ((int) csList::csl[i].cam.find(cam, 0) == 0) {
-                camAdded = true;
-            }
-            i++;
+        std::map<string, camService>::iterator csit = csl.find(cam);
+        if (csit != csl.end()) {
+            camAdded = true;
         }
         if (!camAdded) {
-            csList::csl[i].cam = cam;
+            csl[cam].cam = cam;
+            csit = csl.find(cam);
             if (stream_type == FMSP) {
-                csList::csl[i].t = new pthread_t();
+                csit->second.t = new pthread_t();
                 MediaManager::capture_thread_iargs* args = new MediaManager::capture_thread_iargs();
-                csList::csl[i].cti = args;
+                csit->second.cti = args;
                 args->inputs = new std::valarray<MediaManager::media>(enable_mic ? 2 : 1);
                 (*args->inputs)[0].duration = 0;
                 (*args->inputs)[0].encoding = MediaManager::MJPEG;
@@ -782,7 +764,7 @@ public:
                 args->outputs = new std::valarray<MediaManager::media>(2);
                 //(*args->outputs)[0].identifier = "fmsp://fms.newmeksolutions.com:92711/" + appName + "1780";
                 //    (*args->output)[0].identifier = "ferrymediacapture1/";
-                (*args->outputs)[0].identifier = csList::csl[i].recordPath;
+                (*args->outputs)[0].identifier = csit->second.recordPath;
                 (*args->outputs)[0].segmentDuration = 1;
                 (*args->outputs)[0].videoframerate = rfps;
                 (*args->outputs)[0].audioBitrate = 64000;
@@ -791,7 +773,7 @@ public:
                 (*args->outputs)[0].splMediaProps.fPRecorderExclProps.perFileDurationSec = 15 * 60;
                 (*args->outputs)[0].state = 0;
                 (*args->outputs)[0].signalNewState = 0;
-                (*args->outputs)[1].identifier = csList::csl[i].streamPath;
+                (*args->outputs)[1].identifier = csit->second.streamPath;
                 (*args->outputs)[1].segmentDuration = 1;
                 (*args->outputs)[1].videoframerate = sfps;
                 (*args->outputs)[1].audioBitrate = 64000;
@@ -801,11 +783,10 @@ public:
                 (*args->outputs)[1].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
                 (*args->outputs)[1].state = 0;
                 (*args->outputs)[1].signalNewState = 0;
-                pthread_create(csList::csl[i].t, NULL, &MediaManager::capture, (void*) (args));
+                pthread_create(csit->second.t, NULL, &MediaManager::capture, (void*) (args));
             }
-            csList::camCount++;
-            csList::csl[i].state = CAM_OFF;
-            csList::csl[i].newState = CAM_RECORD;
+            csit->second.state = CAM_OFF;
+            csit->second.newState = CAM_RECORD;
         }
     }
 
@@ -813,64 +794,55 @@ public:
      * removeCamService removes camService corresponding to @param cam from csList, frees all the resources accompanied with it and rearrange csList
      * @param cam
      */
-    static void removeCamService(string cam) {
-        int csIndex;
-        camService cs = getCamService(cam, &csIndex);
+    static std::map<string, camService>::iterator removeCamService(string cam) {
+        std::map<std::string, camService>::iterator csit = csl.find(cam);
         ffl_debug(FPOL_MAIN | NO_NEW_LINE, "removing a cam service...");
-        if (csIndex != -1) {
-            pthread_cancel(*cs.t);
-            delete cs.t;
-            delete cs.cti;
-            if (csList::camCount > 1) {
-                csList::moveCamService(csList::camCount - 1, csIndex);
-            } else {
-                csList::csl[csIndex].cam = "";
+        if (csit != csl.end()) {
+            if (stream_type == FMSP) {
+                FerryTimeStamp fts;
+                clock_gettime(CLOCK_REALTIME, &fts.ts);
+                fts.ts.tv_sec += 2;
+                (*csit->second.cti->outputs)[0].signalNewState = -1;
+                pthread_timedjoin_np(*csit->second.t, NULL, &fts.ts);
             }
-            csList::camCount--;
+            csit = csl.erase(csit);
             ffl_debug_contnu(FPOL_MAIN, "OK");
         } else {
             ffl_debug_contnu(FPOL_MAIN, "FAIL");
         }
-    }
-
-    static camService getCamService(string cam, int * index) {
-        int i = 0;
-        camService *nul = new camService;
-        while (csl[i].cam.length() != 0) {
-            if (csl[i].cam.compare(cam) == 0) {
-                *index = i;
-                return csl[i];
-            }
-            i++;
-        }
-        *index = -1;
-        return *nul;
+        return csit;
     }
 
     static int getCamCount() {
-        return csList::camCount;
+        return csl.size();
     }
 
     static bool camReattached() {
-        int i = 0;
+        std::map<string, camService>::iterator csit = csl.begin();
         string procF = "/proc/";
         string proc;
         struct stat ptr;
-        while (i < csList::camCount) {
-            if (!csList::csl[i].disable) {
-                proc = procF + string(itoa(csl[i].pid));
-                if (stat(proc.c_str(), &ptr) == -1) {
-                    return true;
+        while (csit != csl.end()) {
+            if (!csit->second.disable) {
+                if (stream_type == FMSP) {
+                    if (stat((*csit->second.cti->inputs)[0].identifier.c_str(), &ptr) != -1) {
+                        return (*csit->second.cti->inputs)[0].state == -1;
+                    }
+                } else if (stream_type == RTMP) {
+                    proc = procF + string(itoa(csit->second.pid));
+                    if (stat(proc.c_str(), &ptr) == -1) {
+                        return true;
+                    }
                 }
             }
-            i++;
+            csit++;
         }
         return false;
     }
 
     static pid_t setCamState(string cam) {
         int csIndex;
-        camService cs = csList::getCamService(cam, &csIndex);
+        camService& cs = csl[cam];
         if (!cs.disable) {
             string dev = camFolder + cam;
             pid_t fcpid = cs.pid;
@@ -937,9 +909,9 @@ public:
                     kill(cs.pid, SIGTERM);
                 }
             }
-            csList::csl[csIndex].pid = fcpid;
-            csList::csl[csIndex].state = ns;
-            csList::csl[csIndex].newState = CAM_PREVIOUS_STATE;
+            cs.pid = fcpid;
+            cs.state = ns;
+            cs.newState = CAM_PREVIOUS_STATE;
             return fcpid;
         } else {
             return -1;
@@ -949,7 +921,7 @@ public:
     static int stopCam(string cam) {
         int i = 0;
         int csIndex;
-        camService cs = csList::getCamService(cam, &csIndex);
+        camService& cs = csl[cam];
         if (stream_type == RTMP) {
             string proc = "/proc/" + string(itoa(cs.pid));
             struct stat ptr;
@@ -959,10 +931,36 @@ public:
                 while (!pkilled);
             }
         } else if (stream_type == FMSP) {
+            FerryTimeStamp fts;
+            clock_gettime(CLOCK_REALTIME, &fts.ts);
+            fts.ts.tv_sec += 2;
+            (*cs.cti->outputs)[0].signalNewState = -1;
+            if (pthread_timedjoin_np(*cs.t, NULL, &fts.ts) != 0) {
+                pthread_cancel(*cs.t);
+                delete cs.t;
+            };
+
             delete cs.t;
         }
         cs.state = CAM_OFF;
         return i;
+    }
+
+    static bool isCamDisabled(string cam) {
+        if (csl.find(cam) != csl.end()) {
+            return csl[cam].disable;
+        } else {
+            throw Exception(cam + " not in the cam service list");
+        }
+        return false;
+    }
+
+    static camState getCamNewState(string cam) {
+        if (csl.find(cam) != csl.end()) {
+            return csl[cam].newState;
+        } else {
+            throw Exception(cam + " not in the cam service list");
+        }
     }
 
     /**
@@ -976,21 +974,24 @@ public:
         string procf = "/proc/";
         string proc;
         struct stat ptr;
-        if (stream_type == FMSP) {
-            while (i < csList::camCount) {
-                if ((*csList::csl[i].cti->inputs)[0].state == -1) {
-                    csList::removeCamService(csList::csl[i].cam);
-                } else {
-                    i++;
+        if (csl.size() > 0) {
+            std::map<string, camService>::iterator csit = csl.begin();
+            if (stream_type == FMSP) {
+                while (csit != csl.end()) {
+                    if ((*csit->second.cti->inputs)[0].state == -1) {
+                        csit = csList::removeCamService(csit->second.cam);
+                    } else {
+                        csit++;
+                    }
                 }
-            }
-        } else if (stream_type == RTMP) {
-            while (i < csList::camCount) {
-                proc = procf + string(itoa(csList::csl[i].pid));
-                if (stat(proc.c_str(), &ptr) == -1) {
-                    csList::removeCamService(csList::csl[i].cam);
-                } else {
-                    i++;
+            } else if (stream_type == RTMP) {
+                while (csit != csl.end()) {
+                    proc = procf + string(itoa(csit->second.pid));
+                    if (stat(proc.c_str(), &ptr) == -1) {
+                        csit = csList::removeCamService(csit->second.cam);
+                    } else {
+                        csit++;
+                    }
                 }
             }
         }
@@ -1001,99 +1002,108 @@ public:
         }
     }
 
-    static int setPid(string cam, pid_t pid) {
-        int csIndex;
-        csList::getCamService(cam, &csIndex);
-        csList::csl[csIndex].pid = pid;
-        return csIndex;
-    }
-
-    static int setSId(string cam, string SId) {
-        int csIndex;
-        csList::getCamService(cam, &csIndex);
-        if (csIndex != -1) {
-            csList::csl[csIndex].SId = SId;
-            return csIndex;
-        } else {
-            return -1;
-        }
-    }
-
     static int setNewCamState(string cam, camState ns) {
-        int csIndex;
-        getCamService(cam, &csIndex);
-        if (csIndex != -1) {
-            if (csList::csl[csIndex].state != ns) {
-                csList::csl[csIndex].newState = ns;
+        if (csl.find(cam) != csl.end()) {
+            if (csl[cam].state != ns) {
+                csl[cam].newState = ns;
                 return 1;
             } else {
                 return 0;
             }
-        } else {
-            return -1;
         }
+        return -1;
     }
 
     static void setRecordPath(string cam, string recordPath) {
-        int csIndex;
-        getCamService(cam, &csIndex);
-        csList::csl[csIndex].recordPath = recordPath;
-        if (stream_type == FMSP) {
-            (*csList::csl[csIndex].cti->outputs)[0].identifier = recordPath;
+        if (csl.find(cam) != csl.end()) {
+            csl[cam].recordPath = recordPath;
+            if (stream_type == FMSP) {
+                (*csl[cam].cti->outputs)[0].identifier = recordPath;
+            }
         }
     }
 
     static void setStreamPath(string cam, string streamPath) {
-        int csIndex;
-        getCamService(cam, &csIndex);
-        csList::csl[csIndex].streamPath = streamPath;
-        if (stream_type == FMSP) {
-            (*csList::csl[csIndex].cti->outputs)[1].identifier = streamPath;
+        if (csl.find(cam) != csl.end()) {
+            csl[cam].streamPath = streamPath;
+            if (stream_type == FMSP) {
+                (*csl[cam].cti->outputs)[1].identifier = streamPath;
+            }
         }
     }
 
     static int setStateAllCams(camState state) {
-        int i = 0;
-        while (i < csList::camCount) {
-            if (csList::csl[i].state != state) {
-                csList::csl[i].newState = state;
+        std::map<string, camService>::iterator csit = csl.begin();
+        while (csit != csl.end()) {
+            if (csit->second.state != state) {
+                csit->second.newState = state;
             }
-            i++;
+            csit++;
         }
         return 0;
     }
 
     static int resetStateAllCams(camState state) {
-        int i = 0;
-        while (i < csList::camCount) {
-            csList::csl[i].newState = state;
-            i++;
+        map<string, camService>::iterator csit = csl.begin();
+        while (csit != csl.end()) {
+            csit->second.newState = state;
+            csit++;
         }
         return 0;
     }
 
     static void getCams(string * cams) {
+        map<string, camService>::iterator csit = csl.begin();
         int i = 0;
-        while (i < csList::camCount) {
-            cams[i] = string(csList::csl[i].cam);
+        while (csit != csl.end()) {
+            cams[i] = string(csit->second.cam);
+            csit++;
             i++;
         }
     }
 
+    static string getSId(string cam) {
+        if (csl.find(cam) != csl.end()) {
+            return csl[cam].SId;
+        } else {
+            throw Exception(cam + " not in the cam service list");
+        }
+    }
+
+    static int setSId(string cam, string sid) {
+        if (csl.find(cam) != csl.end()) {
+            csl[cam].SId = sid;
+        }
+        return -1;
+    }
+
     static string getCamsWithStateString() {
         string strCameras = "";
-        int i = 0;
-        while (i < csList::camCount) {
-            strCameras += csList::csl[i].cam + ":" + camStateString[csList::csl[i].state] + ((i + 1 == csList::camCount) ? "" : "^");
-            i++;
+        map<string, camService>::iterator csit = csl.begin();
+        while (csit != csl.end()) {
+            map<string, camService>::iterator csit2 = csit;
+            csit2++;
+            strCameras += csit->second.cam + ":" + camStateString[csit->second.state] + ((csit2 == csl.end()) ? "" : "^");
+            csit++;
         }
         return strCameras;
     }
 
 };
 int csList::s = 0;
-camService csList::csl[MAX_CAMS];
-int csList::camCount = 0;
+map<string, camService> csList::csl;
+
+csList::Exception::Exception(string msg) {
+    this->msg = msg;
+}
+
+csList::Exception::~Exception() {
+
+}
+
+string csList::Exception::what() {
+    return this->msg;
+}
 
 void uninstall() {
     stopRunningProcess();
@@ -1378,11 +1388,9 @@ void setState() {
     string sa;
     i = 0;
     int k = 0;
-    int csIndex;
-    camService cs;
     while (vd[i].length() != 0) {
         k = 0;
-        if (!(cs = csList::getCamService(vd[i], &csIndex)).disable && (csIndex != -1) && cs.newState != CAM_PREVIOUS_STATE) {
+        if (!csList::isCamDisabled(vd[i]) && csList::getCamNewState(vd[i]) != CAM_PREVIOUS_STATE) {
             fold = path + vd[i];
             if (stat(fold.c_str(), &fileAtt) == -1) {
                 mkdir(fold.c_str(), 0774);
@@ -1390,9 +1398,9 @@ void setState() {
             dev = "/dev/" + vd[i];
             fname = fold + "/" + fn;
             if (stream_type == FMSP) {
-                sa = "fmsp://" + streamAddr + ":" + streamPort + "/" + cs.SId;
+                sa = "fmsp://" + streamAddr + ":" + streamPort + "/" + csList::getSId(vd[i]);
             } else if (stream_type == RTMP) {
-                sa = "rtmp://" + streamAddr + ":" + streamPort + "/oflaDemo/" + cs.SId;
+                sa = "rtmp://" + streamAddr + ":" + streamPort + "/oflaDemo/" + csList::getSId(vd[i]);
             }
             csList::setRecordPath(vd[i], fname);
             csList::setStreamPath(vd[i], sa);
@@ -2078,7 +2086,8 @@ int log(string prefix, string msg) {
 }
 
 void signalHandler(int signal_number) {
-    ffl_debug(FPOL_LL, "process %d received signal %d", getpid(), signal_number);
+    ffl_debug(FPOL_LL, "process %d received signal %d", getpid(),
+            signal_number);
     if (signal_number == SIGUSR1) {
         int fd;
         void* file_memory;
@@ -2089,9 +2098,12 @@ void signalHandler(int signal_number) {
         munmap(file_memory, 1024);
     }
     if (signal_number == SIGUSR2) {
-        if ((family_message_block_ptr->msg_to == 0) || (family_message_block_ptr->msg_to == getpid())) {
-            if (family_message_block_ptr->msg.type == family_message_block_ptr->msg.CORRECT_TIME_STAMP) {
-                timeGapToCorrectTime = family_message_block_ptr->msg.data.timeGapToCorrectTime;
+        if ((family_message_block_ptr->msg_to == 0) ||
+                (family_message_block_ptr->msg_to == getpid())) {
+            if (family_message_block_ptr->msg.type ==
+                    family_message_block_ptr->msg.CORRECT_TIME_STAMP) {
+                timeGapToCorrectTime =
+                        family_message_block_ptr->msg.data.timeGapToCorrectTime;
                 correctAllTimeVariables();
             }
         }
@@ -2465,14 +2477,8 @@ sleep_enough_time:
                                 memset(wvdialerr, 0, 500);
                                 read(wvdial->cpstderr, wvdialerr, 500);
                                 string wvdialerrstr = string(wvdialerr);
-#ifdef DEBUG
-                                if ((debug & 1) == 1) {
-                                    cout << "\n" + getTime() + " networkManager: wvdial killed; wvdial->pid=" << wvdial->cpid << ", wvdial->exitcode=" + string(itoa(wvdial->getChildExitStatus())) + ",wvdialerr->error=" + wvdialerrstr + ". \n";
-                                    cout << "\n" + getTime() + " networkManager: Gonna re-spawn wvdial :) don worry I will connect u to the network!...If u've given me what I need (;\n";
-                                    fflush(stdout);
-                                }
-#endif
-
+                                ffl_debug(FPOL_MAIN, "wvdial killed; wvdail->pid=%d, wvdial->exitcode=%d,wvdialerr->error=%s", wvdial->cpid, wvdial->getChildExitStatus(), wvdialerrstr.c_str());
+                                ffl_debug(FPOL_MAIN, "Gonna re-spawn wvdial :) don worry I will connect u to the network!...If u've given me what I need (;");
                                 waitpid(wvdial->cpid, NULL, WNOHANG);
                                 delete wvdial;
                                 if ((int) wvdialerrstr.find("Cannot open /dev/CDMAModem:", 0) > 0) {
@@ -2600,8 +2606,8 @@ string readPreviousProcess() {
 
 int writeRootProcess() {
     int fd = open((const char*) runningProcessFile.c_str(), O_WRONLY | O_CREAT);
-    char* pid = itoa((int) rootProcess);
-    write(fd, pid, strlen(pid));
+    std::string pid = itoa((int) rootProcess);
+    write(fd, pid.c_str(), pid.length());
     close(fd);
 }
 
@@ -2609,11 +2615,7 @@ int main(int argc, char** argv) {
     //    GPSManager::gpsProtoStr[0] = string("GPS_PROTO_UNKNOWN");
     //    GPSManager::gpsProtoStr[1] = string("GPS_PROTO_LOCAL");
     //    GPSManager::gpsProtoStr[2] = string("GPS_PROTO_NMEA0183");
-    camStateString[CAM_PREVIOUS_STATE] = "CAM_PREVIOUS_STATE";
-    camStateString[CAM_NEW_STATE] = "CAM_NEW_STATE";
-    camStateString[CAM_OFF] = "CAM_OFF";
-    camStateString[CAM_RECORD] = "CAM_RECORD";
-    camStateString[CAM_STREAM] = "CAM_STREAM";
+    camStateStringInit();
     family_message_block_id = shmget(IPC_PRIVATE, sizeof (family_message_block), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     family_message_block_ptr = (family_message_block*) shmat(family_message_block_id, NULL, 0);
     struct stat statbuf;

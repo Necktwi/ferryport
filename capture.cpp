@@ -67,7 +67,6 @@ static char* force_format;
 static int frame_count = 100;
 static int width = 640;
 static int height = 480;
-static int ofd = -1;
 static int final_frame_count = 0;
 static time_t start_time;
 static time_t stop_time;
@@ -162,7 +161,7 @@ static void process_image(const void *p, int size) {
         //            };
         //        }
         if (final_frame_count % framerate == 0) {
-            ffl_debug(FPOL_CAP, "%s", std::string(framerate, '.').c_str());
+            ffl_debug(FPOL_CAP_L, "%s", std::string(framerate, '.').c_str());
         }
         //fprintf(stdout, ".");
         //fflush(stdout);
@@ -301,7 +300,7 @@ static void mainloop(void) {
     time(&stop_time);
 }
 
-static void stop_capturing(void) {
+static void stop_capturing(void*) {
     enum v4l2_buf_type type;
 
     switch (io) {
@@ -365,7 +364,7 @@ static void start_capturing(void) {
     }
 }
 
-static void uninit_device(void) {
+static void uninit_device(void*) {
     unsigned int i;
 
     switch (io) {
@@ -594,7 +593,7 @@ static void init_device(void) {
 
         if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt)) {
             if (-1 < xioctl(fd, VIDIOC_G_FMT, &fmt)) {
-                ffl_debug(FPOL_CAP_L, "%s is set to pixel format:\n\tpixelformat:\t%s\n\tfield:\t\t%s\n\twidth:\t\t%d\n\theight:\t\t%d", dev_name, std::string((char*) &fmt.fmt.pix.pixelformat, 4).c_str(), v4l2_field_str[(v4l2_field) fmt.fmt.pix.field].c_str(), fmt.fmt.pix.width, fmt.fmt.pix.height);
+                ffl_debug(FPOL_CAP, "%s is set to pixel format:\n\tpixelformat:\t%s\n\tfield:\t\t%s\n\twidth:\t\t%d\n\theight:\t\t%d", dev_name, std::string((char*) &fmt.fmt.pix.pixelformat, 4).c_str(), v4l2_field_str[(v4l2_field) fmt.fmt.pix.field].c_str(), fmt.fmt.pix.width, fmt.fmt.pix.height);
             }
             errno_exit("VIDIOC_S_FMT");
         }
@@ -644,7 +643,7 @@ static void init_device(void) {
     }
 }
 
-static void close_device(void) {
+static void close_device(void*) {
     if (-1 == close(fd))
         errno_exit("close");
 
@@ -769,29 +768,29 @@ void* videocapture(void * voidarg) {
     signalNewState = arg->signalNewState;
     strcpy(dev_name, arg->device.c_str());
     open_device();
+    pthread_cleanup_push(&close_device, NULL);
     init_device();
+    pthread_cleanup_push(&uninit_device, NULL);
     *arg->returnObj.state = 1;
     start_capturing();
+    pthread_cleanup_push(&stop_capturing, NULL);
     mainloop();
-    stop_capturing();
-    uninit_device();
-    close_device();
-    fprintf(stderr, "\n");
-    close(ofd);
+    stop_capturing(NULL);
+    pthread_cleanup_pop(0);
+    uninit_device(NULL);
+    pthread_cleanup_pop(0);
+    close_device(NULL);
+    pthread_cleanup_pop(0);
     dup2(stdoutfd, 1);
     arg->framerate = framerate;
-#ifdef _DEBUG    
-    ffl_debug(FPOL_CAP, "\n--------videoparams-------");
-    if (ffl_debug_lvl(FPOL_CAP)) {
-        print_videoparams();
-    }
-    ffl_debug(FPOL_CAP, "\n--------videoparams-------");
-#endif
+    //#ifdef _DEBUG    
+    //    ffl_debug(FPOL_CAP, "\n--------videoparams-------");
+    //    if (ffl_debug_lvl(FPOL_CAP)) {
+    //        print_videoparams();
+    //    }
+    //    ffl_debug(FPOL_CAP, "\n--------videoparams-------");
+    //#endif
     *arg->returnObj.state = -1;
-    pthread_cleanup_pop(1);
+    pthread_cleanup_pop(0);
     return NULL;
-}
-
-void stream(int width, int height, int fps, std::string url) {
-
 }

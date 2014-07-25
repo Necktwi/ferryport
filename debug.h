@@ -29,7 +29,7 @@ enum FPOL_LEVEL {
     FPOL_LL = 1 << 5, //*< lowlevel calls like siganlHandler, spawn
     FPOL_PCM = 1 << 6, //*< pulse code modulation(sound recording)
     FPOL_CAP = 1 << 7, //*< video capture
-    FPOL_CAP_L = 1 << 8,
+    FPOL_CAP_L = 1 << 8, //*< low level or frequent log
     FPOL_LAV = 1 << 9, //*< libavcodec
 
     NO_NEW_LINE = 1 << 31 //*< or it with above options for the log to be terminated with out new line

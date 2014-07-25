@@ -326,8 +326,18 @@ void deallocate_srarg(void* buffer) {
     *args->returnObj.state = -1;
 };
 
+struct free_pcm_args{
+    snd_pcm_t *handle;
+    uinit16_t *buffer;
+};
+
+void free_pcm(void* args){
+    free_pcm_args* pargs = (free_pcm_args*)args;
+    snd_pcm_drain(pargs->handle);
+    snd_pcm_close(pargs->handle);
+    free(pargs->buffer);
+}
 void * snd_record(void* voidargs) {
-    pthread_cleanup_push(deallocate_srarg, voidargs);
     struct snd_record_args* args = (snd_record_args*) voidargs;
     *args->returnObj.state = 0;
     long loops;
@@ -343,6 +353,7 @@ void * snd_record(void* voidargs) {
     bool continuous_capture = args->duration <= 0 ? true : false;
     /* Open PCM device for recording (capture). */
     rc = snd_pcm_open(&handle, (const char*) args->dev_name.c_str(), SND_PCM_STREAM_CAPTURE, 0);
+    pthread_cleanup_push(deallocate_srarg, voidargs);
     if (rc < 0) {
         ffl_err(FPOL_PCM, "unable to open pcm device: %s", snd_strerror(rc));
         ffl_debug(FPOL_PCM, "dev_name: %s", (char*) args->dev_name.c_str());
@@ -388,7 +399,10 @@ void * snd_record(void* voidargs) {
     snd_pcm_hw_params_get_period_size(params, &frames, &dir);
     size = frames * 4; /* 2 bytes/sample, 2 channels */
     buffer = (uint16_t*) malloc(size);
-
+    free_pcm_args fpa;
+    fpa.handle=handle;
+    fpa.buffer=buffer;
+    pthread_cleanup_push(&free_pcm,(void*)&fpa);
     /* We want to loop for 5 seconds */
     snd_pcm_hw_params_get_period_time(params, &val, &dir);
     loops = args->duration * 1000000 / val;
@@ -415,10 +429,11 @@ void * snd_record(void* voidargs) {
         //            fprintf(stderr, "short write: wrote %d bytes\n", rc);
         //        }
     }
-    *args->returnObj.state = -1;
     snd_pcm_drain(handle);
     snd_pcm_close(handle);
     free(buffer);
-    pthread_cleanup_pop(1);
+    pthread_cleanup_pop(0);
+    *args->returnObj.state = -1;
+    pthread_cleanup_pop(0);
     return NULL;
 }
