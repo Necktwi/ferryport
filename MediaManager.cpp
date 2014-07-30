@@ -46,30 +46,69 @@ MediaManager::capture_thread_iargs::~capture_thread_iargs() {
 std::string MediaManager::MediaTypeString[] = {"AUDIO", "VIDEO"};
 std::string MediaManager::EncodingString[] = {"mjpeg", "mp3"};
 
-void* MediaManager::capture(std::valarray<MediaManager::media>& inputs, std::valarray<MediaManager::media>& outputs) {
-    ctsr->retvalue = capture(*ctsa->inputs, *ctsa->outputs);
-    return ctsr;
+int MediaManager::capture(std::valarray<MediaManager::media>& inputs, std::valarray<MediaManager::media>& outputs) {
+    capture_thread_iargs ctsa;
+    ctsa.inputs = &inputs;
+    ctsa.outputs = &outputs;
+    capture_thread_rargs * crargs = (capture_thread_rargs*) capture(&ctsa);
+    int ret = crargs->retvalue;
+    delete crargs;
+    return ret;
 }
 
-int MediaManager::capture(void * args) {
+void MediaManager::pthreadCleanupCapture(void* args) {
+    pthreadCleanupCaptureArgs& pcca = *(pthreadCleanupCaptureArgs*) args;
+    ffl_debug(FPOL_MM, "terminating output threads");
+    int i = 0;
+    while (pcca.oupthreads.size() > 0) {
+        pthread_t* thread = pcca.oupthreads[pcca.oupthreads.size() - 1];
+        pthread_cancel(*thread);
+        pthread_join(*thread, NULL);
+        pcca.oupthreads.pop_back();
+        delete thread;
+    }
+    ffl_debug(FPOL_MM, "terminating input threads");
+    i = 0;
+    timespec ts = {0, 0};
+    while (pcca.inpthreads.size() > 0) {
+        clock_gettime(CLOCK_REALTIME, &ts);
+        pthread_cancel(*pcca.inpthreads[pcca.inpthreads.size() - 1]);
+        pthread_join(*pcca.inpthreads[pcca.inpthreads.size() - 1], NULL);
+        pcca.inpthreads.pop_back();
+    }
+    ffl_debug(FPOL_MM, "freeing up buffers");
+    i = 0;
+    while (i < (*pcca.inputs).size()) {
+        if ((*pcca.inputs)[i].type == VIDEO)delete (*pcca.inputs)[i].buffer.framebuffer;
+        else if ((*pcca.inputs)[i].type == AUDIO)delete (*pcca.inputs)[i].buffer.periodbuffer;
+        i++;
+    }
+    i = 0;
+    while (pcca.expired_objs.size() > 0) {
+        delete pcca.expired_objs[pcca.expired_objs.size() - 1];
+        pcca.expired_objs.pop_back();
+    }
+}
+
+void* MediaManager::capture(void * args) {
     capture_thread_iargs * ctsa = (capture_thread_iargs*) args;
     capture_thread_rargs * ctsr = new capture_thread_rargs;
-    std::valarray<MediaManager::media>& inputs=*ctsa->inputs;
-    std::valarray<MediaManager::media>& outputs=*ctsa->outputs;
+    std::valarray<MediaManager::media>& inputs = *ctsa->inputs;
+    std::valarray<MediaManager::media>& outputs = *ctsa->outputs;
     int i = 0;
     int audioTypeInputs[10];
     int videoTypeInputs[10];
     int atic = 0;
     int vtic = 0;
     int threadCount = 0;
-    std::vector<pthread_t*> inpthreads;
-    std::vector<pthread_t*> oupthreads;
-    std::vector<void*> expired_objs;
+    pthreadCleanupCaptureArgs pcca;
+    pcca.inputs = &inputs;
+    pthread_cleanup_push(pthreadCleanupCapture, (void*) &pcca);
     while (i < inputs.size()) {
         if (inputs[i].type == MediaManager::VIDEO) {
             videoTypeInputs[vtic++] = i;
-            pthread_t *capture_thread = (pthread_t*) malloc(sizeof (pthread_t));
-            inpthreads.push_back(capture_thread);
+            pthread_t * capture_thread = (pthread_t*) malloc(sizeof (pthread_t));
+            pcca.inpthreads.push_back(capture_thread);
             capture_args *cargs = new capture_args();
             inputs[i].buffer.framebuffer = new std::valarray<ferryframe>(200);
             cargs->framebuffer = inputs[i].buffer.framebuffer;
@@ -93,12 +132,15 @@ int MediaManager::capture(void * args) {
             inputs[i].signalNewState = 1;
             //videocapture(cargs);
             inputs[i].videoframerate = cargs->framerate;
-            expired_objs.push_back((void*) cargs);
-            if (pthread_create(capture_thread, NULL, &videocapture, cargs) != 0)return -1;
+            pcca.expired_objs.push_back((void*) cargs);
+            if (pthread_create(capture_thread, NULL, &videocapture, cargs) != 0) {
+                ctsr->retvalue = -1;
+                return (void*) ctsr;
+            }
         } else if (inputs[i].type == MediaManager::AUDIO) {
             audioTypeInputs[atic++] = i;
             pthread_t *snd_record_thread = (pthread_t*) malloc(sizeof (pthread_t));
-            inpthreads.push_back(snd_record_thread);
+            pcca.inpthreads.push_back(snd_record_thread);
             inputs[i].buffer.periodbuffer = new std::valarray<ferryperiod>(500);
             snd_record_args* srargs = new snd_record_args();
             //memset((void*) &srargs, 0, sizeof (snd_record_args));
@@ -113,8 +155,11 @@ int MediaManager::capture(void * args) {
             srargs->returnObj.state = &inputs[i].state;
             srargs->signalNewState = &inputs[i].signalNewState;
             inputs[i].signalNewState = 1;
-            expired_objs.push_back((void*) srargs);
-            if (pthread_create(snd_record_thread, NULL, &snd_record, srargs) != 0)return -1;
+            pcca.expired_objs.push_back((void*) srargs);
+            if (pthread_create(snd_record_thread, NULL, &snd_record, srargs) != 0) {
+                ctsr->retvalue = -1;
+                return (void*) ctsr;
+            }
             //snd_record(srargs);
         }
         i++;
@@ -129,10 +174,13 @@ int MediaManager::capture(void * args) {
             fca->ivideomedia = (vtic > 0) ? &inputs[videoTypeInputs[0]] : NULL;
             fca->omedia = &outputs[i];
             pthread_t * fmp_feeder_thread = (pthread_t*) malloc(sizeof (pthread_t));
-            oupthreads.push_back(fmp_feeder_thread);
-            if (pthread_create(fmp_feeder_thread, NULL, &fmp_feeder, fca) != 0)return -1;
+            pcca.oupthreads.push_back(fmp_feeder_thread);
+            if (pthread_create(fmp_feeder_thread, NULL, &fmp_feeder, fca) != 0) {
+                ctsr->retvalue = -1;
+                return (void*) ctsr;
+            }
             //fmp_feeder(fca);
-            expired_objs.push_back(fca);
+            pcca.expired_objs.push_back(fca);
         } else if ((int) outputs[i].identifier.find(".mp3") == outputs[i].identifier.length() - 4) {
 
         } else if ((int) outputs[i].identifier.find(".fp") == outputs[i].identifier.length() - 3) {
@@ -141,9 +189,9 @@ int MediaManager::capture(void * args) {
             rmmda->ivideomedia = (vtic > 0) ? &inputs[videoTypeInputs[0]] : NULL;
             rmmda->omedia = &outputs[i];
             pthread_t * rmmda_thread = (pthread_t*) malloc(sizeof (pthread_t));
-            oupthreads.push_back(rmmda_thread);
+            pcca.oupthreads.push_back(rmmda_thread);
             pthread_create(rmmda_thread, NULL, &fPRecorder, rmmda);
-            expired_objs.push_back(rmmda);
+            pcca.expired_objs.push_back(rmmda);
         } else if ((int) outputs[i].identifier[outputs[i].identifier.length() - 1] == '/') {
             raw_mjpeg_mp3_dump_args* rmmda = new raw_mjpeg_mp3_dump_args(); //(raw_mjpeg_mp3_dump_args*) malloc(sizeof (raw_mjpeg_mp3_dump_args));
             //memset((void*) rmmda, 0, sizeof (raw_mjpeg_mp3_dump_args));
@@ -151,29 +199,29 @@ int MediaManager::capture(void * args) {
             rmmda->ivideomedia = (vtic > 0) ? &inputs[videoTypeInputs[0]] : NULL;
             rmmda->omedia = &outputs[i];
             pthread_t * rmmda_thread = (pthread_t*) malloc(sizeof (pthread_t));
-            oupthreads.push_back(rmmda_thread);
+            pcca.oupthreads.push_back(rmmda_thread);
             //raw_mjpeg_mp3_dump(rmmda);
             pthread_create(rmmda_thread, NULL, &raw_mjpeg_mp3_dump, rmmda);
-            expired_objs.push_back(rmmda); //0xb6b01e980xb6b01e98
+            pcca.expired_objs.push_back(rmmda); //0xb6b01e980xb6b01e98
         }
         i++;
     }
     ffl_debug(FPOL_MM, "waiting for output threads to join");
     i = 0;
-    while (oupthreads.size() > 0) {
-        pthread_t* thread = oupthreads[oupthreads.size() - 1];
+    while (pcca.oupthreads.size() > 0) {
+        pthread_t* thread = pcca.oupthreads[pcca.oupthreads.size() - 1];
         pthread_join(*thread, NULL);
-        oupthreads.pop_back();
+        pcca.oupthreads.pop_back();
         delete thread;
     }
     ffl_debug(FPOL_MM, "terminating input threads");
     i = 0;
     timespec ts = {0, 0};
-    while (inpthreads.size() > 0) {
+    while (pcca.inpthreads.size() > 0) {
         clock_gettime(CLOCK_REALTIME, &ts);
-        pthread_cancel(*inpthreads[inpthreads.size() - 1]);
-        pthread_join(*inpthreads[inpthreads.size() - 1], NULL);
-        inpthreads.pop_back();
+        pthread_cancel(*pcca.inpthreads[pcca.inpthreads.size() - 1]);
+        pthread_join(*pcca.inpthreads[pcca.inpthreads.size() - 1], NULL);
+        pcca.inpthreads.pop_back();
     }
     ffl_debug(FPOL_MM, "freeing up buffers");
     i = 0;
@@ -183,17 +231,23 @@ int MediaManager::capture(void * args) {
         i++;
     }
     i = 0;
-    while (expired_objs.size() > 0) {
-        delete expired_objs[expired_objs.size() - 1];
-        expired_objs.pop_back();
+    while (pcca.expired_objs.size() > 0) {
+        delete pcca.expired_objs[pcca.expired_objs.size() - 1];
+        pcca.expired_objs.pop_back();
     }
-    return 1;
+    pthread_cleanup_pop(0);
+    ctsr->retvalue = 1;
+    return (void*) ctsr;
 }
 
 void* MediaManager::fmp_feeder_aftermath(void* args, bool isSuccess) {
-    MediaManager::fmp_feeder_aftermath_args * ffaa = (MediaManager::fmp_feeder_aftermath_args*)args;
-    if (isSuccess) {
-        time(&ffaa->lastConnectFTS->t);
+    
+}
+
+void MediaManager::pthreadCleanupFMPFeeder(void* args) {
+    pthreadCleanupFMPFeederArgs* pcffa = (pthreadCleanupFMPFeederArgs*) args;
+    if (pcffa->isSuccess) {
+        time(&pcffaa->lastConnectFTS->t);
     } else {
         time_t ct;
         time(&ct);
@@ -206,18 +260,17 @@ void* MediaManager::fmp_feeder_aftermath(void* args, bool isSuccess) {
     delete ffaa->payload;
 }
 
-void deallocate_fmp_feeder_args(void* args) {
-    //free(args);
-}
-
 void *MediaManager::fmp_feeder(void* args) {
 
     /**
-     * It contains length of initial bytes common in frames captured by the video source.
+     * It contains length of initial bytes common in frames captured by the
+     * video source.
      */
     int headerLength = 0;
     fmp_feeder_args * ffargs = (fmp_feeder_args *) args;
-    pthread_cleanup_push(deallocate_fmp_feeder_args, args);
+    pthreadCleanupFMPFeederArgs pcffa;
+    pcffa.ffargs = ffargs;
+    pthread_cleanup_push(pthreadCleanupFMPFeeder, (void*) &pcffa);
     int index = 0;
     struct timespec tstart = {0, 0}, tend = {0, 0};
     int ret = 0;
@@ -322,32 +375,21 @@ connect:
         index++;
         packet = new std::string("{index:" + itoa(index));
         *packet += ",ferryframes:[";
-        //cs->send(*packet, MSG_MORE);
         std::vector<int> framesizes;
         if (ffargs->ivideomedia != NULL && ffargs->ivideomedia->state > 0) {
             received_frames_per_segment_duration = videoframesCfloat > videoframesPfloat ? (videoframesCfloat - videoframesPfloat + 1) : (videoframesCfloat + 200 - videoframesPfloat + 1);
             if (transmitted_frames_per_segment_duration == 0 || transmitted_frames_per_segment_duration > received_frames_per_segment_duration)transmitted_frames_per_segment_duration = received_frames_per_segment_duration;
             cf = videoframesPfloat;
-            //            std::string frame_fn;
-            //            int frame_fd;
             for (int i = 0; i < transmitted_frames_per_segment_duration; i++) {
                 pf = cf;
                 cf = (videoframesPfloat + (i * received_frames_per_segment_duration / transmitted_frames_per_segment_duration)) % ffargs->ivideomedia->buffer.framebuffer->size();
                 *packet += "FFESCSTR";
-                //cs->send(buf, MSG_MORE);
                 buf.assign((char*) (((char*) (*ffargs->ivideomedia->buffer.framebuffer)[cf].frame)), (*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
                 *packet += buf;
                 framesizes.push_back((*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
-                //                frame_fn = ffargs->omedia->identifier + std::string(itoa(i)) + ".jpeg";
-                //                frame_fd = open(frame_fn.c_str(), O_WRONLY | O_CREAT | O_TRUNC);
-                //                write(frame_fd, (*ffargs->ivideomedia->buffer.framebuffer)[cf].frame, (*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
-                //                close(frame_fd);
-                //                //cs->send(buf, MSG_MORE);
                 *packet += buf = "FFESCSTR";
-                //cs->send(buf, MSG_MORE);
                 if (i < (transmitted_frames_per_segment_duration - 1)) {
                     *packet += buf = ",";
-                    //cs->send(buf, MSG_MORE);
                 }
             }
         }
@@ -359,7 +401,6 @@ connect:
             }
         }
         *packet += "],ferrymp3:FFESCSTR";
-        //cs->send(buf, MSG_MORE);
         if (ffargs->iaudiomedia != NULL && ffargs->iaudiomedia->state > 0) {
             lavea.initptr = audioperiodPfloat;
             lavea.termptr = audioperiodCfloat - 1;
@@ -369,19 +410,10 @@ connect:
                 packet->append(lavea.output_buffer, lavea.output_buffer_size);
                 ffl_debug(FPOL_MM, "mp3 encoded packet size: %d", lavea.output_buffer_size);
             }
-            //cs->send(buf, MSG_MORE);
             free(lavea.output_buffer);
         }
         *packet += buf = "FFESCSTR,time:\"" + itoa((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + itoa(ffargs->omedia->segmentDuration) + ",endex:" + itoa(index) + "}";
-        //cs->send(buf); //, MSG_MORE);
-        //        ClientSocket::AftermathObj* afmo = new ClientSocket::AftermathObj();
-        //        afmo->aftermath = &MediaManager::fmp_feeder_aftermath;
-        //        MediaManager::fmp_feeder_aftermath_args * ffaa = new MediaManager::fmp_feeder_aftermath_args();
-        //        ffaa->cs = ffargs->cs;
-        //        ffaa->csm = &ffargs->csm;
-        //        afmo->aftermathDS = ffaa;
         ffargs->csm.lock();
-        //ffargs->cs->asyncsend(packet, afmo);
         try {
             ffargs->cs->send(packet, MSG_DONTWAIT | MSG_NOSIGNAL);
         } catch (SocketException e) {
@@ -395,20 +427,10 @@ connect:
             ffargs->cs->disconnect();
             goto connect;
         }
-        //        clock_gettime(CLOCK_MONOTONIC, &tend);
-        //        if ((tend.tv_sec - tstart.tv_sec) < ffargs->omedia->segmentDuration) {
-        //            tend.tv_nsec /= 1000;
-        //            tstart.tv_nsec /= 1000;
-        //            tend.tv_nsec += (tend.tv_sec * (1000000));
-        //            tstart.tv_nsec += (tstart.tv_sec * (1000000));
-        //            usleep((ffargs->omedia->segmentDuration * 1000000)-(tend.tv_nsec - tstart.tv_nsec) - 100);
-        //        }
 nsleep:
         ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, &tend);
         if (ret) {
             ffl_debug(FPOL_MM, "MediaManager: clock_nanosleep interrupted! remaining %d.%dsec. gonna sleep again zzzz");
-            //perror("clock_nanosleep");
-            //std::cout << "; remaining " << tend.tv_sec << "sec " << tend.tv_nsec << "nsec\n";
             goto nsleep;
         } else {
             //ffl_debug(FPOL_MM, "MediaManager: clock_nanosleep successfully slept till %ul.%ul", tstart.tv_sec, tstart.tv_nsec);

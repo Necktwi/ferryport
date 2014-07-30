@@ -21,9 +21,7 @@ public:
     MediaManager();
     MediaManager(const MediaManager& orig);
     virtual ~MediaManager();
-    static void* fmp_feeder_aftermath(void* args, bool isSucess);
-    static void* fPRecorderAftermath(void* args, bool isSuccess);
-
+    
     enum MediaType {
         AUDIO, VIDEO
     };
@@ -86,7 +84,8 @@ public:
         media& operator=(media& m);
     };
 
-    static int capture(std::valarray<MediaManager::media>& inputs, std::valarray<MediaManager::media>& outputs);
+    static int capture(std::valarray<MediaManager::media>& inputs,
+            std::valarray<MediaManager::media>& outputs);
 
     static void * fmp_feeder(void *);
     static void * fPRecorder(void *);
@@ -104,19 +103,6 @@ public:
         ClientSocket * cs;
         std::mutex csm; //#csm mutex for creating deleting ClientSocket cs;
         FerryTimeStamp lastconnectFTS; //#fts FerryTimeStamep to store last connect time;
-    };
-
-    struct fmp_feeder_aftermath_args {
-        std::string * payload;
-        ClientSocket * cs;
-        std::mutex * csm;
-        FerryTimeStamp * lastConnectFTS;
-        int reconnectInterval;
-    };
-
-    struct fPRecorderAftermathArgs {
-        std::string * payload;
-        int fd;
     };
 
     struct fPRecorderArgs {
@@ -154,6 +140,36 @@ public:
     static void* raw_mjpeg_mp3_dump(void* args);
 private:
 
+    static void pthreadCleanupCapture(void*);
+
+    class pthreadCleanupCaptureArgs {
+    public:
+        std::vector<pthread_t*> inpthreads;
+        std::vector<pthread_t*> oupthreads;
+        std::vector<void*> expired_objs;
+        std::valarray<MediaManager::media>* inputs;
+    };
+
+    static void pthreadCleanupFMPFeeder(void*);
+
+    class pthreadCleanupFMPFeederArgs {
+    public:
+        std::string * payload;
+        ClientSocket * cs;
+        std::mutex * csm;
+        FerryTimeStamp * lastConnectFTS;
+        int reconnectInterval;
+        void* args = NULL;
+        bool isSuccess;
+    };
+    
+    static void pthreadCleanupFPRecorder(void*);
+    class pthreadCleanupFPRecorderArgs {
+    public:
+        std::string * payload;
+        int fd;
+    };
+    
 };
 
 #endif	/* MEDIAMANAGER_H */

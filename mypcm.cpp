@@ -328,7 +328,7 @@ void deallocate_srarg(void* buffer) {
 
 struct free_pcm_args{
     snd_pcm_t *handle;
-    uinit16_t *buffer;
+    uint16_t *buffer;
 };
 
 void free_pcm(void* args){
@@ -337,6 +337,7 @@ void free_pcm(void* args){
     snd_pcm_close(pargs->handle);
     free(pargs->buffer);
 }
+
 void * snd_record(void* voidargs) {
     struct snd_record_args* args = (snd_record_args*) voidargs;
     *args->returnObj.state = 0;
