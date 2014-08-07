@@ -21,9 +21,9 @@ public:
     MediaManager();
     MediaManager(const MediaManager& orig);
     virtual ~MediaManager();
-    
+
     enum MediaType {
-        AUDIO, VIDEO
+        AUDIO, VIDEO, FILE
     };
     static std::string MediaTypeString[];
 
@@ -109,7 +109,6 @@ public:
         media *iaudiomedia;
         media *ivideomedia;
         media *omedia;
-        fPRecorderAftermathArgs fPRAA;
         int fd;
     };
 
@@ -161,15 +160,26 @@ private:
         int reconnectInterval;
         void* args = NULL;
         bool isSuccess;
+        fmp_feeder_args* ffargs;
     };
-    
+
     static void pthreadCleanupFPRecorder(void*);
+
     class pthreadCleanupFPRecorderArgs {
     public:
         std::string * payload;
         int fd;
+        bool isSuccess;
+        fPRecorderArgs* fprargs;
     };
-    
+
+    static void pthreadCleanupRawMJPEGMP3Dump(void*);
+
+    class pthreadCleanupRawMJPEGMP3Dump {
+    public:
+
+    };
+
 };
 
 #endif	/* MEDIAMANAGER_H */

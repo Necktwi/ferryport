@@ -931,15 +931,7 @@ public:
                 while (!pkilled);
             }
         } else if (stream_type == FMSP) {
-            FerryTimeStamp fts;
-            clock_gettime(CLOCK_REALTIME, &fts.ts);
-            fts.ts.tv_sec += 2;
-            (*cs.cti->outputs)[0].signalNewState = -1;
-            if (pthread_timedjoin_np(*cs.t, NULL, &fts.ts) != 0) {
-                pthread_cancel(*cs.t);
-                delete cs.t;
-            };
-
+            pthread_cancel(*cs.t);
             delete cs.t;
         }
         cs.state = CAM_OFF;
@@ -2632,7 +2624,7 @@ int main(int argc, char** argv) {
     sigaction(SIGUSR1, &signalaction_struct, NULL);
     sigaction(SIGUSR2, &signalaction_struct, NULL);
     int next_option;
-    const char* const short_options = "cdf:hikrs:tux";
+    const char* short_options = "cdf:hikrs:tux";
     string opt;
     const struct option long_options[] = {
         {"configure", 0, NULL, 'c'},

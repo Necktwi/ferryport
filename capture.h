@@ -56,5 +56,51 @@ public:
 void deallocate_vcarg(void* buffer);
 void* videocapture(void *voidargs);
 
+enum io_method {
+    IO_METHOD_READ,
+    IO_METHOD_MMAP,
+    IO_METHOD_USERPTR,
+};
+
+class VideoCapture {
+public:
+    void processImage(const void *p, int size);
+    int readFrame(void);
+    void mainloop(void);
+    void stopCapturing(void* args);
+    void startCapturing(void);
+    void uninitDevice(void* args);
+    void initRead(unsigned int buffer_size);
+    void initMmap(void);
+    void initUserp(unsigned int buffer_size);
+    void initDevice(void);
+    void closeDevice(void* args);
+    void openDevice(void);
+    void printVideoparams();
+    void errnoExit(const char *s);
+    char devName[20];
+    enum io_method io = IO_METHOD_MMAP;
+    int fd = -1;
+    struct buffer *buffers;
+    unsigned int nBuffers;
+    int outBuf;
+    char* forceFormat;
+    int frameCount = 100;
+    int width = 640;
+    int height = 480;
+    int finalFrameCount = 0;
+    time_t startTime;
+    time_t stopTime;
+    int readersCount;
+    int framerate;
+    int duration;
+    int* signalNewState = NULL;
+
+    int *bufferSize;
+    int *bufFloat;
+    std::valarray<ferryframe> *frameBuffer;
+
+};
+
 #endif	/* CAPTURE_H */
 
