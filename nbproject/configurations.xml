@@ -79,18 +79,6 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
-        <cTool>
-          <incDir>
-            <pElem>/usr/local/ffmpeg_build/include</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-            <pElem>.</pElem>
-          </incDir>
-          <commandLine>`cppunit-config --cflags`</commandLine>
-        </cTool>
         <ccTool>
           <standard>8</standard>
           <commandlineTool>g++</commandlineTool>
@@ -106,9 +94,14 @@
           </preprocessorList>
         </ccTool>
         <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport</output>
           <linkerAddLib>
             <pElem>/usr/lib/i386-linux-gnu</pElem>
+            <pElem>/usr/local/lib</pElem>
           </linkerAddLib>
+          <linkerDynSerch>
+            <pElem>/usr/local/lib</pElem>
+          </linkerDynSerch>
           <linkerLibItems>
             <linkerLibFileItem>ffmpeg_build/lib/libavformat.a</linkerLibFileItem>
             <linkerLibFileItem>ffmpeg_build/lib/libavcodec.a</linkerLibFileItem>

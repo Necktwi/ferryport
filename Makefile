@@ -48,7 +48,7 @@
 MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
-APPNAME=remotedevicecontroller
+APPNAME=ferryport
 DEBUG=true
 
 

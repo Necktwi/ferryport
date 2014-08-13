@@ -163,7 +163,7 @@ void* MediaManager::capture(void * args) {
                 return (void*) ctsr;
             }
             //snd_record(srargs);
-        }else if(inputs[i].type == MediaManager::FILE){
+        } else if (inputs[i].type == MediaManager::FILE) {
             fileTypeInputs[ftic++] = i;
         }
         i++;
@@ -388,7 +388,7 @@ connect:
             audioperiodCfloat = ffargs->iaudiomedia->bufferfloat;
         }
         index++;
-        packet = new std::string("{index:" + itoa(index));
+        packet = new std::string("{index:" + std::to_string(index));
         *packet += ",ferryframes:[";
         std::vector<int> framesizes;
         if (ffargs->ivideomedia != NULL && ffargs->ivideomedia->state > 0) {
@@ -410,7 +410,7 @@ connect:
         }
         *packet += buf = "],framesizes:[";
         for (int i = 0; i < framesizes.size(); i++) {
-            packet->append(itoa(framesizes[i]));
+            packet->append(std::to_string(framesizes[i]));
             if (i < framesizes.size() - 1) {
                 packet->append(",");
             }
@@ -427,7 +427,7 @@ connect:
             }
             free(lavea.output_buffer);
         }
-        *packet += buf = "FFESCSTR,time:\"" + itoa((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + itoa(ffargs->omedia->segmentDuration) + ",endex:" + itoa(index) + "}";
+        *packet += buf = "FFESCSTR,time:\"" + std::to_string((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + std::to_string(ffargs->omedia->segmentDuration) + ",endex:" + std::to_string(index) + "}";
         ffargs->csm.lock();
         try {
             ffargs->cs->send(packet, MSG_DONTWAIT | MSG_NOSIGNAL);
@@ -504,7 +504,7 @@ start_stop:
             init = true;
         }
     };
-    ext = std::string(itoa(max_fileduration_tracker_term - max_fileduration_tracker_init));
+    ext = std::string(std::to_string(max_fileduration_tracker_term - max_fileduration_tracker_init));
     time(&max_fileduration_tracker_init);
     std::string fn = bare_fn + ext + ".fp";
     ffargs->fd = open(fn.c_str(), O_WRONLY | O_CREAT);
@@ -591,164 +591,7 @@ start_stop:
             }
             free(lavea.output_buffer);
         }
-        *packet += "FFESCSTR,time:\"" + itoa((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + itoa(ffargs->omedia->segmentDuration) + "},";
-        write(ffargs->fd, (void*) packet->c_str(), packet->size());
-        if (ffargs->omedia->signalNewState < 2) {
-            close(ffargs->fd);
-            time(&max_fileduration_tracker_term);
-            ffl_debug(FPOL_MM, "external signalNewState set to stop");
-            goto start_stop;
-        }
-nsleep:
-        ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, &tend);
-        if (ret) {
-            ffl_debug(FPOL_MM, "MediaManager: clock_nanosleep interrupted! remaining %d.%dsec");
-            goto nsleep;
-        } else {
-            //ffl_debug(FPOL_MM, "MediaManager: clock_nanosleep successfully slept till %ul.%ul", tstart.tv_sec, tstart.tv_nsec);
-        }
-    }
-    pthread_cleanup_pop(1);
-    return NULL;
-}
-
-void MediaManager::pthreadCleanupFPReader(void* args) {
-    MediaManager::pthreadCleanupFPRecorderArgs* pcfpra = (MediaManager::pthreadCleanupFPRecorderArgs*)args;
-    if (pcfpra->isSuccess) {
-
-    } else {
-
-    }
-    delete pcfpra->payload;
-}
-
-void* MediaManager::fPReader(void* args) {
-    /**
-     * It contains length of initial bytes common in frames captured by the video source.
-     */
-    int headerLength = 0;
-    ffl_debug(FPOL_MM, "fPRecorder started");
-    fPReaderArgs * ffargs = (fPReaderderArgs *) args;
-    pthreadCleanupFPRecorderArgs pcfpra;
-    pcfpra.fprargs = ffargs;
-    pthread_cleanup_push(pthreadCleanupFPRecorder, args);
-    int index = 0;
-    struct timespec tstart = {0, 0}, tend = {0, 0};
-    time_t max_fileduration_tracker_init;
-    time_t max_fileduration_tracker_term;
-    int ret = 0;
-    std::string bare_fn;
-    std::string ext;
-    time(&max_fileduration_tracker_init);
-    time(&max_fileduration_tracker_term);
-    bool init = false;
-start_stop:
-    if (ffargs->omedia->signalNewState < 2 || !init) {
-        if ((ffargs->ivideomedia == NULL || ffargs->ivideomedia->state < 0)&&(ffargs->iaudiomedia == NULL || ffargs->iaudiomedia->state < 0)) return NULL;
-        if (ffargs->omedia->signalNewState < 1) {
-            if (ffargs->omedia->signalNewState < 0) {
-                ffargs->omedia->state = -1;
-                return NULL;
-            } else {
-                ffl_debug(FPOL_MM, "waiting for start_stop set");
-                sleep(1);
-                goto start_stop;
-            }
-        } else {
-            bare_fn = ffargs->omedia->identifier.substr(0, ffargs->omedia->identifier.find(".fp")) + std::string("+");
-            ext = "";
-            ffargs->omedia->signalNewState = 2;
-            init = true;
-        }
-    };
-    ext = std::string(itoa(max_fileduration_tracker_term - max_fileduration_tracker_init));
-    time(&max_fileduration_tracker_init);
-    std::string fn = bare_fn + ext + ".fp";
-    ffargs->fd = open(fn.c_str(), O_WRONLY | O_CREAT);
-    if (ffargs->fd < 1) {
-        ffargs->omedia->state = -1;
-        ffl_err(FPOL_MM, "unable to create file %s", fn.c_str());
-        return NULL;
-    }
-    ffl_debug(FPOL_MM, "file %s is created", fn.c_str());
-    int videoframesPfloat;
-    int videoframesCfloat = ffargs->ivideomedia != NULL ? ffargs->ivideomedia->bufferfloat : 0;
-    int audioperiodPfloat;
-    int audioperiodCfloat = ffargs->iaudiomedia != NULL ? ffargs->iaudiomedia->bufferfloat : 0;
-    int received_frames_per_segment_duration;
-    std::string * packet;
-    std::string buf;
-    int transmitted_frames_per_segment_duration = ffargs->omedia->videoframerate * ffargs->omedia->segmentDuration;
-    if (transmitted_frames_per_segment_duration < 1) {
-        ffl_err(FPOL_MM, "MediaManager::fPRecorder: your frame rate should give atleast one frame in segment duration");
-        return NULL;
-    }
-    int pf;
-    int cf;
-    libav_encode_args lavea;
-    if (ffargs->iaudiomedia != NULL) {
-        lavea.codecID = AV_CODEC_ID_MP3;
-        lavea.av_smpl_fmt = AV_SAMPLE_FMT_S16P;
-        lavea.bitrate = ffargs->omedia->audioBitrate;
-        lavea.samplingFrequency = ffargs->iaudiomedia->audioSamplingFrequency;
-        lavea.input_buffer.periodbuffer = ffargs->iaudiomedia->buffer.periodbuffer;
-        lavea.output_buffer = NULL;
-    }
-    sleep(ffargs->omedia->segmentDuration);
-
-    /**
-     * It holds the last byte of the video head to check its same for all frames. 
-     */
-    char headerLastByte;
-    while ((ffargs->iaudiomedia != NULL && ffargs->iaudiomedia->state > 0) || (ffargs->ivideomedia != NULL && ffargs->ivideomedia->state > 0)) {
-        clock_gettime(CLOCK_REALTIME, &tstart);
-        time(&max_fileduration_tracker_term);
-        if (max_fileduration_tracker_term - max_fileduration_tracker_init >= ffargs->omedia->splMediaProps.fPRecorderExclProps.perFileDurationSec) {
-            close(ffargs->fd);
-            ffl_debug(FPOL_MM, "max file duration hit!");
-            goto start_stop;
-        }
-        tstart.tv_sec += ffargs->omedia->segmentDuration;
-        if (ffargs->ivideomedia != NULL && ffargs->ivideomedia->state > 0) {
-            videoframesPfloat = videoframesCfloat + 1;
-            videoframesCfloat = ffargs->ivideomedia->bufferfloat;
-        }
-        if (ffargs->iaudiomedia != NULL && ffargs->iaudiomedia->state > 0) {
-            audioperiodPfloat = audioperiodCfloat;
-            audioperiodCfloat = ffargs->iaudiomedia->bufferfloat;
-        }
-        index++;
-        packet = new std::string("{index:" + std::to_string(index));
-        *packet += ",ferryframes:[";
-        if (ffargs->ivideomedia != NULL && ffargs->ivideomedia->state > 0) {
-            received_frames_per_segment_duration = videoframesCfloat > videoframesPfloat ? (videoframesCfloat - videoframesPfloat + 1) : (videoframesCfloat + 200 - videoframesPfloat + 1);
-            if (transmitted_frames_per_segment_duration == 0 || transmitted_frames_per_segment_duration > received_frames_per_segment_duration)transmitted_frames_per_segment_duration = received_frames_per_segment_duration;
-            cf = videoframesPfloat;
-            for (int i = 0; i < transmitted_frames_per_segment_duration; i++) {
-                pf = cf;
-                cf = (videoframesPfloat + (i * received_frames_per_segment_duration / transmitted_frames_per_segment_duration)) % ffargs->ivideomedia->buffer.framebuffer->size();
-                *packet += "FFESCSTR";
-                buf.assign((char*) (((char*) (*ffargs->ivideomedia->buffer.framebuffer)[cf].frame)), (*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
-                *packet += buf;
-                *packet += buf = "FFESCSTR";
-                if (i < (transmitted_frames_per_segment_duration - 1)) {
-                    *packet += buf = ",";
-                }
-            }
-        }
-        *packet += "],ferrymp3:FFESCSTR";
-        if (ffargs->iaudiomedia != NULL && ffargs->iaudiomedia->state > 0) {
-            lavea.initptr = audioperiodPfloat;
-            lavea.termptr = audioperiodCfloat - 1;
-            ffl_debug(FPOL_MM, "collected sound samples at %d to %d", audioperiodPfloat, audioperiodCfloat);
-            audio_encode(&lavea);
-            if (lavea.output_buffer != NULL) {
-                packet->append(lavea.output_buffer, lavea.output_buffer_size);
-                ffl_debug(FPOL_MM, "mp3 encoded packet size: %d", lavea.output_buffer_size);
-            }
-            free(lavea.output_buffer);
-        }
-        *packet += "FFESCSTR,time:\"" + itoa((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + itoa(ffargs->omedia->segmentDuration) + "},";
+        *packet += "FFESCSTR,time:\"" + std::to_string((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + std::to_string(ffargs->omedia->segmentDuration) + "},";
         write(ffargs->fd, (void*) packet->c_str(), packet->size());
         if (ffargs->omedia->signalNewState < 2) {
             close(ffargs->fd);
@@ -832,7 +675,7 @@ void* MediaManager::raw_mjpeg_mp3_dump(void* args) { //#rmmd
                 pf = cf;
                 cf = (videoframesPfloat + (i * frameSkipLength)) % rmmdargs->ivideomedia->buffer.framebuffer->size();
                 ++frame_seq_no;
-                frame_fn = rmmdargs->omedia->identifier + std::string(itoa(frame_seq_no)) + ".jpeg";
+                frame_fn = rmmdargs->omedia->identifier + std::to_string(frame_seq_no) + ".jpeg";
                 frame_fd = open(frame_fn.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666);
                 write(frame_fd, (*rmmdargs->ivideomedia->buffer.framebuffer)[cf].frame, (*rmmdargs->ivideomedia->buffer.framebuffer)[cf].length);
                 close(frame_fd);

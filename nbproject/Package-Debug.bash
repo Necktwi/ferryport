@@ -13,8 +13,8 @@ CND_BUILDDIR=build
 CND_DLIB_EXT=so
 NBTMPDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller
-OUTPUT_BASENAME=remotedevicecontroller
+OUTPUT_PATH=${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport
+OUTPUT_BASENAME=ferryport
 PACKAGE_TOP_DIR=/usr/
 
 # Functions
@@ -91,9 +91,9 @@ dpkg-deb  --build ${TMPDIRNAME}
 checkReturnCode
 cd "${TOP}"
 mkdir -p  ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package
-mv ${NBTMPDIR}.deb ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/remotedevicecontroller.deb
+mv ${NBTMPDIR}.deb ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/ferryport.deb
 checkReturnCode
-echo Debian: ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/remotedevicecontroller.deb
+echo Debian: ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/ferryport.deb
 
 # Cleanup
 cd "${TOP}"

@@ -166,3 +166,25 @@ else
         sudo yum install g++
     fi
 fi
+
+if pkg-config --cflags --cflags libv4l2 > /dev/null;then
+        echo "libv4l-dev installed."
+else
+    if which apt-get > /dev/null;then
+        sudo apt-get -y --force-yes install libv4l-dev
+    fi
+    if which yum > /dev/null;then
+        sudo yum install libv4l-dev
+    fi
+fi
+
+if pkg-config --cflags --cflags libv4l2 > /dev/null;then
+        echo "libv4l-dev installed."
+else
+    if which apt-get > /dev/null;then
+        sudo apt-get -y --force-yes install libv4l-dev
+    fi
+    if which yum > /dev/null;then
+        sudo yum install libv4l-dev
+    fi
+fi

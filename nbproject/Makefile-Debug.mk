@@ -54,7 +54,7 @@ TESTFILES= \
 	${TESTDIR}/TestFiles/f2
 
 # C Compiler Flags
-CFLAGS=`cppunit-config --cflags` 
+CFLAGS=
 
 # CC Compiler Flags
 CCFLAGS=`cppunit-config --cflags` -D__STDC_CONSTANT_MACROS 
@@ -67,37 +67,37 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L/usr/lib/i386-linux-gnu ffmpeg_build/lib/libavformat.a ffmpeg_build/lib/libavcodec.a ffmpeg_build/lib/libswscale.a ffmpeg_build/lib/libavdevice.a ffmpeg_build/lib/libavfilter.a ffmpeg_build/lib/libx264.a ffmpeg_build/lib/libfdk-aac.a ffmpeg_build/lib/libswresample.a ffmpeg_build/lib/libpostproc.a ffmpeg_build/lib/libavutil.a ../base/dist/Debug/GNU-Linux-x86/libbase.so -lxml2 -lpthread -lssl -lcrypto -lwebsockets -lvorbis -lvpx -lmp3lame -lz -ldl -lvorbisenc -lva -ltheoraenc -ltheoradec -lopus `cppunit-config --libs` `pkg-config --cflags --libs libv4l2` -lasound -ludev -lpulse-simple -lpulse  
+LDLIBSOPTIONS=-L/usr/lib/i386-linux-gnu -L/usr/local/lib -Wl,-rpath,/usr/local/lib ffmpeg_build/lib/libavformat.a ffmpeg_build/lib/libavcodec.a ffmpeg_build/lib/libswscale.a ffmpeg_build/lib/libavdevice.a ffmpeg_build/lib/libavfilter.a ffmpeg_build/lib/libx264.a ffmpeg_build/lib/libfdk-aac.a ffmpeg_build/lib/libswresample.a ffmpeg_build/lib/libpostproc.a ffmpeg_build/lib/libavutil.a ../base/dist/Debug/GNU-Linux-x86/libbase.so -lxml2 -lpthread -lssl -lcrypto -lwebsockets -lvorbis -lvpx -lmp3lame -lz -ldl -lvorbisenc -lva -ltheoraenc -ltheoradec -lopus `cppunit-config --libs` `pkg-config --cflags --libs libv4l2` -lasound -ludev -lpulse-simple -lpulse  
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ffmpeg_build/lib/libavformat.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libavformat.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ffmpeg_build/lib/libavcodec.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libavcodec.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ffmpeg_build/lib/libswscale.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libswscale.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ffmpeg_build/lib/libavdevice.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libavdevice.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ffmpeg_build/lib/libavfilter.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libavfilter.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ffmpeg_build/lib/libx264.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libx264.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ffmpeg_build/lib/libfdk-aac.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libfdk-aac.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ffmpeg_build/lib/libswresample.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libswresample.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ffmpeg_build/lib/libpostproc.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libpostproc.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ffmpeg_build/lib/libavutil.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libavutil.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ../base/dist/Debug/GNU-Linux-x86/libbase.so
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ../base/dist/Debug/GNU-Linux-x86/libbase.so
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller ${OBJECTFILES} ${LDLIBSOPTIONS} -Wall
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport ${OBJECTFILES} ${LDLIBSOPTIONS} -Wall
 
 ${OBJECTDIR}/MediaManager.o: MediaManager.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -142,7 +142,7 @@ ${OBJECTDIR}/mypcm.o: mypcm.cpp
 ${OBJECTDIR}/test-echo.o: test-echo.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g -I/usr/local/ffmpeg_build/include -I. -I. -I. -I. -I. -I. `pkg-config --cflags --cflags libv4l2`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo.o test-echo.c
+	$(COMPILE.c) -g `pkg-config --cflags --cflags libv4l2`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo.o test-echo.c
 
 # Subprojects
 .build-subprojects:
@@ -282,7 +282,7 @@ ${OBJECTDIR}/test-echo_nomain.o: ${OBJECTDIR}/test-echo.o test-echo.c
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.c) -g -I/usr/local/ffmpeg_build/include -I. -I. -I. -I. -I. -I. `pkg-config --cflags --cflags libv4l2`   -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo_nomain.o test-echo.c;\
+	    $(COMPILE.c) -g `pkg-config --cflags --cflags libv4l2`   -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo_nomain.o test-echo.c;\
 	else  \
 	    ${CP} ${OBJECTDIR}/test-echo.o ${OBJECTDIR}/test-echo_nomain.o;\
 	fi
@@ -300,7 +300,7 @@ ${OBJECTDIR}/test-echo_nomain.o: ${OBJECTDIR}/test-echo.o test-echo.c
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/remotedevicecontroller
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport
 
 # Subprojects
 .clean-subprojects:
