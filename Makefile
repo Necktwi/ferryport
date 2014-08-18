@@ -136,6 +136,7 @@ install:
 	test -d "$(DESTDIR)/usr/local/" || mkdir -p "$(DESTDIR)/usr/local/" && cp -R ffmpeg_build $(DESTDIR)/usr/local/
 	cp -R ffmpeg_build/bin $(DESTDIR)/usr/local/
 	install -d $(DESTDIR)/var/${APPNAME}records
+	install -d $(DESTDIR)/media/$(APPNAME)Store
 	install -D config.xml $(DESTDIR)/etc/${APPNAME}.conf.xml
 	install -D devices.rules $(DESTDIR)/etc/udev/rules.d/${APPNAME}.rules
 	install -D error.log $(DESTDIR)/var/log/${APPNAME}.log

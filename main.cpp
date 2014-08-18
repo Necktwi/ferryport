@@ -18,6 +18,7 @@
 #include "capture.h"
 #include "mypcm.h"
 #include "logger.h"
+#include "FFJSON.h"
 #include <cstdlib>
 #include <stdio.h>
 #include <string.h>
@@ -60,6 +61,7 @@
 #include <list>
 #include <thread>
 #include <map>
+#include <sys/mount.h>
 
 #define MAX_CAMS 10
 #define APP_NAME "remotedevicecontroller"
@@ -68,7 +70,8 @@ using namespace std;
 enum RecordState {
     RECORD_PREVIOUS_STATE, RECORD_STOP, RECORD_STREAM
 };
-string recordStateStr[] = {"RECORD_PREVIOUS_STATE", "RECORD_STOP", "RECORD_STREAM"};
+string recordStateStr[] = {"RECORD_PREVIOUS_STATE", "RECORD_STOP",
+    "RECORD_STREAM"};
 
 enum camState {
     CAM_PREVIOUS_STATE = -1,
@@ -128,6 +131,7 @@ int reconnectPollCountCopy;
 string internetTestURL;
 bool configModem;
 string recordsFolder = "/var/" + string(APP_NAME) + "records/";
+string storageMountFolder = "/media/"APP_NAME"Store/";
 string logFile = "/var/log/" + string(APP_NAME) + ".log";
 string initFile = "/etc/init/" + string(APP_NAME) + ".conf";
 string initOverrideFile = "/etc/init/" + string(APP_NAME) + ".override";
@@ -231,6 +235,59 @@ int writeRootProcess();
 void set_bus_device_file_name(string vpid, string& bus_device_file_name);
 void usb_reset(string device);
 
+void setRecordsPath() {
+    DIR *dpdf;
+    struct dirent *epdf;
+    ifstream mtabifs("/etc/mtab", ios::in | ios::ate);
+    string mtabstr;
+    mtabifs>>mtabstr;
+    dpdf = opendir("/dev/");
+    if (dpdf != NULL) {
+        while (epdf = readdir(dpdf)) {
+            if (strstr(epdf->d_name, "sd") != NULL) {
+                string splFile("/dev/");
+                splFile.append(epdf->d_name);
+                int merr = 0;
+                int devStrPos = mtabstr.find(splFile);
+                if (devStrPos >= 0) {
+                    int mntFolStrIn = devStrPos + splFile.length() + 2;
+                    int mntFolStrLen = mtabstr.find(" ", mntFolStrIn) -
+                            mntFolStrIn;
+                    storageMountFolder = mtabstr.substr(mntFolStrIn,
+                            mntFolStrLen);
+                } else {
+                    merr = mount(splFile.c_str(), storageMountFolder.c_str(),
+                            "", MS_MGC_VAL | MS_NOSUID, "");
+                }
+                if (merr = 0) {
+                    string fairportFFJSON = storageMountFolder +
+                            "fairport.ffjson";
+                    ifstream ifs(fairportFFJSON, ios::in | ios::ate);
+                    if (ifs.is_open()) {
+                        string ffjsonStr;
+                        ifs>>ffjsonStr;
+                        FFJSON ffjsonObj(ffjsonStr);
+                        if (ffjsonObj["store"]) {
+                            recordsFolder = storageMountFolder +
+                                    APP_NAME"Records";
+                            struct stat st = {0};
+                            if (stat(recordsFolder.c_str(), &st) == -1) {
+                                mkdir(recordsFolder.c_str(), 0774);
+                            }
+                            ifs.close();
+                            break;
+                        };
+                        ifs.close();
+                    }
+                }
+            };
+            free(epdf);
+        }
+        free(dpdf);
+    }
+    mtabifs.close();
+}
+
 void cleanRecords(int days) {
     DIR * dpdf = opendir(recordsFolder.c_str());
     struct dirent * epdf;
@@ -299,16 +356,19 @@ public:
     static void bye_rfspawn(spawn* rfspawn) {
         bt_respawn = true;
         if (initConnectTrials > 0) {
-            ffl_warn(FPOL_GPS, "gpsManager: No bluetooth gps found; sleeping for 20 seconds");
+            ffl_warn(FPOL_GPS, "gpsManager: No bluetooth gps found; sleeping "
+                    "for 20 seconds");
             sleep(20);
             initConnectTrials--;
         } else {
-            ffl_warn(FPOL_GPS, "gpsManager: No bluetooth gps found; sleeping for 120 seconds");
+            ffl_warn(FPOL_GPS, "gpsManager: No bluetooth gps found; sleeping "
+                    "for 120 seconds");
             sleep(120);
         }
     };
 
-    static void parseNMEA0183(FILE* f, time_t& gpsReadStart, time_t& gpsReadEnd, std::string& gpsCoordinates) {
+    static void parseNMEA0183(FILE* f, time_t& gpsReadStart, time_t& gpsReadEnd,
+            std::string& gpsCoordinates) {
         string gpsphrase;
         bool gpsphrase_start;
         vector<string> GPRMCphrases;
@@ -323,8 +383,13 @@ public:
                 time(&gpsReadEnd);
                 if ((int) gpsphrase.find("GPRMC", 0) > 0) {
                     GPRMCphrases = explode(",", gpsphrase);
-                    gpsCoordinates = GPRMCphrases[3].length() > 0 ? gpsDevice + ":" + "Latitude,Longitude:-" + GPRMCphrases[3] + GPRMCphrases[4] + "," + GPRMCphrases[5] + GPRMCphrases[6] : gpsDevice + ":" + "Latitude,Longitude:-0000.0000,0000.0000";
-                    ffl_debug(FPOL_GPS, "gpsCoordinates: %s", gpsCoordinates.c_str());
+                    gpsCoordinates = GPRMCphrases[3].length() > 0 ? gpsDevice +
+                            ":" + "Latitude,Longitude:-" + GPRMCphrases[3] +
+                            GPRMCphrases[4] + "," + GPRMCphrases[5] +
+                            GPRMCphrases[6] : gpsDevice + ":" +
+                            "Latitude,Longitude:-0000.0000,0000.0000";
+                    ffl_debug(FPOL_GPS, "gpsCoordinates: %s",
+                            gpsCoordinates.c_str());
                 }
             }
             if (gpsphrase_start) {
@@ -334,7 +399,8 @@ public:
         }
     };
 
-    static void parseLocalGPSProtocol(FILE* f, time_t& gpsReadStart, time_t& gpsReadEnd, std::string& gpsCoordinates) {
+    static void parseLocalGPSProtocol(FILE* f, time_t& gpsReadStart,
+            time_t& gpsReadEnd, std::string& gpsCoordinates) {
         int c = getc(f);
         char buf[100];
         int i = 0;
@@ -355,9 +421,11 @@ public:
                     time(&gpsReadEnd);
                     buf[i] = '\0';
                     gpsCoordinates = gpsDevice + ":" + string(buf, i);
-                    ffl_debug(FPOL_GPS, "gpsCoordinates : %s", gpsCoordinates.c_str());
+                    ffl_debug(FPOL_GPS, "gpsCoordinates : %s",
+                            gpsCoordinates.c_str());
                 } else {
-                    ffl_err(FPOL_GPS, "gpsManager: illegal string from GPS device");
+                    ffl_err(FPOL_GPS, "gpsManager: illegal string from GPS"
+                            " device");
                 }
             } else if (c == EOF) {
                 break;
@@ -1365,7 +1433,7 @@ void setState() {
         strftime(fn, 80, "%Y-%m-%d_%H:%M:%S.flv", timeinfo);
     }
     strftime(dn, 80, "%Y-%m-%d", timeinfo);
-    string path = "/var/" + string(APP_NAME) + "records/" + string(dn) + "/";
+    string path = recordsFolder + string(dn) + "/";
     struct stat st = {0};
     if (stat(path.c_str(), &st) == -1) {
         mkdir(path.c_str(), 0774);
@@ -1665,6 +1733,7 @@ void run() {
             cout << "\nPlease install or re-install " + string(APP_NAME) + ".";
             fflush(stdout);
         } else {
+            setRecordsPath();
             GPSManager::init();
             writeRootProcess();
             csList::initialize(10);

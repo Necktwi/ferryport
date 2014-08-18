@@ -54,7 +54,7 @@ TESTFILES= \
 	${TESTDIR}/TestFiles/f2
 
 # C Compiler Flags
-CFLAGS=
+CFLAGS=`cppunit-config --cflags` 
 
 # CC Compiler Flags
 CCFLAGS=`cppunit-config --cflags` -D__STDC_CONSTANT_MACROS 
@@ -67,7 +67,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L/usr/lib/i386-linux-gnu -L/usr/local/lib -Wl,-rpath,/usr/local/lib ffmpeg_build/lib/libavformat.a ffmpeg_build/lib/libavcodec.a ffmpeg_build/lib/libswscale.a ffmpeg_build/lib/libavdevice.a ffmpeg_build/lib/libavfilter.a ffmpeg_build/lib/libx264.a ffmpeg_build/lib/libfdk-aac.a ffmpeg_build/lib/libswresample.a ffmpeg_build/lib/libpostproc.a ffmpeg_build/lib/libavutil.a ../base/dist/Debug/GNU-Linux-x86/libbase.so -lxml2 -lpthread -lssl -lcrypto -lwebsockets -lvorbis -lvpx -lmp3lame -lz -ldl -lvorbisenc -lva -ltheoraenc -ltheoradec -lopus `cppunit-config --libs` `pkg-config --cflags --libs libv4l2` -lasound -ludev -lpulse-simple -lpulse  
+LDLIBSOPTIONS=-L/usr/lib/i386-linux-gnu -Wl,-rpath,/usr/local/lib ffmpeg_build/lib/libavformat.a ffmpeg_build/lib/libavcodec.a ffmpeg_build/lib/libswscale.a ffmpeg_build/lib/libavdevice.a ffmpeg_build/lib/libavfilter.a ffmpeg_build/lib/libx264.a ffmpeg_build/lib/libfdk-aac.a ffmpeg_build/lib/libswresample.a ffmpeg_build/lib/libpostproc.a ffmpeg_build/lib/libavutil.a ../base/dist/Debug/GNU-Linux-x86/libbase.so -lxml2 -lpthread -lssl -lcrypto -lvorbis -lvpx -lmp3lame -lz -ldl -lvorbisenc -lva -ltheoraenc -ltheoradec -lopus `cppunit-config --libs` `pkg-config --cflags --libs libv4l2` -lasound -ludev -lpulse-simple -lpulse -lwebsockets  
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -142,7 +142,7 @@ ${OBJECTDIR}/mypcm.o: mypcm.cpp
 ${OBJECTDIR}/test-echo.o: test-echo.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g `pkg-config --cflags --cflags libv4l2`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo.o test-echo.c
+	$(COMPILE.c) -g -I/usr/local/ffmpeg_build/include -I. -I. -I. -I. -I. -I. `pkg-config --cflags --cflags libv4l2`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo.o test-echo.c
 
 # Subprojects
 .build-subprojects:
@@ -282,7 +282,7 @@ ${OBJECTDIR}/test-echo_nomain.o: ${OBJECTDIR}/test-echo.o test-echo.c
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.c) -g `pkg-config --cflags --cflags libv4l2`   -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo_nomain.o test-echo.c;\
+	    $(COMPILE.c) -g -I/usr/local/ffmpeg_build/include -I. -I. -I. -I. -I. -I. `pkg-config --cflags --cflags libv4l2`   -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo_nomain.o test-echo.c;\
 	else  \
 	    ${CP} ${OBJECTDIR}/test-echo.o ${OBJECTDIR}/test-echo_nomain.o;\
 	fi
