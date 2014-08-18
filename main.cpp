@@ -260,14 +260,14 @@ void setRecordsPath() {
                             "", MS_MGC_VAL | MS_NOSUID, "");
                 }
                 if (merr = 0) {
-                    string fairportFFJSON = storageMountFolder +
-                            "fairport.ffjson";
-                    ifstream ifs(fairportFFJSON, ios::in | ios::ate);
+                    string ferryportFFJSON = storageMountFolder +
+                            "ferryport.ffjson";
+                    ifstream ifs(ferryportFFJSON, ios::in | ios::ate);
                     if (ifs.is_open()) {
                         string ffjsonStr;
                         ifs>>ffjsonStr;
                         FFJSON ffjsonObj(ffjsonStr);
-                        if (ffjsonObj["store"]) {
+                        if (ffjsonObj["StoreRecords"]) {
                             recordsFolder = storageMountFolder +
                                     APP_NAME"Records";
                             struct stat st = {0};
