@@ -1,5 +1,5 @@
-RemoteDeviceController
-======================
+FerryPort
+================================================================================
 
 supporting platforms:
 linux
@@ -7,8 +7,8 @@ linux
 tested platforms:
 CentOS, ubuntu
 
-Installation instructions:
--------------------------------------------------
+Insturctions for installation on Linux:
+--------------------------------------------------------------------------------
 1. Copy application folder to desktop.
 2. Open config.xml in the application folder with text editor.
 3. Set app-name, namespace, server-addr, server-port, stream-addr and stream-port values. Save and close the file.
@@ -19,17 +19,18 @@ Installation instructions:
 8. sudo make install
 
 
-Installation instructions for ubuntu
---------------------------------------------------
-1. cd ubuntu-13.04-console-armhf-2013-09-26
-2. sudo ./setup_sdcard.sh --probe-mmc
-3. sudo ./setup_sdcard.sh --mmc /dev/sdX --uboot bone
-4. insert sd card in beaglebone, connect to system and ssh ubuntu@192.168.7.2
-5. password: temppwd
-6. add "deb http://deb.newmeksolutions.com/ $(ARCH)/" to top of /etc/apt/sources.list without quotes
-7. sudo route add default gw 192.168.7.1
-8. sudo vi /etc/resolv.conf
-9. change nameserver 192.168.1.1 to 192.168.7.1
+Instructions for initial setup and installation on Ubuntu
+--------------------------------------------------------------------------------
+1.  cd ubuntu-13.04-console-armhf-2013-09-26
+2.  sudo ./setup_sdcard.sh --probe-mmc
+3.  sudo ./setup_sdcard.sh --mmc /dev/sdX --uboot bone
+4.  insert sd card in beaglebone, connect to system and ssh ubuntu@192.168.7.2
+5.  password: temppwd
+6.  add "deb http://deb.newmeksolutions.com/ $(ARCH)/" to top of 
+    /etc/apt/sources.list without quotes
+7.  sudo route add default gw 192.168.7.1
+8.  sudo vi /etc/resolv.conf
+9.  change nameserver 192.168.1.1 to 192.168.7.1
 10. sudo dpkg-reconfigure tzdata  # to set time-zone
 11. sudo ntpdate ntp.ubuntu.com
 12. sudo vi /etc/udev/rules.d/70-persistent-net.rules add at EOF
@@ -38,7 +39,8 @@ Installation instructions for ubuntu
 SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="wlan*", NAME="wlan0"
 
 
-13. sudo vi /etc/network/interfaces  and replace #wifi example section with the below
+13. sudo vi /etc/network/interfaces  and replace #wifi example section with the
+    below
 
 # WiFi Example
 auto wlan0
@@ -75,13 +77,13 @@ Baud = 9600
 
 
 Preparing the image
-----------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 1. sudo cp -Rrf --preserve=all /media/gowtham/BOOT/* BOOT/
 2. sudo cp -Rrf --preserve=all /media/gowtham/rootfs/* rootfs/
 3. sudo dd if=/dev/sdb of=bbb_mbr_08-13.img bs=446 count=1
 
 Copying image:
-----------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 1. sudo dd if=BBB_img/bbb_mbr.img of=/dev/sdb bs=446 count=1
 2. partition /dev/sdb into boot(65MB,fat16) and rootfs(remaining,ext4) using gparted.
 3. mount all cards
@@ -99,4 +101,4 @@ Copying image:
 
 
 Building package:
-----------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
