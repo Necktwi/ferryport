@@ -3,7 +3,6 @@ ffmpeg_sources/
 libav_output_files/
 ferrymediacapture1/
 dist/
-nbproject/private/private.xml
 remotedevicecontroller
 var/tmp/
 

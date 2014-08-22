@@ -12,6 +12,8 @@
             <sourceRootList>
                 <sourceRootElem>ffmpeg_build</sourceRootElem>
                 <sourceRootElem>ffmpeg_sources</sourceRootElem>
+                <sourceRootElem>/home/gowtham/Projects/ferryport/nbproject</sourceRootElem>
+                <sourceRootElem>/home/gowtham/Packages/debian_ferryport</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

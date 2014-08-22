@@ -1,6 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="94">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="debian_ferryport"
+                   displayName="debian_ferryport"
+                   projectFiles="true">
+      <logicalFolder name="base" displayName="base" projectFiles="true">
+        <logicalFolder name="DEBIAN" displayName="DEBIAN" projectFiles="true">
+          <itemPath>/home/gowtham/Packages/debian_ferryport/base/DEBIAN/control</itemPath>
+          <itemPath>/home/gowtham/Packages/debian_ferryport/base/DEBIAN/md5sums</itemPath>
+        </logicalFolder>
+        <logicalFolder name="usr" displayName="usr" projectFiles="true">
+          <logicalFolder name="local" displayName="local" projectFiles="true">
+            <logicalFolder name="lib" displayName="lib" projectFiles="true">
+              <logicalFolder name="ferryfair" displayName="ferryfair" projectFiles="true">
+              </logicalFolder>
+            </logicalFolder>
+          </logicalFolder>
+          <logicalFolder name="share" displayName="share" projectFiles="true">
+            <logicalFolder name="doc" displayName="doc" projectFiles="true">
+              <logicalFolder name="base" displayName="base" projectFiles="true">
+                <itemPath>/home/gowtham/Packages/debian_ferryport/base/usr/share/doc/base/README.Debian</itemPath>
+                <itemPath>/home/gowtham/Packages/debian_ferryport/base/usr/share/doc/base/README.md</itemPath>
+                <itemPath>/home/gowtham/Packages/debian_ferryport/base/usr/share/doc/base/changelog.Debian.gz</itemPath>
+                <itemPath>/home/gowtham/Packages/debian_ferryport/base/usr/share/doc/base/copyright</itemPath>
+              </logicalFolder>
+            </logicalFolder>
+          </logicalFolder>
+        </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="source" displayName="source" projectFiles="true">
+        <itemPath>/home/gowtham/Packages/debian_ferryport/source/format</itemPath>
+        <itemPath>/home/gowtham/Packages/debian_ferryport/source/include-binaries</itemPath>
+      </logicalFolder>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/README.Debian</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/README.source</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/base-dev.dirs</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/base-dev.install</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/base.cron.d.ex</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/base.debhelper.log</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/base.default.ex</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/base.doc-base.EX</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/base.substvars</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/base1.dirs</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/base1.install</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/changelog</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/compat</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/control</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/copyright</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/docs</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/files</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/init.d.ex</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/manpage.1.ex</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/manpage.sgml.ex</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/manpage.xml.ex</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/menu.ex</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/postinst.ex</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/postrm.ex</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/preinst.ex</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/prerm.ex</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/rules</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/shlibs.local.ex</itemPath>
+      <itemPath>/home/gowtham/Packages/debian_ferryport/watch.ex</itemPath>
+    </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
@@ -12,6 +73,25 @@
       <itemPath>debug.h</itemPath>
       <itemPath>libavcodec_util.h</itemPath>
       <itemPath>mypcm.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="nbproject" displayName="nbproject" projectFiles="true">
+      <logicalFolder name="private" displayName="private" projectFiles="true">
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/Makefile-variables.mk</itemPath>
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/configurations.xml</itemPath>
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/downloads-183.82.98.147-gowtham-22</itemPath>
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/launcher.properties</itemPath>
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/private.xml</itemPath>
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/private.xml.orig</itemPath>
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/timestamps-183.82.98.147-gowtham-22</itemPath>
+      </logicalFolder>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Makefile-Debug.mk</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Makefile-Release.mk</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Makefile-impl.mk</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Makefile-variables.mk</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Package-Debug.bash</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Package-Release.bash</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/configurations.xml</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/project.xml</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -69,6 +149,8 @@
   <sourceRootList>
     <Elem>ffmpeg_build</Elem>
     <Elem>ffmpeg_sources</Elem>
+    <Elem>/home/gowtham/Projects/ferryport/nbproject</Elem>
+    <Elem>/home/gowtham/Packages/debian_ferryport</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -91,9 +173,9 @@
           <commandlineTool>g++</commandlineTool>
           <incDir>
             <pElem>/usr/include/libxml2</pElem>
-            <pElem>/usr/local/ffmpeg_build/include</pElem>
             <pElem>.</pElem>
-            <pElem>../base</pElem>
+            <pElem>/usr/include/ferryfair/base</pElem>
+            <pElem>ffmpeg_build/include</pElem>
           </incDir>
           <commandLine>`cppunit-config --cflags` -D__STDC_CONSTANT_MACROS</commandLine>
           <preprocessorList>
@@ -118,7 +200,6 @@
             <linkerLibFileItem>ffmpeg_build/lib/libswresample.a</linkerLibFileItem>
             <linkerLibFileItem>ffmpeg_build/lib/libpostproc.a</linkerLibFileItem>
             <linkerLibFileItem>ffmpeg_build/lib/libavutil.a</linkerLibFileItem>
-            <linkerLibFileItem>../base/dist/Debug/GNU-Linux-x86/libbase.so</linkerLibFileItem>
             <linkerOptionItem>-lxml2</linkerOptionItem>
             <linkerOptionItem>-lpthread</linkerOptionItem>
             <linkerOptionItem>-lssl</linkerOptionItem>
@@ -140,6 +221,7 @@
             <linkerOptionItem>-lpulse-simple</linkerOptionItem>
             <linkerOptionItem>-lpulse</linkerOptionItem>
             <linkerOptionItem>-lwebsockets</linkerOptionItem>
+            <linkerOptionItem>-lbase</linkerOptionItem>
           </linkerLibItems>
           <commandLine>-Wall</commandLine>
         </linkerTool>
@@ -176,6 +258,266 @@
           <packInfoListElem name="Description" value="..." mandatory="false"/>
         </packInfoList>
       </packaging>
+      <item path="/home/gowtham/Packages/debian_ferryport/README.Debian"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/README.source"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base-dev.dirs"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base-dev.install"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base.cron.d.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base.debhelper.log"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base.default.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base.doc-base.EX"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base.substvars"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base/DEBIAN/control"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base/DEBIAN/md5sums"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base/usr/share/doc/base/README.Debian"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base/usr/share/doc/base/README.md"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base/usr/share/doc/base/changelog.Debian.gz"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base/usr/share/doc/base/copyright"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base1.dirs"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base1.install"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/changelog"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/compat"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/control"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/copyright"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/docs"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/files"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/init.d.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/manpage.1.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/manpage.sgml.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/manpage.xml.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/menu.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/postinst.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/postrm.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/preinst.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/prerm.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/rules"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/shlibs.local.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/source/format"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/source/include-binaries"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/watch.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Debug.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Release.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-impl.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-variables.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Package-Debug.bash"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Package-Release.bash"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/configurations.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/Makefile-variables.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/configurations.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/downloads-183.82.98.147-gowtham-22"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/launcher.properties"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/private.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/private.xml.orig"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/timestamps-183.82.98.147-gowtham-22"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/project.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="MediaManager.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MediaManager.h" ex="false" tool="3" flavor2="0">
@@ -297,6 +639,266 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="/home/gowtham/Packages/debian_ferryport/README.Debian"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/README.source"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base-dev.dirs"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base-dev.install"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base.cron.d.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base.debhelper.log"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base.default.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base.doc-base.EX"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base.substvars"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base/DEBIAN/control"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base/DEBIAN/md5sums"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base/usr/share/doc/base/README.Debian"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base/usr/share/doc/base/README.md"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base/usr/share/doc/base/changelog.Debian.gz"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base/usr/share/doc/base/copyright"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base1.dirs"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/base1.install"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/changelog"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/compat"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/control"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/copyright"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/docs"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/files"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/init.d.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/manpage.1.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/manpage.sgml.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/manpage.xml.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/menu.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/postinst.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/postrm.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/preinst.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/prerm.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/rules"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/shlibs.local.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/source/format"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/source/include-binaries"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Packages/debian_ferryport/watch.ex"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Debug.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Release.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-impl.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-variables.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Package-Debug.bash"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Package-Release.bash"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/configurations.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/Makefile-variables.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/configurations.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/downloads-183.82.98.147-gowtham-22"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/launcher.properties"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/private.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/private.xml.orig"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/timestamps-183.82.98.147-gowtham-22"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/project.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="MediaManager.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MediaManager.h" ex="false" tool="3" flavor2="0">
