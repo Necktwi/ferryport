@@ -135,7 +135,7 @@ help: .help-post
 install:
 	test -d "$(DESTDIR)/usr/local/" || mkdir -p "$(DESTDIR)/usr/local/" && cp -R ffmpeg_build $(DESTDIR)/usr/local/
 	cp -R ffmpeg_build/bin $(DESTDIR)/usr/local/
-	ln -s $DESTDIR/usr/local/bin/ffmpeg $DESTDIR/usr/bin/
+	ln -s $(DESTDIR)/usr/local/bin/ffmpeg $(DESTDIR)/usr/bin/
 	install -d $(DESTDIR)/var/${APPNAME}records
 	install -d $(DESTDIR)/media/$(APPNAME)Store
 	install -D config.xml $(DESTDIR)/etc/${APPNAME}.conf.xml

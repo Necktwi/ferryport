@@ -102,3 +102,7 @@ Copying image:
 
 Building package:
 --------------------------------------------------------------------------------
+1.  sudo apt-get install gcc build-essential build-dep libcppunit-dev libssl-dev libxml2-dev
+2.  sudo apt-get install base-dev
+3.  do not build projects in netbeans initially build using terminal
+4.  
