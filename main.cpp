@@ -64,7 +64,7 @@
 #include <sys/mount.h>
 
 #define MAX_CAMS 10
-#define APP_NAME "remotedevicecontroller"
+#define APP_NAME "ferryport"
 using namespace std;
 
 enum RecordState {
@@ -100,14 +100,14 @@ string appName;
 string systemId;
 Socket::SOCKET_TYPE socketType;
 string trustedCA = "/etc/ssl/certs/ferryfair.cert";
-string privatecert = "/etc/ssl/certs/" + string(APP_NAME) + ".ferryfair.cert";
-string privatekey = "/etc/ssl/certs/" + string(APP_NAME) + ".ferryfair.key";
+string privatecert = "/etc/ssl/certs/"APP_NAME".ferryfair.cert";
+string privatekey = "/etc/ssl/certs/"APP_NAME".ferryfair.key";
 string xmlnamespace;
 string securityKey;
 string videoStreamingType;
 string pollInterval;
 string autoInsertCameras;
-string configFile = "/etc/" + string(APP_NAME) + ".conf.xml";
+string configFile = "/etc/"APP_NAME".conf.xml";
 string camFolder = "/dev/";
 bool camcaptureCompression;
 string recordResolution;
@@ -130,18 +130,18 @@ int reconnectPollCount = 0;
 int reconnectPollCountCopy;
 string internetTestURL;
 bool configModem;
-string recordsFolder = "/var/" + string(APP_NAME) + "records/";
+string recordsFolder = "/var/"APP_NAME"records/";
 string storageMountFolder = "/media/"APP_NAME"Store/";
-string logFile = "/var/log/" + string(APP_NAME) + ".log";
-string initFile = "/etc/init/" + string(APP_NAME) + ".conf";
-string initOverrideFile = "/etc/init/" + string(APP_NAME) + ".override";
+string logFile = "/var/log/"APP_NAME".log";
+string initFile = "/etc/init/"APP_NAME".conf";
+string initOverrideFile = "/etc/init/"APP_NAME".override";
 string initdFile = "/etc/init.d/" + string(APP_NAME);
 string installationFolder = "/usr/local/bin/";
 string binFile = installationFolder + string(APP_NAME);
 string rootBinLnk = "/usr/bin/" + string(APP_NAME);
 string srcFolder = "/usr/local/src/" + string(APP_NAME);
-string deviceRulesFile = "/etc/udev/rules.d/" + string(APP_NAME) + ".rules";
-string runningProcessFile = "/var/tmp/" + string(APP_NAME) + ".pid";
+string deviceRulesFile = "/etc/udev/rules.d/"APP_NAME".rules";
+string runningProcessFile = "/var/tmp/"APP_NAME".pid";
 string mobileModemVendorProductID = "";
 string usbHubVendorProductID = "";
 bool mobile_modem_disconnect_toggle = false;
@@ -762,7 +762,7 @@ void correctTimeStampFileNames() {
             strftime(fn, 80, "%Y-%m-%d_%H:%M:%S.flv", timeinfo);
         }
         strftime(dn, 80, "%Y-%m-%d", timeinfo);
-        string path = "/var/" + string(APP_NAME) + "records/" + string(dn) + "/";
+        string path = "/var/"APP_NAME"records/" + string(dn) + "/";
         struct stat st = {0};
         if (stat(path.c_str(), &st) == -1) {
             mkdir(path.c_str(), 0774);
@@ -1200,7 +1200,7 @@ decision:
     } else {
         goto decision;
     }
-    cout << "\n" + string(APP_NAME) + " uninstalled successfully :D\n";
+    cout << "\n"APP_NAME" uninstalled successfully :D\n";
 }
 
 string generateSecurityKey() {
@@ -1665,16 +1665,16 @@ camState systemStateChange() {
 
 void print_usage(FILE* stream, int exit_code, char* program_name) {
     fprintf(stream, "Usage: %s <option> [<parameter>]\n", program_name);
-    string doc = "-c --configure Configures " + string(APP_NAME) + ""
+    string doc = "-c --configure Configures "APP_NAME""
             "\n-f --config-file <file name> it reads configuration from the file specified. It should be given ahead of all other options"
-            "\n-d --update Updates " + string(APP_NAME) + ""
+            "\n-d --update Updates "APP_NAME""
             "\n-h --help Display this usage information."
-            "\n-i --install Installs " + string(APP_NAME) + "."
-            "\n-k --keyInstall Installs " + string(APP_NAME) + " with key given by user."
-            "\n-r --reinstall Reinstall the " + string(APP_NAME) + ""
-            "\n-s --start=\033[4mTYPE\033[0m Runs client. If \033[4mTYPE\033[0m is 'daemon' " + string(APP_NAME) + " runs as daemon. If \033[4mTYPE\033[0m is 'normal' " + string(APP_NAME) + " runs normally."
-            "\n-u --uninstall Uninstalls " + string(APP_NAME) + "."
-            "\n-x --stop Terminates " + string(APP_NAME) + "."
+            "\n-i --install Installs "APP_NAME"."
+            "\n-k --keyInstall Installs "APP_NAME" with key given by user."
+            "\n-r --reinstall Reinstall the "APP_NAME""
+            "\n-s --start=\033[4mTYPE\033[0m Runs client. If \033[4mTYPE\033[0m is 'daemon' "APP_NAME" runs as daemon. If \033[4mTYPE\033[0m is 'normal' "APP_NAME" runs normally."
+            "\n-u --uninstall Uninstalls "APP_NAME"."
+            "\n-x --stop Terminates "APP_NAME"."
             "\n---------------------------"
             "\nHave a nice day :)\n\n";
     fprintf(stream, (const char*) doc.c_str());
@@ -1730,7 +1730,7 @@ void run() {
             }
         }
         if (securityKey.length() == 0) {
-            cout << "\nPlease install or re-install " + string(APP_NAME) + ".";
+            cout << "\nPlease install or re-install "APP_NAME".";
             fflush(stdout);
         } else {
             setRecordsPath();
@@ -1875,7 +1875,7 @@ void install() {
 void reinstallKey() {
     readConfig();
     string sk;
-    cout << "\nInstalling " + string(APP_NAME) + "...";
+    cout << "\nInstalling "APP_NAME"...";
     cout << "\nSecurity key: ";
     sk = inputText();
     instReInstComCode(sk);
@@ -1884,7 +1884,7 @@ void reinstallKey() {
 void reinstall() {
     struct stat st;
     if (stat(configFile.c_str(), &st) == -1) {
-        cout << "Configuration file not found. Install " + string(APP_NAME) + ".";
+        cout << "Configuration file not found. Install "APP_NAME".";
     } else {
         string sk = readConfigValue("system-id");
         string cmd = string(APP_NAME) + " -u";
@@ -1948,7 +1948,7 @@ void instReInstComCode(string sk) {
                 xmlCleanupParser();
                 struct stat st;
                 if (stat(initFile.c_str(), &st) != -1) {
-                    cout << "\nAllowing to run " + string(APP_NAME) + " at startup...";
+                    cout << "\nAllowing to run "APP_NAME" at startup...";
                     if (stat(initOverrideFile.c_str(), &st) != -1) {
                         string rmfcmd = "rm " + initOverrideFile;
                         system(rmfcmd.c_str());
@@ -1956,17 +1956,17 @@ void instReInstComCode(string sk) {
                     writeConfigValue("bootup", "true");
                     cout << "ok\n";
                 } else {
-                    cout << "\nInstall " + string(APP_NAME) + " in first.\n";
+                    cout << "\nInstall "APP_NAME" in first.\n";
                 }
-                cout << "\n" + string(APP_NAME) + " installed successfully :D"
-                        "\nDo u wanna start " + string(APP_NAME) + " now? [Y/n]: ";
+                cout << "\n"APP_NAME" installed successfully :D"
+                        "\nDo u wanna start "APP_NAME" now? [Y/n]: ";
                 string input = inputText();
                 cout << "\n";
                 if (input.length() == 0 || tolower(input).compare("y") == 0) {
                     string cmd = "start " + string(APP_NAME);
                     system(cmd.c_str());
                 } else if (tolower(input).compare("n") == 0) {
-                    cout << string(APP_NAME) + " will start at next system startup. To change configuration run '" + string(APP_NAME) + " -c'\n";
+                    cout << string(APP_NAME) + " will start at next system startup. To change configuration run '"APP_NAME" -c'\n";
                 }
             } else {
                 cout << "\nSorry some one booked the system while u r choosing! Try again.\n";
@@ -1983,7 +1983,7 @@ void instReInstComCode(string sk) {
 
 void configure() {
     readConfig();
-    cout << "\nCurrent " + string(APP_NAME) + " configuration:\n----------------------------";
+    cout << "\nCurrent "APP_NAME" configuration:\n----------------------------";
     cout << "\napp-name:\t" + appName;
     cout << "\nserver-addr:\t" + serverAddr;
     cout << "\nserver-port:\t" + serverPort;
@@ -2032,7 +2032,7 @@ void configure() {
                     struct stat st;
                     if (val.compare("true") == 0) {
                         if (stat(initFile.c_str(), &st) != -1) {
-                            cout << "\nAllowing to run " + string(APP_NAME) + " at startup...";
+                            cout << "\nAllowing to run "APP_NAME" at startup...";
                             if (stat(initOverrideFile.c_str(), &st) != -1) {
                                 string rmfcmd = "rm " + initOverrideFile;
                                 system(rmfcmd.c_str());
@@ -2040,11 +2040,11 @@ void configure() {
                             writeConfigValue(pn, val);
                             cout << "ok\n";
                         } else {
-                            cout << "\nInstall " + string(APP_NAME) + " in first.\n";
+                            cout << "\nInstall "APP_NAME" in first.\n";
                         }
                     } else if (val.compare("false") == 0) {
                         if (stat(initFile.c_str(), &st) != 1) {
-                            cout << "\nDisabling " + string(APP_NAME) + " to run at startup...";
+                            cout << "\nDisabling "APP_NAME" to run at startup...";
                             if (stat(initOverrideFile.c_str(), &st) == -1) {
                                 int fd = open(initOverrideFile.c_str(), O_WRONLY | O_CREAT | O_TRUNC);
                                 string buf = "manual";
@@ -2054,7 +2054,7 @@ void configure() {
                             writeConfigValue(pn, val);
                             cout << "ok\n";
                         } else {
-                            cout << "\nInstall " + string(APP_NAME) + " in first.\n";
+                            cout << "\nInstall "APP_NAME" in first.\n";
                         }
                     }
                 }
@@ -2152,7 +2152,7 @@ void signalHandler(int signal_number) {
     if (signal_number == SIGUSR1) {
         int fd;
         void* file_memory;
-        string fn = "/var/" + string(APP_NAME) + ".data";
+        string fn = "/var/"APP_NAME".data";
         fd = open(fn.c_str(), O_RDWR, S_IRUSR | S_IWUSR);
         file_memory = mmap(0, 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
         close(fd);
@@ -2248,7 +2248,7 @@ void update() {
     // Unix
     if (stat(srcFolder.c_str(), &st) == -1) {
         chdir("/usr/local/src");
-        cmd = "git clone git://github.com/bulbmaker/" + string(APP_NAME) + ".git";
+        cmd = "git clone git://github.com/bulbmaker/"APP_NAME".git";
         system(cmd.c_str());
     } else {
         chdir(srcFolder.c_str());
@@ -2258,13 +2258,13 @@ void update() {
         system(cmd.c_str());
     }
     chdir(srcFolder.c_str());
-    cout << "\nbuilding " + string(APP_NAME) + "...";
+    cout << "\nbuilding "APP_NAME"...";
     cmd = "make clean";
     system(cmd.c_str());
     cmd = "make";
     system(cmd.c_str());
-    cout << "Spawning " + string(APP_NAME) + "...";
-    cmd = "./" + string(APP_NAME) + " -r";
+    cout << "Spawning "APP_NAME"...";
+    cmd = "./"APP_NAME" -r";
     spawn(cmd, false, NULL, true);
 #elif __posix
     // POSIX
