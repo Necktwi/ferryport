@@ -22,7 +22,7 @@ make install
 make distclean
 
 if [ ! -d $BDIR/ffmpeg_sources/fdk-aac ]; then
-cd $BDIR/ffmpeg_sources/fdk-aac
+cd $BDIR/ffmpeg_sources/
 git clone --depth 1 git://github.com/mstorsjo/fdk-aac.git
 fi
 cd $BDIR/ffmpeg_sources/fdk-aac
@@ -35,7 +35,7 @@ make install
 make distclean
 
 if [ ! -d $BDIR/ffmpeg_sources/ffmpeg ]; then
-cd $BDIR/ffmpeg_sources/ffmpeg
+cd $BDIR/ffmpeg_sources/
 git clone --depth 1 git://source.ffmpeg.org/ffmpeg
 fi
 cd $BDIR/ffmpeg_sources/ffmpeg
