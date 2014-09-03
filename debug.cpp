@@ -1,6 +1,6 @@
 #include "debug.h"
 #include <sys/types.h>
-#include "mystdlib.h"
+#include <base/mystdlib.h>
 
 #ifdef DEBUG
 int debug = 0;

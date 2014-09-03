@@ -9,12 +9,12 @@
 #include "capture.h"
 #include "mypcm.h"
 #include "libavcodec_util.h"
-#include "ClientSocket.h"
-#include "SocketException.h"
-#include "myconverters.h"
+#include <base/ClientSocket.h>
+#include <base/SocketException.h>
+#include <base/myconverters.h>
 #include "debug.h"
-#include "mystdlib.h"
-#include "logger.h"
+#include <base/mystdlib.h>
+#include <base/logger.h>
 #include <string>
 #include <sys/socket.h>
 #include <stdlib.h>
@@ -24,7 +24,7 @@
 #include <sys/stat.h>
 #include <libavcodec/avcodec.h>
 #include <unistd.h>
-#include<time.h>
+#include <time.h>
 #include <fstream>
 
 MediaManager::MediaManager() {

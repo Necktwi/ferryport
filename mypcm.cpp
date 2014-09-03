@@ -2,8 +2,8 @@
 
 #include "mypcm.h"
 #include "debug.h"
-#include "mystdlib.h"
-#include "logger.h"
+#include <base/mystdlib.h>
+#include <base/logger.h>
 #include <alsa/asoundlib.h>
 #include <alsa/pcm.h>
 #include <stdio.h>
@@ -326,13 +326,13 @@ void deallocate_srarg(void* buffer) {
     *args->returnObj.state = -1;
 };
 
-struct free_pcm_args{
+struct free_pcm_args {
     snd_pcm_t *handle;
     uint16_t *buffer;
 };
 
-void free_pcm(void* args){
-    free_pcm_args* pargs = (free_pcm_args*)args;
+void free_pcm(void* args) {
+    free_pcm_args* pargs = (free_pcm_args*) args;
     snd_pcm_drain(pargs->handle);
     snd_pcm_close(pargs->handle);
     free(pargs->buffer);
@@ -401,9 +401,9 @@ void * snd_record(void* voidargs) {
     size = frames * 4; /* 2 bytes/sample, 2 channels */
     buffer = (uint16_t*) malloc(size);
     free_pcm_args fpa;
-    fpa.handle=handle;
-    fpa.buffer=buffer;
-    pthread_cleanup_push(&free_pcm,(void*)&fpa);
+    fpa.handle = handle;
+    fpa.buffer = buffer;
+    pthread_cleanup_push(&free_pcm, (void*) &fpa);
     /* We want to loop for 5 seconds */
     snd_pcm_hw_params_get_period_time(params, &val, &dir);
     loops = args->duration * 1000000 / val;

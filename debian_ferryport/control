@@ -1,7 +1,7 @@
 Source: ferryport
 Priority: extra
 Maintainer: Satya Gowtham Kudupudi <satyagowtham.k@gmail.com>
-Build-Depends: debhelper (>= 8.0.0), base-dev, texi2html, libxml2-dev, bluez, zlib1g-dev, libass-dev, libgpac-dev, libtheora-dev, libtool, libvorbis-dev, libmp3lame-dev, libopus-dev, libvpx-dev, libwebsockets-dev
+Build-Depends: debhelper (>= 8.0.0), base-dev, texi2html, libxml2-dev, bluez, zlib1g-dev, libass-dev, libgpac-dev, libtheora-dev, libtool, libvorbis-dev, libmp3lame-dev, libopus-dev, libvpx-dev, libwebsockets-dev, libblkid-dev
 Standards-Version: 3.9.4
 Section: utils
 Homepage: https://github.com/necktwi/ferryport
@@ -10,6 +10,6 @@ Vcs-Browser: https://github.com/necktwi/ferryport
 
 Package: ferryport
 Architecture: i386
-Depends: ${shlibs:Depends}, ${misc:Depends}, libwebsockets3, base1, libtheora0, libssl1.0.0, libcrypto++9, libvorbis0a, libvpx1, libxml2, texi2html, libmp3lame0, bluez, zlib1g, libass4, libgpac2, libtool, libopus0
+Depends: ${shlibs:Depends}, ${misc:Depends}, libwebsockets3, base1, libtheora0, libssl1.0.0, libcrypto++9, libvorbis0a, libvpx1, libxml2, texi2html, libmp3lame0, bluez, zlib1g, libass4, libgpac2, libtool, libopus0, ntfs-3g
 Description: Its an attempt to push various sensor data to a remote server
  For now it pushes video, audio and gps.

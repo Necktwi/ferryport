@@ -1,6 +1,6 @@
 #include "Multimedia.h"
-#include "mystdlib.h"
-#include "myconverters.h"
+#include <base/mystdlib.h>
+#include <base/myconverters.h>
 #include <string>
 #include <string.h>
 #include <sys/types.h>
@@ -14,7 +14,7 @@
 int videoSegmenter(std::string inputFile, int segmentLength, std::string outputFolder) {
     std::string ffcmd = "ffmpeg -i " + inputFile;
     std::string ffout = getStdoutFromCommand(ffcmd);
-    int ffDoffset = (int)ffout.find("Duration: ", 0);
+    int ffDoffset = (int) ffout.find("Duration: ", 0);
     if (ffDoffset > 0) {
         outputFolder = outputFolder[outputFolder.length() - 1] == '/' ? outputFolder : outputFolder + "/";
         struct stat st;

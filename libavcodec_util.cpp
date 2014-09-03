@@ -40,9 +40,9 @@ extern "C" {
 }
 
 #include "libavcodec_util.h"
-#include "mystdlib.h"
+#include <base/mystdlib.h>
 #include "debug.h"
-#include "logger.h"
+#include <base/logger.h>
 #include <string>
 #include <iostream>
 

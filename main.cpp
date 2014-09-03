@@ -7,18 +7,18 @@
 
 #include "Multimedia.h"
 #include "MediaManager.h"
-#include "myconverters.h"
-#include "mystdlib.h"
-#include "myxml.h"
-#include "mycurl.h"
 #include "debug.h"
-#include "Socket.h"
 #include "test-echo.c"
 #include "libavcodec_util.h"
 #include "capture.h"
 #include "mypcm.h"
-#include "logger.h"
-#include "FFJSON.h"
+#include <base/Socket.h>
+#include <base/myconverters.h>
+#include <base/mystdlib.h>
+#include <base/myxml.h>
+#include <base/mycurl.h>
+#include <base/logger.h>
+#include <base/FFJSON.h>
 #include <cstdlib>
 #include <stdio.h>
 #include <string.h>
@@ -62,6 +62,7 @@
 #include <thread>
 #include <map>
 #include <sys/mount.h>
+#include <blkid/blkid.h>
 
 #define MAX_CAMS 10
 #define APP_NAME "ferryport"
@@ -236,55 +237,124 @@ void set_bus_device_file_name(string vpid, string& bus_device_file_name);
 void usb_reset(string device);
 
 void setRecordsPath() {
-    DIR *dpdf;
-    struct dirent *epdf;
     ifstream mtabifs("/etc/mtab", ios::in | ios::ate);
     string mtabstr;
-    mtabifs>>mtabstr;
-    dpdf = opendir("/dev/");
-    if (dpdf != NULL) {
-        while (epdf = readdir(dpdf)) {
-            if (strstr(epdf->d_name, "sd") != NULL) {
-                string splFile("/dev/");
-                splFile.append(epdf->d_name);
-                int merr = 0;
-                int devStrPos = mtabstr.find(splFile);
-                if (devStrPos >= 0) {
-                    int mntFolStrIn = devStrPos + splFile.length() + 2;
-                    int mntFolStrLen = mtabstr.find(" ", mntFolStrIn) -
-                            mntFolStrIn;
-                    storageMountFolder = mtabstr.substr(mntFolStrIn,
-                            mntFolStrLen);
-                } else {
-                    merr = mount(splFile.c_str(), storageMountFolder.c_str(),
-                            "", MS_MGC_VAL | MS_NOSUID, "");
-                }
-                if (merr = 0) {
-                    string ferryportFFJSON = storageMountFolder +
-                            "ferryport.ffjson";
-                    ifstream ifs(ferryportFFJSON, ios::in | ios::ate);
-                    if (ifs.is_open()) {
-                        string ffjsonStr;
-                        ifs>>ffjsonStr;
-                        FFJSON ffjsonObj(ffjsonStr);
-                        if (ffjsonObj["StoreRecords"]) {
-                            recordsFolder = storageMountFolder +
-                                    APP_NAME"Records";
-                            struct stat st = {0};
-                            if (stat(recordsFolder.c_str(), &st) == -1) {
-                                mkdir(recordsFolder.c_str(), 0774);
-                            }
-                            ifs.close();
-                            break;
-                        };
-                        ifs.close();
-                    }
-                }
-            };
-            free(epdf);
+    string localStorageMountFolder;
+    mtabifs.seekg(0, std::ios::end);
+    mtabstr.reserve(mtabifs.tellg());
+    mtabifs.seekg(0, std::ios::beg);
+
+    mtabstr.assign((std::istreambuf_iterator<char>(mtabifs)),
+            std::istreambuf_iterator<char>());
+    std::map<int, string> mount_err_map;
+    mount_err_map[EPERM] = "EPERM";
+    mount_err_map[ENODEV] = "ENODEV";
+    mount_err_map[ENOTBLK] = "ENOTBLK";
+    mount_err_map[EBUSY] = "EBUSY";
+    mount_err_map[EINVAL] = "EINVAL";
+    mount_err_map[EACCES] = "EACCES";
+    //mount_err_map[EM_FILE] = "EM_FILE";
+    bool mounted = false;
+    blkid_dev_iterate iter;
+    blkid_dev dev;
+    blkid_cache cache = NULL;
+    char *search_type = NULL, *search_value = NULL;
+    char *read = NULL;
+
+    blkid_get_cache(&cache, read);
+
+    blkid_probe_all(cache);
+
+    std::stringstream ss;
+    ss.precision(100); // weird, but seems to work
+
+    std::time_t t = std::time(0);
+    iter = blkid_dev_iterate_begin(cache);
+    blkid_dev_set_search(iter, search_type, search_value);
+    while (blkid_dev_next(iter, &dev) == 0) {
+        dev = blkid_verify(cache, dev);
+        if (!dev) {
+            continue;
         }
-        free(dpdf);
+        blkid_tag_iterate iter;
+        const char *type, *value, *devname;
+        const char *uuid = "", *fs_type = "", *label = "";
+        int len, mount_flags;
+        char mtpt[1024];
+
+        devname = blkid_dev_devname(dev);
+        if (access(devname, F_OK))
+            return;
+
+        /* Get the uuid, label, type */
+        iter = blkid_tag_iterate_begin(dev);
+        while (blkid_tag_next(iter, &type, &value) == 0) {
+
+            if (!strcmp(type, "UUID"))
+                uuid = value;
+            if (!strcmp(type, "TYPE"))
+                fs_type = value;
+            if (!strcmp(type, "LABEL"))
+                label = value;
+        }
+        blkid_tag_iterate_end(iter);
+        int merr = 0;
+        string splFile(devname);
+        int devStrPos = mtabstr.find(splFile);
+        mounted = false;
+        if (devStrPos >= 0 &&
+                mtabstr[devStrPos + splFile.length()] == ' ') {
+            int mntFolStrIn = devStrPos + splFile.length() + 1;
+            int mntFolStrLen = mtabstr.find(" ", mntFolStrIn) -
+                    mntFolStrIn;
+            localStorageMountFolder = mtabstr.substr(mntFolStrIn,
+                    mntFolStrLen);
+        } else {
+            int i = 0;
+            merr = -1;
+            string fsType = strcmp(fs_type, "ntfs") == 0 ? "ntfs-3g" :
+                    string(fs_type);
+            string ms = "mount -t " + string(fsType) + " " + splFile + " "
+                    + storageMountFolder;
+            spawn mount(ms, false, NULL, false, true);
+            merr = mount.childExitStatus;
+            localStorageMountFolder = storageMountFolder;
+            mounted = true;
+        }
+        if (merr == 0) {
+            string ferryportFFJSON = localStorageMountFolder +
+                    "ferryport.ffjson";
+            ifstream ifs(ferryportFFJSON, ios::in | ios::ate);
+            if (ifs.is_open()) {
+                string ffjsonStr;
+                ifs.seekg(0, std::ios::end);
+                ffjsonStr.reserve(ifs.tellg());
+                ifs.seekg(0, std::ios::beg);
+                ffjsonStr.assign((std::istreambuf_iterator<char>(ifs)),
+                        std::istreambuf_iterator<char>());
+                FFJSON ffjsonObj(ffjsonStr);
+                if (ffjsonObj["StoreRecords"]) {
+                    recordsFolder = localStorageMountFolder +
+                            APP_NAME"Records/";
+                    struct stat st = {0};
+                    if (stat(recordsFolder.c_str(), &st) == -1) {
+                        mkdir(recordsFolder.c_str(), 0774);
+                    }
+                    ifs.close();
+                    break;
+                };
+                ifs.close();
+            } else {
+                if (mounted) {
+                    spawn umount("umount " + localStorageMountFolder, daemon, NULL, false, true);
+                }
+            }
+        } else {
+            ffl_debug(FPOL_MAIN, "couldn't mount %s. errno is %s", splFile.c_str(), mount_err_map[errno].c_str());
+        }
     }
+    blkid_dev_iterate_end(iter);
+    free(cache);
     mtabifs.close();
 }
 
@@ -1966,7 +2036,7 @@ void instReInstComCode(string sk) {
                     string cmd = "start " + string(APP_NAME);
                     system(cmd.c_str());
                 } else if (tolower(input).compare("n") == 0) {
-                    cout << string( APP_NAME ) + " will start at next system startup. To change configuration run '" APP_NAME " -c'\n";
+                    cout << string(APP_NAME) + " will start at next system startup. To change configuration run '" APP_NAME " -c'\n";
                 }
             } else {
                 cout << "\nSorry some one booked the system while u r choosing! Try again.\n";
@@ -2765,6 +2835,8 @@ int main(int argc, char** argv) {
                 print_usage(stderr, 1, argv[0]);
                 break;
             case -1:
+
+            default:
                 print_usage(stderr, 1, argv[0]);
                 break;
         }

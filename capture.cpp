@@ -11,11 +11,11 @@
  * see http://linuxtv.org/docs.php for more information
  */
 
-#include "JPEGImage.h"
+#include <base/JPEGImage.h>
 #include "capture.h"
 #include "debug.h"
-#include "mystdlib.h"
-#include "logger.h"
+#include <base/mystdlib.h>
+#include <base/logger.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
