@@ -323,9 +323,10 @@ void setRecordsPath() {
         }
         if (merr == 0) {
             string ferryportFFJSON = localStorageMountFolder +
-                    "ferryport.ffjson";
+                    APP_NAME".ffjson";
             ifstream ifs(ferryportFFJSON, ios::in | ios::ate);
             if (ifs.is_open()) {
+                ffl_debug(FPOL_MAIN, APP_NAME".ffjson found in %s mounted on %s", devname, localStorageMountFolder.c_str());
                 string ffjsonStr;
                 ifs.seekg(0, std::ios::end);
                 ffjsonStr.reserve(ifs.tellg());
@@ -336,6 +337,8 @@ void setRecordsPath() {
                 if (ffjsonObj["StoreRecords"]) {
                     recordsFolder = localStorageMountFolder +
                             APP_NAME"Records/";
+                    ffl_debug(FPOL_MAIN, "recordsFolder = %s",
+                            recordsFolder.c_str());
                     struct stat st = {0};
                     if (stat(recordsFolder.c_str(), &st) == -1) {
                         mkdir(recordsFolder.c_str(), 0774);
@@ -345,8 +348,10 @@ void setRecordsPath() {
                 };
                 ifs.close();
             } else {
+                ffl_debug(FPOL_MAIN, "unable to open " APP_NAME ".ffjson in %s mounted on %s", devname, localStorageMountFolder.c_str());
                 if (mounted) {
                     spawn umount("umount " + localStorageMountFolder, daemon, NULL, false, true);
+                    ffl_debug(FPOL_MAIN, "%s unmounted", devname);
                 }
             }
         } else {
