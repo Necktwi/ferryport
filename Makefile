@@ -140,6 +140,7 @@ install:
 	install -d $(DESTDIR)/var/${APPNAME}records
 	install -d $(DESTDIR)/media/$(APPNAME)Store
 	install -D config.xml $(DESTDIR)/etc/${APPNAME}.conf.xml
+	install -D wvdial.conf $(DESTDIR)/etc/wvdial.conf
 	install -D devices.rules $(DESTDIR)/etc/udev/rules.d/${APPNAME}.rules
 	install -D error.log $(DESTDIR)/var/log/${APPNAME}.log
 	install -D init.conf $(DESTDIR)/etc/init/${APPNAME}.conf
