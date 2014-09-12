@@ -13,6 +13,8 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
+        <gdb_signals>
+        </gdb_signals>
         <gdb_options>
           <DebugOptions>
           </DebugOptions>
@@ -24,7 +26,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t &lt; /dev/zero</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t > libav</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t &lt; /dev/urandom</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t > libav_output_files/snd_capture.wav</runcommandpicklistitem>
@@ -34,9 +35,10 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -s normal</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" --config-file config.xml -s normal</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" --config-file config.xml -s daemon</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" --config-file config.xml -s normal</runcommand>
-        <rundir></rundir>
+        <runcommand>"${OUTPUT_PATH}" --config-file config.xml -s daemon</runcommand>
+        <rundir>/home/gowtham/Projects/ferryport</rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
         <remove-instrumentation>0</remove-instrumentation>

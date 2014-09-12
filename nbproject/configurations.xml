@@ -201,11 +201,9 @@
                             group="bin"/>
         </packFileList>
         <packInfoList>
-          <packInfoListElem name="Package"
-                            value="remotedevicecontroller"
-                            mandatory="true"/>
+          <packInfoListElem name="Package" value="ferryport" mandatory="true"/>
           <packInfoListElem name="Version" value="1.0" mandatory="true"/>
-          <packInfoListElem name="Architecture" value="i386" mandatory="false"/>
+          <packInfoListElem name="Architecture" value="any" mandatory="false"/>
           <packInfoListElem name="Maintainer" value="gowtham" mandatory="false"/>
           <packInfoListElem name="Description" value="..." mandatory="false"/>
         </packInfoList>

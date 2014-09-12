@@ -152,7 +152,7 @@ int const_usb_hub_reset_interval = 500;
 time_t gpsUpdatePeriod = 10;
 bool pkilled = true;
 int SOAPServiceReqCount = 0;
-int ferr;
+int ferr = 0;
 bool contiguousPoll = false;
 bool updateTimeStamps = false;
 vector<string> recordedFileNames;
@@ -236,7 +236,7 @@ int writeRootProcess();
 void set_bus_device_file_name(string vpid, string& bus_device_file_name);
 void usb_reset(string device);
 
-void setRecordsPath() {
+void setPaths() {
     ifstream mtabifs("/etc/mtab", ios::in | ios::ate);
     string mtabstr;
     string localStorageMountFolder;
@@ -344,8 +344,11 @@ void setRecordsPath() {
                         mkdir(recordsFolder.c_str(), 0774);
                     }
                     ifs.close();
-                    break;
                 };
+                if (ffjsonObj["StoreLog"]) {
+                    logFile = localStorageMountFolder + APP_NAME".log";
+                    ffl_debug(FPOL_MAIN, "logFile = %s", logFile.c_str());
+                }
                 ifs.close();
             } else {
                 ffl_debug(FPOL_MAIN, "unable to open " APP_NAME ".ffjson in %s mounted on %s", devname, localStorageMountFolder.c_str());
@@ -355,7 +358,7 @@ void setRecordsPath() {
                 }
             }
         } else {
-            ffl_debug(FPOL_MAIN, "couldn't mount %s. errno is %s", splFile.c_str(), mount_err_map[errno].c_str());
+            ffl_debug(FPOL_MAIN, "couldn't mount %s. exit code is %d", splFile.c_str(), merr);
         }
     }
     blkid_dev_iterate_end(iter);
@@ -1793,10 +1796,18 @@ void correctAllTimeVariables() {
     }
 }
 
+void groomLogFile() {
+    if (ferr > 0)close(ferr);
+    struct stat statbuf;
+    int stat_r = stat(logFile.c_str(), &statbuf);
+    ferr = open(logFile.c_str(), O_WRONLY | ((stat_r == -1 || statbuf.st_size > 5000000) ? (O_CREAT | O_TRUNC) : O_APPEND));
+}
+
 void run() {
     secondChild = getpid();
     if (geteuid() != 0) {
-        cout << "\nPlease login as root are sudo user.\n";
+        ffl_err(FPOL_MAIN, "Please login as root or run as sudo user");
+        exit(-1);
     } else {
         if (runMode.compare("daemon") != 0) {
             readConfig();
@@ -1808,7 +1819,13 @@ void run() {
             cout << "\nPlease install or re-install " APP_NAME ".";
             fflush(stdout);
         } else {
-            setRecordsPath();
+            setPaths();
+            groomLogFile();
+            if (runMode.compare("daemon") == 0) {
+                dup2(ferr, 2);
+                dup2(2, 1);
+            }
+            ffl_info(FPOL_MAIN, "  -------------   Run Started   -------------");
             GPSManager::init();
             writeRootProcess();
             csList::initialize(10);
@@ -2353,7 +2370,7 @@ void onEndTestSpawnHandler(spawn* process) {
 
 void* test(void *) {
     /*To test websockets test-echo.c*/
-    //char * options[] = {"remotedevicecontroller", "-c"};
+    //char * options[] = {"ferryport", "-c"};
     //testecho(1, (char**) options);
 
     /*To test libavcodec libavcodec-example.c*/
@@ -2754,9 +2771,7 @@ int main(int argc, char** argv) {
     camStateStringInit();
     family_message_block_id = shmget(IPC_PRIVATE, sizeof (family_message_block), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     family_message_block_ptr = (family_message_block*) shmat(family_message_block_id, NULL, 0);
-    struct stat statbuf;
-    int stat_r = stat(logFile.c_str(), &statbuf);
-    ferr = open(logFile.c_str(), O_WRONLY | ((stat_r == -1 || statbuf.st_size > 5000000) ? (O_CREAT | O_TRUNC) : O_APPEND));
+    groomLogFile();
     stdinfd = dup(0);
     stdoutfd = dup(1);
     stderrfd = dup(2);
@@ -2840,7 +2855,7 @@ int main(int argc, char** argv) {
                 print_usage(stderr, 1, argv[0]);
                 break;
             case -1:
-
+                break;
             default:
                 print_usage(stderr, 1, argv[0]);
                 break;

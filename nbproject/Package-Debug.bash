@@ -78,9 +78,9 @@ rm -f ${CONTROL_FILE}
 mkdir -p ${NBTMPDIR}/DEBIAN
 
 cd "${TOP}"
-echo 'Package: remotedevicecontroller' >> ${CONTROL_FILE}
+echo 'Package: ferryport' >> ${CONTROL_FILE}
 echo 'Version: 1.0' >> ${CONTROL_FILE}
-echo 'Architecture: i386' >> ${CONTROL_FILE}
+echo 'Architecture: any' >> ${CONTROL_FILE}
 echo 'Maintainer: gowtham' >> ${CONTROL_FILE}
 echo 'Description: ...' >> ${CONTROL_FILE}
 

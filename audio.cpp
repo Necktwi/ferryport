@@ -36,7 +36,7 @@ int audio::record(void* buf) {
     int ret = 1;
     int error;
     /* Create the recording stream */
-    if (!(s = pa_simple_new(NULL, "remotedevicecontroller", PA_STREAM_RECORD, NULL, "record", &ss, NULL, NULL, &error))) {
+    if (!(s = pa_simple_new(NULL, "ferryport", PA_STREAM_RECORD, NULL, "record", &ss, NULL, NULL, &error))) {
         fprintf(stderr, __FILE__": pa_simple_new() failed: %s\n", pa_strerror(error));
         goto finish;
     }

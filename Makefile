@@ -61,12 +61,6 @@ build: .build-post
 
 .build-post: .build-impl
 # Add your post 'build' code here...
-	cp config.xml ${CND_ARTIFACT_DIR_${CONF}}/
-	cp error.log ${CND_ARTIFACT_DIR_${CONF}}/
-	cp init.conf ${CND_ARTIFACT_DIR_${CONF}}/
-	cp init.d ${CND_ARTIFACT_DIR_${CONF}}/
-	cp devices.rules ${CND_ARTIFACT_DIR_${CONF}}/
-	cp ${CND_ARTIFACT_PATH_${CONF}} ./
 	echo ${CND_ARTIFACT_PATH_${CONF}}
 	
 # clean0
@@ -77,12 +71,6 @@ clean: .clean-post
 
 .clean-post: .clean-impl
 # Add your post 'clean' code here...
-	rm -f ${CND_ARTIFACT_DIR_${CONF}}/config.xml
-	rm -f ${CND_ARTIFACT_DIR_${CONF}}/error.log
-	rm -f ${CND_ARTIFACT_DIR_${CONF}}/init.conf
-	rm -f ${CND_ARTIFACT_DIR_${CONF}}/init.d
-	rm -f ${CND_ARTIFACT_DIR_${CONF}}/devices.rules
-	rm -f ${CND_ARTIFACT_NAME_${CONF}}
 	
 # clobber
 clobber: .clobber-post
