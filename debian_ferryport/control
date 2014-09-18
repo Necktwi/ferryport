@@ -1,7 +1,7 @@
 Source: ferryport
 Priority: extra
 Maintainer: Satya Gowtham Kudupudi <satyagowtham.k@gmail.com>
-Build-Depends: debhelper (>= 9), base-dev, texi2html, libxml2-dev, bluez, zlib1g-dev, libass-dev, libgpac-dev, libtheora-dev, libtool, libvorbis-dev, libmp3lame-dev, libopus-dev, libvpx-dev, libwebsockets-dev, libblkid-dev
+Build-Depends: debhelper (>= 9), base-dev, texi2html, libxml2-dev, bluez, zlib1g-dev, libass-dev, libgpac-dev, libtheora-dev, libtool, libvorbis-dev, libmp3lame-dev, libopus-dev, libvpx-dev, libwebsockets-dev, libblkid-dev, autoconf, automake, git, pkg-config, yasm
 Standards-Version: 3.9.5
 Section: non-free/utils
 Homepage: https://github.com/necktwi/ferryport

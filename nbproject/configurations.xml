@@ -95,6 +95,8 @@
       <itemPath>wvdial.conf</itemPath>
     </logicalFolder>
     <itemPath>ferryport.ffjson</itemPath>
+    <itemPath>ffmpeg_clean.sh</itemPath>
+    <itemPath>man</itemPath>
     <itemPath>webm_container.html</itemPath>
   </logicalFolder>
   <sourceRootList>
@@ -350,11 +352,15 @@
       </folder>
       <item path="ferryport.ffjson" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="ffmpeg_clean.sh" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="libavcodec_util.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="libavcodec_util.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="man" ex="false" tool="3" flavor2="0">
       </item>
       <item path="mypcm.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -561,11 +567,15 @@
       </folder>
       <item path="ferryport.ffjson" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="ffmpeg_clean.sh" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="libavcodec_util.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="libavcodec_util.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="man" ex="false" tool="3" flavor2="0">
       </item>
       <item path="mypcm.cpp" ex="false" tool="1" flavor2="0">
       </item>

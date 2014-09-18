@@ -68,7 +68,9 @@ clean: .clean-post
 
 .clean-pre:
 # Add your pre 'clean' code here...
-
+	sh ffmpeg_clean.sh
+#	rm -Rf ffmpeg_build ffmpeg_source
+	
 .clean-post: .clean-impl
 # Add your post 'clean' code here...
 	
@@ -121,24 +123,18 @@ help: .help-post
 # Add your post 'help' code here...
 
 install:
-	test -d "$(DESTDIR)/usr/local/" || mkdir -p "$(DESTDIR)/usr/local/" && cp -R ffmpeg_build $(DESTDIR)/usr/local/
-	cp -R ffmpeg_build/bin $(DESTDIR)/usr/local/
-	test -d "$(DESTDIR)/usr/bin/" || mkdir -p "$(DESTDIR)/usr/bin/"
-	ln -s $(DESTDIR)/usr/local/bin/ffmpeg $(DESTDIR)/usr/bin/
-	install -d $(DESTDIR)/var/${APPNAME}records
-	install -d $(DESTDIR)/media/$(APPNAME)Store
-	install -D config.xml $(DESTDIR)/etc/${APPNAME}.conf.xml
-	install -D wvdial.conf $(DESTDIR)/etc/wvdial.conf
-	install -D devices.rules $(DESTDIR)/etc/udev/rules.d/${APPNAME}.rules
-	install -D error.log $(DESTDIR)/var/log/${APPNAME}.log
-	install -D init.conf $(DESTDIR)/etc/init/${APPNAME}.conf
-	install -D init.override $(DESTDIR)/etc/init/${APPNAME}.override
-	install -D init.d $(DESTDIR)/etc/init.d/${APPNAME}
-	install -D certs/ferryfair.cert $(DESTDIR)/etc/ssl/certs/ferryfair.cert
-	install -D certs/ferryport.ferryfair.cert $(DESTDIR)/etc/ssl/certs/${CND_ARTIFACT_NAME_${CONF}}.ferryfair.cert
-	install -D certs/ferryport.ferryfair.key $(DESTDIR)/etc/ssl/certs/${CND_ARTIFACT_NAME_${CONF}}.ferryfair.key
-	install -D ttyO1_armhf.com-00A0.dtbo $(DESTDIR)/lib/firmware/ttyO1_armhf.com-00A0.dtbo
+	install -D ffmpeg_build/bin/ffmpeg $(DESTDIR)/usr/bin/ffmpeg
+	install -m644 -D config.xml $(DESTDIR)/etc/${APPNAME}.conf.xml
+	install -m644 -D wvdial.conf $(DESTDIR)/etc/wvdial.conf
+	install -m644 -D devices.rules $(DESTDIR)/lib/udev/rules.d/50-${APPNAME}.rules
+	install -m644 -D init.conf $(DESTDIR)/etc/init/${APPNAME}.conf
+	install -m644 -D init.override $(DESTDIR)/etc/init/${APPNAME}.override
+	install -m644 -D certs/ferryfair.cert $(DESTDIR)/etc/ssl/certs/ferryfair.cert
+	install -m644 -D certs/ferryport.ferryfair.cert $(DESTDIR)/etc/ssl/certs/${CND_ARTIFACT_NAME_${CONF}}.ferryfair.cert
+	install -m644 -D certs/ferryport.ferryfair.key $(DESTDIR)/etc/ssl/certs/${CND_ARTIFACT_NAME_${CONF}}.ferryfair.key
+	install -m644 -D ttyO1_armhf.com-00A0.dtbo $(DESTDIR)/lib/firmware/ttyO1_armhf.com-00A0.dtbo
 	install -m755 -D ${CND_ARTIFACT_PATH_${CONF}} $(DESTDIR)/usr/bin/${APPNAME}
+	install -m644 -D man $(DESTDIR)/usr/share/man/man1/$(APPNAME).1
 	
 install-exec-hook:
 	${CND_ARTIFACT_PATH_${CONF}} -i

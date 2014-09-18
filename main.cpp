@@ -240,6 +240,7 @@ void setPaths() {
     ifstream mtabifs("/etc/mtab", ios::in | ios::ate);
     string mtabstr;
     string localStorageMountFolder;
+    bool checkStorageMountFolder = false;
     mtabifs.seekg(0, std::ios::end);
     mtabstr.reserve(mtabifs.tellg());
     mtabifs.seekg(0, std::ios::beg);
@@ -310,6 +311,13 @@ void setPaths() {
             localStorageMountFolder = mtabstr.substr(mntFolStrIn,
                     mntFolStrLen);
         } else {
+            if (!checkStorageMountFolder) {
+                struct stat st = {0};
+                if (stat(storageMountFolder.c_str(), &st) == -1) {
+                    mkdir(storageMountFolder.c_str(), 0774);
+                }
+                checkStorageMountFolder = true;
+            }
             int i = 0;
             merr = -1;
             string fsType = strcmp(fs_type, "ntfs") == 0 ? "ntfs-3g" :
@@ -360,6 +368,10 @@ void setPaths() {
         } else {
             ffl_debug(FPOL_MAIN, "couldn't mount %s. exit code is %d", splFile.c_str(), merr);
         }
+    }
+    struct stat st = {0};
+    if (stat(recordsFolder.c_str(), &st) == -1) {
+        mkdir(recordsFolder.c_str(), 0774);
     }
     blkid_dev_iterate_end(iter);
     free(cache);
