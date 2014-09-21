@@ -4,9 +4,7 @@
 .SH NAME
 ferryport \- stream senses to remote server
 .SH SYNOPSIS
-ferryport -s normal|daemon [-f
-.I config-file
-.B ]
+ferryport
 .SH DESCRIPTION
 ferryport is a program used to stream various sensor data to remote server.
 .SH OPTIONS
