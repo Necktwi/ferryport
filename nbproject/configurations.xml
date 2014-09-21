@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="95">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="debian" displayName="debian" projectFiles="true">
+      <logicalFolder name="source" displayName="source" projectFiles="true">
+        <itemPath>debian/source/format</itemPath>
+      </logicalFolder>
+      <itemPath>debian/README.Debian</itemPath>
+      <itemPath>debian/README.source</itemPath>
+      <itemPath>debian/changelog</itemPath>
+      <itemPath>debian/compat</itemPath>
+      <itemPath>debian/control</itemPath>
+      <itemPath>debian/copyright</itemPath>
+      <itemPath>debian/docs</itemPath>
+      <itemPath>debian/rules</itemPath>
+    </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
@@ -91,6 +104,7 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>nbproject</Elem>
+    <Elem>debian</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -269,6 +283,24 @@
       <item path="capture.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="capture.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/README.Debian" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/README.source" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/changelog" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/compat" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/control" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/copyright" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/docs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/rules" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/source/format" ex="false" tool="3" flavor2="0">
       </item>
       <item path="debug.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -476,6 +508,24 @@
       <item path="capture.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="capture.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/README.Debian" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/README.source" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/changelog" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/compat" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/control" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/copyright" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/docs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/rules" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/source/format" ex="false" tool="3" flavor2="0">
       </item>
       <item path="debug.cpp" ex="false" tool="1" flavor2="0">
       </item>

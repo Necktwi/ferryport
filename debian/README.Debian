@@ -1,0 +1,7 @@
+ferryport for Debian
+---------------
+
+After installing one should run ferryport -c to configure various values like server address.
+And then run ferryport -i to link with the server.
+
+ -- Satya Gowtham Kudupudi <satyagowtham.k@gmail.com>  Sat, 06 Sep 2014 14:13:37 +0530

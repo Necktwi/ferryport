@@ -1,0 +1,11 @@
+ferryport for Debian
+---------------
+
+To build cd to extracted source folder and execute
+make clean
+make
+sudo make install
+
+
+ -- Satya Gowtham Kudupudi <satyagowtham.k@gmail.com>  Sat, 06 Sep 2014 14:13:37 +0530
+
