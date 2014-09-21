@@ -1,0 +1,30 @@
+.\" Manpage for ferryport.
+.\" Contact satyagowtham.k@gmail.com to correct errors or typos.
+.TH man 1 "16 Tue 2014" "1.0" "ferryport man page"
+.SH NAME
+ferryport \- stream senses to remote server
+.SH SYNOPSIS
+ferryport
+.SH DESCRIPTION
+ferryport is a program used to stream various sensor data to remote server.
+.SH OPTIONS
+.IP -c
+lists and edits configuration options.
+.IP "-f config-file"
+Use the alternate system wide
+.I config-file
+instead of
+.IR /etc/ferryport.xml.conf .
+This overrides any
+.B FFCONF
+environment variable.
+.IP -h
+prints help.
+.IP -i
+installs system id from server.
+.SH SEE ALSO
+ffmpeg(1)
+.SH BUGS
+No known bugs.
+.SH AUTHOR
+Satya Gowtham Kudupudi (satyagowtham.k@gmail.com)
