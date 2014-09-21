@@ -85,14 +85,12 @@
     </logicalFolder>
     <itemPath>ferryport.ffjson</itemPath>
     <itemPath>ffmpeg_clean.sh</itemPath>
+    <itemPath>../../Packages/ferryport/flashplayer.html</itemPath>
     <itemPath>man</itemPath>
     <itemPath>webm_container.html</itemPath>
   </logicalFolder>
   <sourceRootList>
-    <Elem>ffmpeg_build</Elem>
-    <Elem>ffmpeg_sources</Elem>
-    <Elem>/home/gowtham/Projects/ferryport/nbproject</Elem>
-    <Elem>/home/gowtham/Packages/debian_ferryport</Elem>
+    <Elem>nbproject</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -105,7 +103,6 @@
       <compileType>
         <cTool>
           <incDir>
-            <pElem>/usr/local/ffmpeg_build/include</pElem>
             <pElem>.</pElem>
           </incDir>
           <commandLine>`cppunit-config --cflags`</commandLine>
@@ -117,7 +114,6 @@
             <pElem>/usr/include/libxml2</pElem>
             <pElem>.</pElem>
             <pElem>/usr/include/ferryfair</pElem>
-            <pElem>ffmpeg_build/include</pElem>
           </incDir>
           <commandLine>`cppunit-config --cflags` -D__STDC_CONSTANT_MACROS</commandLine>
           <preprocessorList>
@@ -128,43 +124,22 @@
           <linkerAddLib>
             <pElem>/usr/lib/i386-linux-gnu</pElem>
           </linkerAddLib>
-          <linkerDynSerch>
-            <pElem>/usr/local/lib</pElem>
-          </linkerDynSerch>
           <linkerLibItems>
-            <linkerLibFileItem>ffmpeg_build/lib/libavformat.a</linkerLibFileItem>
-            <linkerLibFileItem>ffmpeg_build/lib/libavcodec.a</linkerLibFileItem>
-            <linkerLibFileItem>ffmpeg_build/lib/libswscale.a</linkerLibFileItem>
-            <linkerLibFileItem>ffmpeg_build/lib/libavdevice.a</linkerLibFileItem>
-            <linkerLibFileItem>ffmpeg_build/lib/libavfilter.a</linkerLibFileItem>
-            <linkerLibFileItem>ffmpeg_build/lib/libx264.a</linkerLibFileItem>
-            <linkerLibFileItem>ffmpeg_build/lib/libfdk-aac.a</linkerLibFileItem>
-            <linkerLibFileItem>ffmpeg_build/lib/libswresample.a</linkerLibFileItem>
-            <linkerLibFileItem>ffmpeg_build/lib/libpostproc.a</linkerLibFileItem>
-            <linkerLibFileItem>ffmpeg_build/lib/libavutil.a</linkerLibFileItem>
             <linkerOptionItem>-lxml2</linkerOptionItem>
             <linkerOptionItem>-lpthread</linkerOptionItem>
             <linkerOptionItem>-lssl</linkerOptionItem>
             <linkerOptionItem>-lcrypto</linkerOptionItem>
-            <linkerOptionItem>-lvorbis</linkerOptionItem>
-            <linkerOptionItem>-lvpx</linkerOptionItem>
-            <linkerOptionItem>-lmp3lame</linkerOptionItem>
             <linkerOptionItem>-lz</linkerOptionItem>
-            <linkerOptionItem>-ldl</linkerOptionItem>
-            <linkerOptionItem>-lvorbisenc</linkerOptionItem>
-            <linkerOptionItem>-lva</linkerOptionItem>
-            <linkerOptionItem>-ltheoraenc</linkerOptionItem>
-            <linkerOptionItem>-ltheoradec</linkerOptionItem>
-            <linkerOptionItem>-lopus</linkerOptionItem>
             <linkerOptionItem>`cppunit-config --libs`</linkerOptionItem>
             <linkerOptionItem>`pkg-config --cflags --libs libv4l2`</linkerOptionItem>
             <linkerOptionItem>-lasound</linkerOptionItem>
-            <linkerOptionItem>-ludev</linkerOptionItem>
             <linkerOptionItem>-lpulse-simple</linkerOptionItem>
             <linkerOptionItem>-lpulse</linkerOptionItem>
             <linkerOptionItem>-lwebsockets</linkerOptionItem>
             <linkerOptionItem>-lbase</linkerOptionItem>
             <linkerOptionItem>-lblkid</linkerOptionItem>
+            <linkerOptionItem>-lavcodec</linkerOptionItem>
+            <linkerOptionItem>-lavutil</linkerOptionItem>
           </linkerLibItems>
           <commandLine>-Wall</commandLine>
         </linkerTool>
@@ -199,6 +174,11 @@
           <packInfoListElem name="Description" value="..." mandatory="false"/>
         </packInfoList>
       </packaging>
+      <item path="../../Packages/ferryport/flashplayer.html"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Debug.mk"
             ex="false"
             tool="3"
@@ -401,6 +381,11 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="../../Packages/ferryport/flashplayer.html"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Debug.mk"
             ex="false"
             tool="3"

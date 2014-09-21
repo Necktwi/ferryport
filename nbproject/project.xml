@@ -10,10 +10,7 @@
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
-                <sourceRootElem>ffmpeg_build</sourceRootElem>
-                <sourceRootElem>ffmpeg_sources</sourceRootElem>
-                <sourceRootElem>/home/gowtham/Projects/ferryport/nbproject</sourceRootElem>
-                <sourceRootElem>/home/gowtham/Packages/debian_ferryport</sourceRootElem>
+                <sourceRootElem>nbproject</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

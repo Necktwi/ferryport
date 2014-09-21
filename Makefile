@@ -57,7 +57,6 @@ build: .build-post
 
 .build-pre:
 # Add your pre 'build' code here...
-	sh installDependencies.sh
 
 .build-post: .build-impl
 # Add your post 'build' code here...
@@ -68,8 +67,6 @@ clean: .clean-post
 
 .clean-pre:
 # Add your pre 'clean' code here...
-	sh ffmpeg_clean.sh
-#	rm -Rf ffmpeg_build ffmpeg_source
 	
 .clean-post: .clean-impl
 # Add your post 'clean' code here...
@@ -123,7 +120,6 @@ help: .help-post
 # Add your post 'help' code here...
 
 install:
-	install -D ffmpeg_build/bin/ffmpeg $(DESTDIR)/usr/bin/ffmpeg
 	install -m644 -D config.xml $(DESTDIR)/etc/${APPNAME}.conf.xml
 	install -m644 -D wvdial.conf $(DESTDIR)/etc/wvdial.conf
 	install -m644 -D devices.rules $(DESTDIR)/lib/udev/rules.d/50-${APPNAME}.rules

@@ -57,7 +57,6 @@
 #include <locale.h>
 #include <langinfo.h>
 #include <stdint.h>
-#include <libudev.h>
 #include <list>
 #include <thread>
 #include <map>

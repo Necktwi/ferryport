@@ -67,31 +67,11 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L/usr/lib/i386-linux-gnu -Wl,-rpath,/usr/local/lib ffmpeg_build/lib/libavformat.a ffmpeg_build/lib/libavcodec.a ffmpeg_build/lib/libswscale.a ffmpeg_build/lib/libavdevice.a ffmpeg_build/lib/libavfilter.a ffmpeg_build/lib/libx264.a ffmpeg_build/lib/libfdk-aac.a ffmpeg_build/lib/libswresample.a ffmpeg_build/lib/libpostproc.a ffmpeg_build/lib/libavutil.a -lxml2 -lpthread -lssl -lcrypto -lvorbis -lvpx -lmp3lame -lz -ldl -lvorbisenc -lva -ltheoraenc -ltheoradec -lopus `cppunit-config --libs` `pkg-config --cflags --libs libv4l2` -lasound -ludev -lpulse-simple -lpulse -lwebsockets -lbase -lblkid  
+LDLIBSOPTIONS=-L/usr/lib/i386-linux-gnu -lxml2 -lpthread -lssl -lcrypto -lz `cppunit-config --libs` `pkg-config --cflags --libs libv4l2` -lasound -lpulse-simple -lpulse -lwebsockets -lbase -lblkid -lavcodec -lavutil  
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
 	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libavformat.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libavcodec.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libswscale.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libavdevice.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libavfilter.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libx264.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libfdk-aac.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libswresample.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libpostproc.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ffmpeg_build/lib/libavutil.a
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
@@ -100,47 +80,47 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ferryport: ${OBJECTFILES}
 ${OBJECTDIR}/MediaManager.o: MediaManager.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MediaManager.o MediaManager.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MediaManager.o MediaManager.cpp
 
 ${OBJECTDIR}/Multimedia.o: Multimedia.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Multimedia.o Multimedia.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Multimedia.o Multimedia.cpp
 
 ${OBJECTDIR}/audio.o: audio.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/audio.o audio.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/audio.o audio.cpp
 
 ${OBJECTDIR}/capture.o: capture.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/capture.o capture.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/capture.o capture.cpp
 
 ${OBJECTDIR}/debug.o: debug.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/debug.o debug.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/debug.o debug.cpp
 
 ${OBJECTDIR}/libavcodec_util.o: libavcodec_util.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/libavcodec_util.o libavcodec_util.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/libavcodec_util.o libavcodec_util.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 ${OBJECTDIR}/mypcm.o: mypcm.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mypcm.o mypcm.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mypcm.o mypcm.cpp
 
 ${OBJECTDIR}/test-echo.o: test-echo.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g -I/usr/local/ffmpeg_build/include -I. `pkg-config --cflags --cflags libv4l2`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo.o test-echo.c
+	$(COMPILE.c) -g -I. `pkg-config --cflags --cflags libv4l2`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo.o test-echo.c
 
 # Subprojects
 .build-subprojects:
@@ -159,13 +139,13 @@ ${TESTDIR}/TestFiles/f2: ${TESTDIR}/tests/rawPlayer.o ${OBJECTFILES:%.o=%_nomain
 ${TESTDIR}/tests/audioTest.o: tests/audioTest.cpp 
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include -I. -I. `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/audioTest.o tests/audioTest.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -I. -I. `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/audioTest.o tests/audioTest.cpp
 
 
 ${TESTDIR}/tests/rawPlayer.o: tests/rawPlayer.cpp 
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include -I. `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/rawPlayer.o tests/rawPlayer.cpp
+	$(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -I. `pkg-config --cflags --cflags libv4l2` -std=c++11  -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/rawPlayer.o tests/rawPlayer.cpp
 
 
 ${OBJECTDIR}/MediaManager_nomain.o: ${OBJECTDIR}/MediaManager.o MediaManager.cpp 
@@ -176,7 +156,7 @@ ${OBJECTDIR}/MediaManager_nomain.o: ${OBJECTDIR}/MediaManager.o MediaManager.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MediaManager_nomain.o MediaManager.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MediaManager_nomain.o MediaManager.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/MediaManager.o ${OBJECTDIR}/MediaManager_nomain.o;\
 	fi
@@ -189,7 +169,7 @@ ${OBJECTDIR}/Multimedia_nomain.o: ${OBJECTDIR}/Multimedia.o Multimedia.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Multimedia_nomain.o Multimedia.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Multimedia_nomain.o Multimedia.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/Multimedia.o ${OBJECTDIR}/Multimedia_nomain.o;\
 	fi
@@ -202,7 +182,7 @@ ${OBJECTDIR}/audio_nomain.o: ${OBJECTDIR}/audio.o audio.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/audio_nomain.o audio.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/audio_nomain.o audio.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/audio.o ${OBJECTDIR}/audio_nomain.o;\
 	fi
@@ -215,7 +195,7 @@ ${OBJECTDIR}/capture_nomain.o: ${OBJECTDIR}/capture.o capture.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/capture_nomain.o capture.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/capture_nomain.o capture.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/capture.o ${OBJECTDIR}/capture_nomain.o;\
 	fi
@@ -228,7 +208,7 @@ ${OBJECTDIR}/debug_nomain.o: ${OBJECTDIR}/debug.o debug.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/debug_nomain.o debug.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/debug_nomain.o debug.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/debug.o ${OBJECTDIR}/debug_nomain.o;\
 	fi
@@ -241,7 +221,7 @@ ${OBJECTDIR}/libavcodec_util_nomain.o: ${OBJECTDIR}/libavcodec_util.o libavcodec
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/libavcodec_util_nomain.o libavcodec_util.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/libavcodec_util_nomain.o libavcodec_util.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/libavcodec_util.o ${OBJECTDIR}/libavcodec_util_nomain.o;\
 	fi
@@ -254,7 +234,7 @@ ${OBJECTDIR}/main_nomain.o: ${OBJECTDIR}/main.o main.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main_nomain.o main.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main_nomain.o main.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/main.o ${OBJECTDIR}/main_nomain.o;\
 	fi
@@ -267,7 +247,7 @@ ${OBJECTDIR}/mypcm_nomain.o: ${OBJECTDIR}/mypcm.o mypcm.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair -Iffmpeg_build/include `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mypcm_nomain.o mypcm.cpp;\
+	    $(COMPILE.cc) -g -D_DEBUG -I/usr/include/libxml2 -I. -I/usr/include/ferryfair `pkg-config --cflags --cflags libv4l2` -std=c++11  -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mypcm_nomain.o mypcm.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/mypcm.o ${OBJECTDIR}/mypcm_nomain.o;\
 	fi
@@ -280,7 +260,7 @@ ${OBJECTDIR}/test-echo_nomain.o: ${OBJECTDIR}/test-echo.o test-echo.c
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.c) -g -I/usr/local/ffmpeg_build/include -I. `pkg-config --cflags --cflags libv4l2`   -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo_nomain.o test-echo.c;\
+	    $(COMPILE.c) -g -I. `pkg-config --cflags --cflags libv4l2`   -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo_nomain.o test-echo.c;\
 	else  \
 	    ${CP} ${OBJECTDIR}/test-echo.o ${OBJECTDIR}/test-echo_nomain.o;\
 	fi
