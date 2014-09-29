@@ -67,8 +67,6 @@ clean: .clean-post
 
 .clean-pre:
 # Add your pre 'clean' code here...
-#	sh ffmpeg_clean.sh
-	rm -Rf ffmpeg_build
 	
 .clean-post: .clean-impl
 # Add your post 'clean' code here...
