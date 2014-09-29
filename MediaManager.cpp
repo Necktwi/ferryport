@@ -591,7 +591,7 @@ start_stop:
             }
             free(lavea.output_buffer);
         }
-        *packet += "</BINARY>,time:\"" + std::to_string((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + std::to_string(ffargs->omedia->segmentDuration) + "},";
+        *packet += "</BINARY>,time:\"" + std::to_string((unsigned int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + std::to_string(ffargs->omedia->segmentDuration) + "},";
         write(ffargs->fd, (void*) packet->c_str(), packet->size());
         if (ffargs->omedia->signalNewState < 2) {
             close(ffargs->fd);
