@@ -2423,21 +2423,21 @@ void* test(void *) {
     //    pcm_open_set_device();
 
     /*Testing MediaManager*/
-    setuid(1000);
-    debug = 17;
-    readConfig();
-    valarray<MediaManager::media> imedia(2);
-    imedia[0].duration = 0;
-    imedia[0].encoding = MediaManager::MJPEG;
-    imedia[0].height = 240;
-    imedia[0].identifier = "/dev/video0";
-    imedia[0].type = MediaManager::VIDEO;
-    imedia[0].videoframerate = 10;
-    imedia[0].width = 320;
-    imedia[1].audioSamplingFrequency = 44100;
-    imedia[1].duration = 0;
-    imedia[1].identifier = "plughw:1";
-    imedia[1].type = MediaManager::AUDIO;
+    //    setuid(1000);
+    //    debug = 17;
+    //    readConfig();
+    //    valarray<MediaManager::media> imedia(2);
+    //    imedia[0].duration = 0;
+    //    imedia[0].encoding = MediaManager::MJPEG;
+    //    imedia[0].height = 240;
+    //    imedia[0].identifier = "/dev/video0";
+    //    imedia[0].type = MediaManager::VIDEO;
+    //    imedia[0].videoframerate = 10;
+    //    imedia[0].width = 320;
+    //    imedia[1].audioSamplingFrequency = 44100;
+    //    imedia[1].duration = 0;
+    //    imedia[1].identifier = "plughw:1";
+    //    imedia[1].type = MediaManager::AUDIO;
     //    imedia[2].duration = 0;
     //    imedia[2].encoding = MediaManager::MJPEG;
     //    imedia[2].height = 240;
@@ -2449,18 +2449,18 @@ void* test(void *) {
     //    imedia[3].duration = 0;
     //    imedia[3].identifier = "default";
     //    imedia[3].type = MediaManager::AUDIO;
-    valarray<MediaManager::media> omedia(1);
-    omedia[0].identifier = "fmsp://fms.newmeksolutions.com:92711/" + appName + "1780";
+    //    valarray<MediaManager::media> omedia(1);
+    //    omedia[0].identifier = "fmsp://fms.newmeksolutions.com:92711/" + appName + "1780";
     //    omedia[0].identifier = "ferrymediacapture1/";
-    omedia[0].segmentDuration = 1;
-    omedia[0].videoframerate = 10;
-    omedia[0].audioBitrate = 64000;
-    omedia[0].duration = 10;
-    omedia[0].encoding = MediaManager::MP2;
-    omedia[0].splMediaProps.fmpFeederSplProps.reconnect = true;
-    omedia[0].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
-    omedia[0].signalNewState = 0;
-    MediaManager::capture(imedia, omedia);
+    //    omedia[0].segmentDuration = 1;
+    //    omedia[0].videoframerate = 10;
+    //    omedia[0].audioBitrate = 64000;
+    //    omedia[0].duration = 10;
+    //    omedia[0].encoding = MediaManager::MP2;
+    //    omedia[0].splMediaProps.fmpFeederSplProps.reconnect = true;
+    //    omedia[0].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
+    //    omedia[0].signalNewState = 0;
+    //    MediaManager::capture(imedia, omedia);
     /*stat*/
     //    struct stat statbuf;
     //    struct passwd *pwd;
@@ -2565,6 +2565,7 @@ void* test(void *) {
     //#ifdef DEBUG
     //    std::cout << "MakeFile Chnages Reflected\n";
     //#endif
+
 }
 
 void set_bus_device_file_name(string vpid, string& bus_device_file_name) { //#vpid-vendor product id

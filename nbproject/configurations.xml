@@ -14,17 +14,6 @@
       <itemPath>debian/docs</itemPath>
       <itemPath>debian/rules</itemPath>
     </logicalFolder>
-    <logicalFolder name="debian_ferryport"
-                   displayName="debian_ferryport"
-                   projectFiles="true">
-      <logicalFolder name="source" displayName="source" projectFiles="true">
-        <itemPath>debian_ferryport/source/include-binaries</itemPath>
-      </logicalFolder>
-      <itemPath>debian_ferryport/changelog</itemPath>
-      <itemPath>debian_ferryport/control</itemPath>
-      <itemPath>debian_ferryport/copyright</itemPath>
-      <itemPath>debian_ferryport/rules</itemPath>
-    </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
@@ -115,7 +104,6 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>../../Projects/ferryport/nbproject</Elem>
-    <Elem>../debian_ferryport</Elem>
     <Elem>debian</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
@@ -309,19 +297,6 @@
       <item path="debian/rules" ex="false" tool="3" flavor2="0">
       </item>
       <item path="debian/source/format" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="debian_ferryport/changelog" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="debian_ferryport/control" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="debian_ferryport/copyright" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="debian_ferryport/rules" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="debian_ferryport/source/include-binaries"
-            ex="false"
-            tool="3"
-            flavor2="0">
       </item>
       <item path="debug.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -544,19 +519,6 @@
       <item path="debian/rules" ex="false" tool="3" flavor2="0">
       </item>
       <item path="debian/source/format" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="debian_ferryport/changelog" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="debian_ferryport/control" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="debian_ferryport/copyright" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="debian_ferryport/rules" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="debian_ferryport/source/include-binaries"
-            ex="false"
-            tool="3"
-            flavor2="0">
       </item>
       <item path="debug.cpp" ex="false" tool="1" flavor2="0">
       </item>

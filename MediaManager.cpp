@@ -398,11 +398,11 @@ connect:
             for (int i = 0; i < transmitted_frames_per_segment_duration; i++) {
                 pf = cf;
                 cf = (videoframesPfloat + (i * received_frames_per_segment_duration / transmitted_frames_per_segment_duration)) % ffargs->ivideomedia->buffer.framebuffer->size();
-                *packet += "FFESCSTR";
+                *packet += "<BINARY>";
                 buf.assign((char*) (((char*) (*ffargs->ivideomedia->buffer.framebuffer)[cf].frame)), (*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
                 *packet += buf;
                 framesizes.push_back((*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
-                *packet += buf = "FFESCSTR";
+                *packet += buf = "</BINARY>";
                 if (i < (transmitted_frames_per_segment_duration - 1)) {
                     *packet += buf = ",";
                 }
@@ -415,7 +415,7 @@ connect:
                 packet->append(",");
             }
         }
-        *packet += "],ferrymp3:FFESCSTR";
+        *packet += "],ferrymp3:<BINARY>";
         if (ffargs->iaudiomedia != NULL && ffargs->iaudiomedia->state > 0) {
             lavea.initptr = audioperiodPfloat;
             lavea.termptr = audioperiodCfloat - 1;
@@ -427,7 +427,7 @@ connect:
             }
             free(lavea.output_buffer);
         }
-        *packet += buf = "FFESCSTR,time:\"" + std::to_string((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + std::to_string(ffargs->omedia->segmentDuration) + ",endex:" + std::to_string(index) + "}";
+        *packet += buf = "</BINARY>,time:\"" + std::to_string((unsigned int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + std::to_string(ffargs->omedia->segmentDuration) + ",endex:" + std::to_string(index) + "}";
         ffargs->csm.lock();
         try {
             ffargs->cs->send(packet, MSG_DONTWAIT | MSG_NOSIGNAL);
@@ -570,16 +570,16 @@ start_stop:
             for (int i = 0; i < transmitted_frames_per_segment_duration; i++) {
                 pf = cf;
                 cf = (videoframesPfloat + (i * received_frames_per_segment_duration / transmitted_frames_per_segment_duration)) % ffargs->ivideomedia->buffer.framebuffer->size();
-                *packet += "FFESCSTR";
+                *packet += "<BINARY>";
                 buf.assign((char*) (((char*) (*ffargs->ivideomedia->buffer.framebuffer)[cf].frame)), (*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
                 *packet += buf;
-                *packet += buf = "FFESCSTR";
+                *packet += buf = "</BINARY>";
                 if (i < (transmitted_frames_per_segment_duration - 1)) {
                     *packet += buf = ",";
                 }
             }
         }
-        *packet += "],ferrymp3:FFESCSTR";
+        *packet += "],ferrymp3:<BINARY>";
         if (ffargs->iaudiomedia != NULL && ffargs->iaudiomedia->state > 0) {
             lavea.initptr = audioperiodPfloat;
             lavea.termptr = audioperiodCfloat - 1;
@@ -591,7 +591,7 @@ start_stop:
             }
             free(lavea.output_buffer);
         }
-        *packet += "FFESCSTR,time:\"" + std::to_string((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + std::to_string(ffargs->omedia->segmentDuration) + "},";
+        *packet += "</BINARY>,time:\"" + std::to_string((int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + std::to_string(ffargs->omedia->segmentDuration) + "},";
         write(ffargs->fd, (void*) packet->c_str(), packet->size());
         if (ffargs->omedia->signalNewState < 2) {
             close(ffargs->fd);
