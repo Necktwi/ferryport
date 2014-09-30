@@ -1,0 +1,10 @@
+ffmpeg_build/
+ffmpeg_sources/
+libav_output_files/
+ferrymediacapture1/
+dist/
+nbproject/private/private.xml
+<<<<<<< HEAD
+remotedevicecontroller
+=======
+>>>>>>> 2bc70d8fdcac031e652b321e8d7b5cefbe262344
