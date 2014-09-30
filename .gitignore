@@ -1,0 +1,9 @@
+ffmpeg_build/
+ffmpeg_sources/
+libav_output_files/
+ferrymediacapture1/
+dist/
+var/tmp/
+.bzr/
+.bzrignore
+

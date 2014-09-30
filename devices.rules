@@ -1,0 +1,7 @@
+SUBSYSTEMS=="scsi", ATTRS{model}=="USB Storage FFE9", ACTION=="add", RUN+="/sbin/modprobe usbserial vendor=0x19d2 product=0xffe9"
+SUBSYSTEMS=="usb", ACTION=="add", DRIVERS=="usbserial_generic", ATTRS{bNumEndpoints}=="03", SYMLINK+="CDMAModem"
+SUBSYSTEMS=="usb", ACTION=="remove", DRIVERS=="usbserial_generic", ATTRS{bNumEndpoints}=="03", SYMLINK-="CDMAModem"
+SUBSYSTEMS=="usb", ACTION=="add", DRIVERS=="option", ATTRS{bNumEndpoints}=="03", SYMLINK+="CDMAModem"
+SUBSYSTEMS=="usb", ACTION=="remove", DRIVERS=="option", ATTRS{bNumEndpoints}=="03", SYMLINK-="CDMAModem"
+SUBSYSTEMS=="usb", ACTION=="add", DRIVERS=="option1", ATTRS{bNumEndpoints}=="03", SYMLINK+="CDMAModem"
+SUBSYSTEMS=="usb", ACTION=="remove", DRIVERS=="option1", ATTRS{bNumEndpoints}=="03", SYMLINK-="CDMAModem"

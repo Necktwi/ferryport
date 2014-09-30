@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="95">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="debian" displayName="debian" projectFiles="true">
+      <logicalFolder name="source" displayName="source" projectFiles="true">
+        <itemPath>debian/source/format</itemPath>
+      </logicalFolder>
+      <itemPath>debian/README.Debian</itemPath>
+      <itemPath>debian/README.source</itemPath>
+      <itemPath>debian/changelog</itemPath>
+      <itemPath>debian/compat</itemPath>
+      <itemPath>debian/control</itemPath>
+      <itemPath>debian/copyright</itemPath>
+      <itemPath>debian/docs</itemPath>
+      <itemPath>debian/rules</itemPath>
+    </logicalFolder>
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>MediaManager.h</itemPath>
+      <itemPath>Multimedia.h</itemPath>
+      <itemPath>audio.cpp</itemPath>
+      <itemPath>audio.h</itemPath>
+      <itemPath>capture.h</itemPath>
+      <itemPath>debug.h</itemPath>
+      <itemPath>libavcodec_util.h</itemPath>
+      <itemPath>mypcm.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="nbproject" displayName="nbproject" projectFiles="true">
+      <logicalFolder name="private" displayName="private" projectFiles="true">
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/Makefile-variables.mk</itemPath>
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/configurations.xml</itemPath>
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/downloads-183.82.98.147-gowtham-22</itemPath>
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/launcher.properties</itemPath>
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/private.xml</itemPath>
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/private.xml.orig</itemPath>
+        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/timestamps-183.82.98.147-gowtham-22</itemPath>
+      </logicalFolder>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Makefile-Debug.mk</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Makefile-Release.mk</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Makefile-impl.mk</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Makefile-variables.mk</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Package-Debug.bash</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Package-Release.bash</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/configurations.xml</itemPath>
+      <itemPath>/home/gowtham/Projects/ferryport/nbproject/project.xml</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>MediaManager.cpp</itemPath>
+      <itemPath>Multimedia.cpp</itemPath>
+      <itemPath>capture.cpp</itemPath>
+      <itemPath>debug.cpp</itemPath>
+      <itemPath>libavcodec_util.cpp</itemPath>
+      <itemPath>main.cpp</itemPath>
+      <itemPath>mypcm.cpp</itemPath>
+      <itemPath>test-echo.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+      <logicalFolder name="f1"
+                     displayName="audioTest"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/audioTest.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f2"
+                     displayName="rawPlayer"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/rawPlayer.cpp</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+      <itemPath>README.md</itemPath>
+      <itemPath>certs</itemPath>
+      <itemPath>config.xml</itemPath>
+      <itemPath>devices.rules</itemPath>
+      <itemPath>error.log</itemPath>
+      <itemPath>ffmpeg_install.sh</itemPath>
+      <itemPath>init.conf</itemPath>
+      <itemPath>init.d</itemPath>
+      <itemPath>init.override</itemPath>
+      <itemPath>installDependencies.sh</itemPath>
+      <itemPath>ttyO1_armhf.com-00A0.dtbo</itemPath>
+      <itemPath>wvdial.conf</itemPath>
+    </logicalFolder>
+    <itemPath>ferryport.ffjson</itemPath>
+    <itemPath>ffmpeg_clean.sh</itemPath>
+    <itemPath>flashplayer.html</itemPath>
+    <itemPath>man</itemPath>
+    <itemPath>webm_container.html</itemPath>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../Projects/ferryport/nbproject</Elem>
+    <Elem>debian</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <incDir>
+            <pElem>/usr/local/ffmpeg_build/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </cTool>
+        <ccTool>
+          <standard>8</standard>
+          <commandlineTool>g++</commandlineTool>
+          <incDir>
+            <pElem>/usr/include/libxml2</pElem>
+            <pElem>.</pElem>
+            <pElem>/usr/include/ferryfair</pElem>
+          </incDir>
+          <commandLine>`cppunit-config --cflags` -D__STDC_CONSTANT_MACROS</commandLine>
+          <preprocessorList>
+            <Elem>_DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+        <linkerTool>
+          <linkerAddLib>
+            <pElem>/usr/lib/i386-linux-gnu</pElem>
+          </linkerAddLib>
+          <linkerLibItems>
+            <linkerOptionItem>-lxml2</linkerOptionItem>
+            <linkerOptionItem>-lpthread</linkerOptionItem>
+            <linkerOptionItem>-lssl</linkerOptionItem>
+            <linkerOptionItem>-lcrypto</linkerOptionItem>
+            <linkerOptionItem>-lz</linkerOptionItem>
+            <linkerOptionItem>`cppunit-config --libs`</linkerOptionItem>
+            <linkerOptionItem>`pkg-config --cflags --libs libv4l2`</linkerOptionItem>
+            <linkerOptionItem>-lwebsockets</linkerOptionItem>
+            <linkerOptionItem>-lbase</linkerOptionItem>
+            <linkerOptionItem>-lblkid</linkerOptionItem>
+            <linkerOptionItem>-lpulse-simple</linkerOptionItem>
+            <linkerOptionItem>-lpulse</linkerOptionItem>
+            <linkerOptionItem>-lavcodec</linkerOptionItem>
+            <linkerOptionItem>-lavutil</linkerOptionItem>
+            <linkerOptionItem>-lasound</linkerOptionItem>
+          </linkerLibItems>
+          <commandLine>-Wall</commandLine>
+        </linkerTool>
+      </compileType>
+      <packaging>
+        <packType>Debian</packType>
+        <packFileList>
+          <packFileListElem type="File"
+                            to="${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}"
+                            from="${OUTPUT_PATH}"
+                            perm="755"
+                            owner="root"
+                            group="bin"/>
+          <packFileListElem type="File"
+                            to="/etc/${APPNAME}.conf.xml"
+                            from="config.xml"
+                            perm="644"
+                            owner="root"
+                            group="bin"/>
+          <packFileListElem type="Dir"
+                            to="${PACKAGE_TOP_DIR}/local/ffmpeg_build"
+                            from="ffmpeg_build"
+                            perm="755"
+                            owner="root"
+                            group="bin"/>
+        </packFileList>
+        <packInfoList>
+          <packInfoListElem name="Package" value="ferryport" mandatory="true"/>
+          <packInfoListElem name="Version" value="1.0" mandatory="true"/>
+          <packInfoListElem name="Architecture" value="any" mandatory="false"/>
+          <packInfoListElem name="Maintainer" value="gowtham" mandatory="false"/>
+          <packInfoListElem name="Description" value="..." mandatory="false"/>
+        </packInfoList>
+      </packaging>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Debug.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Release.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-impl.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-variables.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Package-Debug.bash"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Package-Release.bash"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/configurations.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/Makefile-variables.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/configurations.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/downloads-183.82.98.147-gowtham-22"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/launcher.properties"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/private.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/private.xml.orig"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/timestamps-183.82.98.147-gowtham-22"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/project.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="MediaManager.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MediaManager.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Multimedia.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Multimedia.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="audio.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="audio.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="capture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="capture.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/README.Debian" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/README.source" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/changelog" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/compat" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/control" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/copyright" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/docs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/rules" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/source/format" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debug.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="debug.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <folder path="TestFiles/f1">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f1</output>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f2">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f2</output>
+        </linkerTool>
+      </folder>
+      <item path="ferryport.ffjson" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ffmpeg_clean.sh" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="flashplayer.html" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="libavcodec_util.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="libavcodec_util.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="man" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="mypcm.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="mypcm.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test-echo.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="tests/audioTest.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/rawPlayer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="webm_container.html" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+          </incDir>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+          </incDir>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f6</output>
+          <linkerLibItems>
+            <linkerOptionItem>`cppunit-config --libs`</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Debug.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Release.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-impl.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-variables.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Package-Debug.bash"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/Package-Release.bash"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/configurations.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/Makefile-variables.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/configurations.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/downloads-183.82.98.147-gowtham-22"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/launcher.properties"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/private.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/private.xml.orig"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/private/timestamps-183.82.98.147-gowtham-22"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/gowtham/Projects/ferryport/nbproject/project.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="MediaManager.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MediaManager.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Multimedia.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Multimedia.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="audio.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="audio.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="capture.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="capture.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/README.Debian" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/README.source" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/changelog" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/compat" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/control" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/copyright" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/docs" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/rules" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debian/source/format" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="debug.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="debug.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <folder path="TestFiles/f1">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f1</output>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f2">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f2</output>
+        </linkerTool>
+      </folder>
+      <item path="ferryport.ffjson" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ffmpeg_clean.sh" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="flashplayer.html" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="libavcodec_util.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="libavcodec_util.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="man" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="mypcm.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="mypcm.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test-echo.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="tests/audioTest.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/rawPlayer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="webm_container.html" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
