@@ -120,7 +120,7 @@ ${OBJECTDIR}/mypcm.o: mypcm.cpp
 ${OBJECTDIR}/test-echo.o: test-echo.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g -I/usr/local/ffmpeg_build/include -I. `pkg-config --cflags --cflags libv4l2`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo.o test-echo.c
+	$(COMPILE.c) -g -I. `pkg-config --cflags --cflags libv4l2`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo.o test-echo.c
 
 # Subprojects
 .build-subprojects:
@@ -260,7 +260,7 @@ ${OBJECTDIR}/test-echo_nomain.o: ${OBJECTDIR}/test-echo.o test-echo.c
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.c) -g -I/usr/local/ffmpeg_build/include -I. `pkg-config --cflags --cflags libv4l2`   -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo_nomain.o test-echo.c;\
+	    $(COMPILE.c) -g -I. `pkg-config --cflags --cflags libv4l2`   -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/test-echo_nomain.o test-echo.c;\
 	else  \
 	    ${CP} ${OBJECTDIR}/test-echo.o ${OBJECTDIR}/test-echo_nomain.o;\
 	fi

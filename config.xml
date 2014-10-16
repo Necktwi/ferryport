@@ -2,12 +2,11 @@
 <!-- be mindful of alphabetical case -->
 <config>
     <app-name></app-name>
-    <server-addr>demo.viewyourworld.com</server-addr>
-    <server-port>80</server-port>
+    <server-addr>fairplay.ferryfair.com</server-addr>
+    <server-port>17291</server-port>
     <stream-addr>fairplay.ferryfair.com</stream-addr>
     <stream-port>92711</stream-port>
-    <!--stream-addr>demo.viewyourworld.com</stream-addr>
-    <stream-port>25222</stream-port-->
+    <server-type description="REST/SOAP">REST</server-type>
     <connection-encryption description="NO-default value,TLS1_1-TLS version 1.1 encryption">NO</connection-encryption>
     <namespace>PortalvisionService</namespace>
     <bootup>false</bootup>

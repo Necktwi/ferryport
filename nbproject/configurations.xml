@@ -100,6 +100,7 @@
     <itemPath>ffmpeg_clean.sh</itemPath>
     <itemPath>flashplayer.html</itemPath>
     <itemPath>man</itemPath>
+    <itemPath>model.ffjson</itemPath>
     <itemPath>webm_container.html</itemPath>
   </logicalFolder>
   <sourceRootList>
@@ -110,14 +111,13 @@
   <confs>
     <conf name="Debug" type="1">
       <toolsSet>
-        <compilerSet>GNU|GNU</compilerSet>
+        <compilerSet>default</compilerSet>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
           <incDir>
-            <pElem>/usr/local/ffmpeg_build/include</pElem>
             <pElem>.</pElem>
           </incDir>
           <commandLine>`cppunit-config --cflags`</commandLine>
@@ -348,6 +348,8 @@
       </item>
       <item path="man" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="model.ffjson" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="mypcm.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="mypcm.h" ex="false" tool="3" flavor2="0">
@@ -569,6 +571,8 @@
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="man" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="model.ffjson" ex="false" tool="3" flavor2="0">
       </item>
       <item path="mypcm.cpp" ex="false" tool="1" flavor2="0">
       </item>
