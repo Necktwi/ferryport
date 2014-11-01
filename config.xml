@@ -2,18 +2,18 @@
 <!-- be mindful of alphabetical case -->
 <config>
     <app-name></app-name>
-    <server-addr>fairplay.ferryfair.com</server-addr>
-    <server-port>17291</server-port>
-    <stream-addr>fairplay.ferryfair.com</stream-addr>
-    <stream-port>92711</stream-port>
-    <server-type description="REST/SOAP">REST</server-type>
+    <server-addr>demo.viewyourworld.com</server-addr>
+    <server-port>80</server-port>
+    <stream-addr>demo.viewyourworld.com</stream-addr>
+    <stream-port>25222</stream-port>
+    <server-type description="REST/SOAP">SOAP</server-type>
     <connection-encryption description="NO-default value,TLS1_1-TLS version 1.1 encryption">NO</connection-encryption>
     <namespace>PortalvisionService</namespace>
     <bootup>false</bootup>
     <camcapture-compression description="if true, higher cpu utilization and low usb bandwidth">false</camcapture-compression>
     <record-fps>15</record-fps>
     <record-resolution>320x240</record-resolution>
-    <stream-fps>8</stream-fps>
+    <stream-fps>2</stream-fps>
     <stream-resolution>240x180</stream-resolution>
     <enable-mic description="captures sound from mic if its set to true">false</enable-mic>
     <manage-network>1</manage-network>
@@ -44,7 +44,7 @@
     <!--properties fetched from server during installation-->
     <system-id>1780</system-id>
     <videoStreamingType description="for ffmpeg and flash set to 'RTMP';
-                                     for FairPlay set to 'FMSP'">FMSP</videoStreamingType>
+                                     for FairPlay set to 'FMSP'">RTMP</videoStreamingType>
     <autoInsertCameras>True</autoInsertCameras>
     <pollInterval>60000</pollInterval>
     <pid>4188</pid>

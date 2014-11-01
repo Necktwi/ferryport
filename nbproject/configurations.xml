@@ -28,22 +28,22 @@
     </logicalFolder>
     <logicalFolder name="nbproject" displayName="nbproject" projectFiles="true">
       <logicalFolder name="private" displayName="private" projectFiles="true">
-        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/Makefile-variables.mk</itemPath>
-        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/configurations.xml</itemPath>
-        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/downloads-183.82.98.147-gowtham-22</itemPath>
-        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/launcher.properties</itemPath>
-        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/private.xml</itemPath>
-        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/private.xml.orig</itemPath>
-        <itemPath>/home/gowtham/Projects/ferryport/nbproject/private/timestamps-183.82.98.147-gowtham-22</itemPath>
+        <itemPath>nbproject/private/Makefile-variables.mk</itemPath>
+        <itemPath>nbproject/private/configurations.xml</itemPath>
+        <itemPath>nbproject/private/downloads-183.82.98.147-gowtham-22</itemPath>
+        <itemPath>nbproject/private/launcher.properties</itemPath>
+        <itemPath>nbproject/private/private.xml</itemPath>
+        <itemPath>nbproject/private/private.xml.orig</itemPath>
+        <itemPath>nbproject/private/timestamps-183.82.98.147-gowtham-22</itemPath>
       </logicalFolder>
-      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Makefile-Debug.mk</itemPath>
-      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Makefile-Release.mk</itemPath>
-      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Makefile-impl.mk</itemPath>
-      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Makefile-variables.mk</itemPath>
-      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Package-Debug.bash</itemPath>
-      <itemPath>/home/gowtham/Projects/ferryport/nbproject/Package-Release.bash</itemPath>
-      <itemPath>/home/gowtham/Projects/ferryport/nbproject/configurations.xml</itemPath>
-      <itemPath>/home/gowtham/Projects/ferryport/nbproject/project.xml</itemPath>
+      <itemPath>nbproject/Makefile-Debug.mk</itemPath>
+      <itemPath>nbproject/Makefile-Release.mk</itemPath>
+      <itemPath>nbproject/Makefile-impl.mk</itemPath>
+      <itemPath>nbproject/Makefile-variables.mk</itemPath>
+      <itemPath>nbproject/Package-Debug.bash</itemPath>
+      <itemPath>nbproject/Package-Release.bash</itemPath>
+      <itemPath>nbproject/configurations.xml</itemPath>
+      <itemPath>nbproject/project.xml</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -189,81 +189,6 @@
           <packInfoListElem name="Description" value="..." mandatory="false"/>
         </packInfoList>
       </packaging>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Debug.mk"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Release.mk"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-impl.mk"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-variables.mk"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/Package-Debug.bash"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/Package-Release.bash"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/configurations.xml"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/Makefile-variables.mk"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/configurations.xml"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/downloads-183.82.98.147-gowtham-22"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/launcher.properties"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/private.xml"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/private.xml.orig"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/timestamps-183.82.98.147-gowtham-22"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/project.xml"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="MediaManager.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MediaManager.h" ex="false" tool="3" flavor2="0">
@@ -353,6 +278,51 @@
       <item path="mypcm.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="mypcm.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/Makefile-Debug.mk" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/Makefile-Release.mk" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/Makefile-impl.mk" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/Makefile-variables.mk" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/Package-Debug.bash" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/Package-Release.bash" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/configurations.xml" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/private/Makefile-variables.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="nbproject/private/configurations.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="nbproject/private/downloads-183.82.98.147-gowtham-22"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="nbproject/private/launcher.properties"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="nbproject/private/private.xml" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/private/private.xml.orig" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/private/timestamps-183.82.98.147-gowtham-22"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="nbproject/project.xml" ex="false" tool="3" flavor2="0">
       </item>
       <item path="test-echo.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -413,81 +383,6 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Debug.mk"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-Release.mk"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-impl.mk"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/Makefile-variables.mk"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/Package-Debug.bash"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/Package-Release.bash"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/configurations.xml"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/Makefile-variables.mk"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/configurations.xml"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/downloads-183.82.98.147-gowtham-22"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/launcher.properties"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/private.xml"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/private.xml.orig"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/private/timestamps-183.82.98.147-gowtham-22"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/gowtham/Projects/ferryport/nbproject/project.xml"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="MediaManager.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MediaManager.h" ex="false" tool="3" flavor2="0">
@@ -577,6 +472,51 @@
       <item path="mypcm.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="mypcm.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/Makefile-Debug.mk" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/Makefile-Release.mk" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/Makefile-impl.mk" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/Makefile-variables.mk" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/Package-Debug.bash" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/Package-Release.bash" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/configurations.xml" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/private/Makefile-variables.mk"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="nbproject/private/configurations.xml"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="nbproject/private/downloads-183.82.98.147-gowtham-22"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="nbproject/private/launcher.properties"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="nbproject/private/private.xml" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/private/private.xml.orig" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="nbproject/private/timestamps-183.82.98.147-gowtham-22"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="nbproject/project.xml" ex="false" tool="3" flavor2="0">
       </item>
       <item path="test-echo.c" ex="false" tool="0" flavor2="0">
       </item>

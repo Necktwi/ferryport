@@ -914,6 +914,9 @@ public:
 		if (!camAdded) {
 			csl[cam].cam = cam;
 			csit = csl.find(cam);
+			model["system"][machineName]["cameras"][cam].setQType(FFJSON::NONE);
+			model["system"][machineName]["cameras"][cam]["state"].setQType(FFJSON::SET);
+			model["system"][machineName]["cameras"][cam]["newState"].setQType(FFJSON::QUERY);
 			if (stream_type == FMSP) {
 				csit->second.t = new pthread_t();
 				MediaManager::capture_thread_iargs* args = new MediaManager::capture_thread_iargs();
@@ -960,6 +963,9 @@ public:
 			}
 			model["system"][machineName]["cameras"][cam]["state"] = "CAM_OFF";
 			model["system"][machineName]["cameras"][cam]["newState"] = "CAM_RECORD";
+			if (strcmp(model["videoStreamingType"], "FMSP") == 0) {
+				setSId(cam, machineName + "/" + cam);
+			}
 			csit->second.state = CAM_OFF;
 			csit->second.newState = CAM_RECORD;
 		}
@@ -981,6 +987,7 @@ public:
 				pthread_timedjoin_np(*csit->second.t, NULL, &fts.ts);
 			}
 			csit = csl.erase(csit);
+			model["system"][machineName]["cameras"].erase(cam);
 			model["system"][machineName]["cameras"][cam].setQType(FFJSON::DELETE);
 			ffl_debug_contnu(FPOL_MAIN, "OK");
 		} else {
@@ -1793,10 +1800,12 @@ camState systemStateChange() {
 		xmlCleanupParser();
 	} else if (serverType == REST) {
 		string qs = model["system"].queryString();
-		cout << qs << endl;
+		ffl_debug(FPOL_MAIN, "%s", qs.c_str());
 		string res = HTTPReq(serverAddr, "", serverPort, qs);
+		ffl_debug(FPOL_MAIN, "%s", res.c_str());
 		FFJSON ansObj(res);
 		delete model["system"].answerObject(&ansObj);
+		cs = CAM_NEW_STATE;
 	}
 	fflush(stdout);
 	return cs;
@@ -1901,9 +1910,10 @@ void run() {
 			time_t presentRunTime;
 			time_t previousRunTime;
 			if (serverType == REST) {
-				FFJSON* model = new FFJSON(FFJSON::OBJECT);
+				model["system"][machineName]["signalstrength"].setQType(FFJSON::SET);
+				model["system"][machineName]["ip"].setQType(FFJSON::SET);
+				model["system"][machineName]["location"].setQType(FFJSON::SET);
 			}
-
 			while (true) {
 				previousRunTime = presentRunTime;
 				time(&presentRunTime);

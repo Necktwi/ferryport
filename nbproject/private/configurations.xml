@@ -36,7 +36,7 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" --config-file config.xml -s normal</runcommandpicklistitem>
         </runcommandpicklist>
         <runcommand>"${OUTPUT_PATH}" --config-file config.xml -s normal</runcommand>
-        <rundir>/home/gowtham/Projects/ferryport</rundir>
+        <rundir>~/Projects/ferryport</rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
         <remove-instrumentation>0</remove-instrumentation>

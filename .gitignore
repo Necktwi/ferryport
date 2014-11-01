@@ -2,6 +2,7 @@ ffmpeg_build/
 ffmpeg_sources/
 libav_output_files/
 ferrymediacapture1/
+build/
 dist/
 var/tmp/
 .bzr/

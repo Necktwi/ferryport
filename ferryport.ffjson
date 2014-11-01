@@ -1,4 +1,4 @@
 {
-    StoreRecords:true,
-    StoreLog:true
+    StoreRecords: true,
+    StoreLog: true
 }
