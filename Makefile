@@ -120,7 +120,7 @@ help: .help-post
 # Add your post 'help' code here...
 
 install:
-	install -m644 -D config.xml $(DESTDIR)/etc/${APPNAME}.conf.xml
+	install -m644 -D config.ffjson $(DESTDIR)/etc/${APPNAME}.conf.ffjson
 	install -m644 -D wvdial.conf $(DESTDIR)/etc/wvdial.conf
 	install -m644 -D devices.rules $(DESTDIR)/lib/udev/rules.d/50-${APPNAME}.rules
 	install -m644 -D init.conf $(DESTDIR)/etc/init/${APPNAME}.conf

@@ -1,0 +1,94 @@
+{
+	appName: "",
+	
+	serverAddress: "demo.viewyourworld.com",
+	
+	serverPort: 80,
+	
+	streamAddress: "demo.viewyourworld.com",
+	
+	streamPort: 25222,
+
+	#serverType: "REST/SOAP",
+	serverType: "SOAP",
+
+	#connectionEncryption: "NO-default value,TLS1_1-TLS version 1.1 encryption",
+	connectionEncryption: "NO",
+
+	namespace: "PortalvisionService",
+	
+	bootup: false,
+	
+	camcaptureCompression: false,
+	
+	recordFps: 15,
+	
+	recordResolution: "320x240",
+	
+	streamFps: 8,
+	
+	streamResolution: "240x180",
+
+	#enableMic: "captures sound from mic if its set to true",
+	enableMic: false,
+	
+	manageNetwork: 1,
+
+	#reconnectDuration: "time to reconnect in minutes when network disconnected",
+	reconnectDuration: 2,
+	
+	reconnectPollCount: 2,
+
+	#mobileBroadbandConnection: "if u use wvdial to connect set it to 'wvdial' without quotes or if u use network manager set it to connection name. If connection name contains spaces, put it in double quotes",
+	mobileBroadbandConnection: "wvdial",
+
+	#configModem: "to run wvdialconf at startup put it true default false",
+	configModem: false,
+
+	#mobileModemVendorProductId: "colon separated vendor id and product id of mobile modem",
+	mobileModemVendorProductId: "19d2:fff1",
+
+	#usbHubVendorProductId: "colon separated vendor id and product id of mobile modem",
+	usbHubVendorProductId: "05e3:0608",
+
+	internetTestURL: "www.google.com",
+	
+	corporateNetworkGateway: "192.168.2.1",
+	
+	gpsDevice: "/dev/ttyO1",
+	
+	gpsSDeviceBaudrate: 9600,
+
+	#gpsProtocol: "Either of these: GPS_PROTO_LOCAL, GPS_PROTO_NMEA0183",
+	gpsProtocol: "GPS_PROTO_NMEA0183",
+
+	#debug: "
+		debug value in context of 
+		basic=1,
+		spawn=2,
+		socket=4,
+		gps=8,
+		MediaManager=16,
+		low-level calls like signalHandler, spawn = 32,
+		pcm=64,
+		video capture=128,
+		video capture low level or frequent log = 256,
+		libavencoder=512
+    ",
+	debug: 145,
+
+	#cmosBatt: "true if main-board has CMOS battery else false",
+	cmosBatt: false,
+	
+	systemId: 1780,
+
+	#videoStreamingType: "
+		for ffmpeg and flash set to 'RTMP';
+		for FairPlay set to 'FMSP'
+	",
+	videoStreamingType: "RTMP",
+	
+	autoInsertCameras: true,
+	pollInterval: 60000,
+	pid: 4188
+}

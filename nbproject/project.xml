@@ -27,5 +27,55 @@
                 <project-formatting-style>false</project-formatting-style>
             </formatting>
         </data>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>appName</word>
+            <word>autoInsertCameras</word>
+            <word>bootup</word>
+            <word>camcaptureCompression</word>
+            <word>cmosBatt</word>
+            <word>configModem</word>
+            <word>connectionEncryption</word>
+            <word>corporateNetworkGateway</word>
+            <word>enableMic</word>
+            <word>FairPlay</word>
+            <word>ffmpeg</word>
+            <word>FMSP</word>
+            <word>GPS</word>
+            <word>gpsDevice</word>
+            <word>gpsProtocol</word>
+            <word>gpsSdeviceBaudrate</word>
+            <word>internetTestUrl</word>
+            <word>libavencoder</word>
+            <word>manageNetwork</word>
+            <word>MediaManager</word>
+            <word>mobileBroadbandConnection</word>
+            <word>mobileModemVendorProductId</word>
+            <word>namespace</word>
+            <word>NMEA</word>
+            <word>pcm</word>
+            <word>pid</word>
+            <word>pollInterval</word>
+            <word>PortalvisionService</word>
+            <word>reconnectDuration</word>
+            <word>reconnectPollCount</word>
+            <word>recordFps</word>
+            <word>recordResolution</word>
+            <word>RTMP</word>
+            <word>serverAddress</word>
+            <word>serverPort</word>
+            <word>serverType</word>
+            <word>signalHandler</word>
+            <word>streamAddress</word>
+            <word>streamFps</word>
+            <word>streamPort</word>
+            <word>streamResolution</word>
+            <word>systemId</word>
+            <word>TLS</word>
+            <word>usbHubVendorProductId</word>
+            <word>videoStreamingType</word>
+            <word>viewyourworld</word>
+            <word>wvdial</word>
+            <word>wvdialconf</word>
+        </spellchecker-wordlist>
     </configuration>
 </project>

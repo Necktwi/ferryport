@@ -96,11 +96,11 @@
       <itemPath>ttyO1_armhf.com-00A0.dtbo</itemPath>
       <itemPath>wvdial.conf</itemPath>
     </logicalFolder>
+    <itemPath>config.ffjson</itemPath>
     <itemPath>ferryport.ffjson</itemPath>
     <itemPath>ffmpeg_clean.sh</itemPath>
     <itemPath>flashplayer.html</itemPath>
     <itemPath>man</itemPath>
-    <itemPath>model.ffjson</itemPath>
     <itemPath>webm_container.html</itemPath>
   </logicalFolder>
   <sourceRootList>
@@ -205,6 +205,8 @@
       </item>
       <item path="capture.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="config.ffjson" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="debian/README.Debian" ex="false" tool="3" flavor2="0">
       </item>
       <item path="debian/README.source" ex="false" tool="3" flavor2="0">
@@ -272,8 +274,6 @@
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="man" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="model.ffjson" ex="false" tool="3" flavor2="0">
       </item>
       <item path="mypcm.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -399,6 +399,8 @@
       </item>
       <item path="capture.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="config.ffjson" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="debian/README.Debian" ex="false" tool="3" flavor2="0">
       </item>
       <item path="debian/README.source" ex="false" tool="3" flavor2="0">
@@ -466,8 +468,6 @@
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="man" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="model.ffjson" ex="false" tool="3" flavor2="0">
       </item>
       <item path="mypcm.cpp" ex="false" tool="1" flavor2="0">
       </item>

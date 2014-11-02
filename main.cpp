@@ -99,6 +99,7 @@ static void camStateStringInit() {
 
 static void camStringStateInit() {
 	camStringState["CAM_PREVIOUS_STATE"] = CAM_PREVIOUS_STATE;
+	camStringState[""] = CAM_PREVIOUS_STATE;
 	camStringState["CAM_NEW_STATE"] = CAM_NEW_STATE;
 	camStringState["CAM_OFF"] = CAM_OFF;
 	camStringState["CAM_RECORD"] = CAM_RECORD;
@@ -121,7 +122,7 @@ string securityKey;
 string videoStreamingType;
 string pollInterval;
 string autoInsertCameras;
-string configFile = "/etc/" APP_NAME ".conf.xml";
+string configFile = "/etc/" APP_NAME ".conf.ffjson";
 string camFolder = "/dev/";
 bool camcaptureCompression;
 string recordResolution;
@@ -175,6 +176,8 @@ time_t timeGapToCorrectTime;
 bool internetTimeUpdated = false;
 bool enable_mic = false;
 FFJSON model;
+unsigned int duration = 0;
+unsigned int starttime = time(NULL);
 
 bool allCams = false;
 string reqCam;
@@ -628,7 +631,8 @@ bool GPSManager::bt_respawn;
 GPSManager::GPSProto GPSManager::gp;
 GPSManager::gps_type GPSManager::gt = GPSManager::RS232;
 int GPSManager::initConnectTrials = 10;
-const char* GPSManager::gpsProtoStr[] = {"GPS_PROTO_UNKNOWN", "GPS_PROTO_LOCAL", "GPS_PROTO_NMEA0183"};
+const char* GPSManager::gpsProtoStr[] = {"GPS_PROTO_UNKNOWN", "GPS_PROTO_LOCAL",
+	"GPS_PROTO_NMEA0183"};
 
 class RecordsManager {
 public:
@@ -1326,144 +1330,88 @@ string generateSecurityKey() {
 }
 
 void readConfig() {
-	std::ifstream t("model.ffjson");
+	std::ifstream t;
+	t.open(configFile.c_str());
+	if (!t.is_open()) {
+		configFile = "config.ffjson";
+		t.open(configFile.c_str());
+		if (!t.is_open()) {
+			ffl_err(FPOL_MAIN, "configuration file not found!");
+			return;
+		}
+	}
 	std::string ffjson((std::istreambuf_iterator<char>(t)),
 			std::istreambuf_iterator<char>());
+	t.close();
 	model.init(ffjson);
 	machineName = getMachineName();
-	xmlInitParser();
-	struct stat st;
-	xmlDoc * xd;
-	if (stat(configFile.c_str(), &st) != -1) {
-		xd = xmlParseFile(configFile.c_str());
-	} else {
-		xd = xmlParseFile("config.xml");
-	}
-	if (xd == NULL) {
-		cout << "\n" << getTime() << " " << "readConfig : config file not found!\n";
-		return;
-	}
-	xmlXPathContext *xc = xmlXPathNewContext(xd);
-	xmlXPathObject* xo = xmlXPathEvalExpression((xmlChar*) "/config/server-addr", xc);
-	xmlNode* node;
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/server-addr", xc);
-	node = xo->nodesetval->nodeTab[0];
-	serverAddr = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/server-port", xc);
-	node = xo->nodesetval->nodeTab[0];
-	serverPort = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/stream-addr", xc);
-	node = xo->nodesetval->nodeTab[0];
-	streamAddr = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/stream-port", xc);
-	node = xo->nodesetval->nodeTab[0];
-	streamPort = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/connection-encryption", xc);
-	node = xo->nodesetval->nodeTab[0];
-	string et = string((char*) xmlNodeGetContent(node));
+	serverAddr.assign(model["serverAddress"]);
+	serverPort = to_string((int) model["serverPort"]);
+	streamAddr.assign((const char*) model["streamAddress"]);
+	streamPort = to_string((int) model["streamPort"]);
+	string prop = "connectionEncryption";
+	string et = string((const char*) model[prop]);
 	socketType = (et.compare("NO") == 0) ? Socket::DEFAULT : ((et.compare("TLS1_1") == 0) ? Socket::TLS1_1 : Socket::DEFAULT);
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/app-name", xc);
-	node = xo->nodesetval->nodeTab[0];
-	appName = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/namespace", xc);
-	node = xo->nodesetval->nodeTab[0];
-	xmlnamespace = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/debug", xc);
-	node = xo->nodesetval->nodeTab[0];
-	debug = atoi((char*) xmlNodeGetContent(node));
+	appName.assign(model["appName"]);
+	xmlnamespace = string((const char*) model["namespace"]);
+	debug = model["debug"];
 	ff_log_level = debug;
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/camcapture-compression", xc);
-	node = xo->nodesetval->nodeTab[0];
-	camcaptureCompression = (string((char*) xmlNodeGetContent(node)).compare("true") == 0);
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/record-fps", xc);
-	node = xo->nodesetval->nodeTab[0];
-	recordfps = string((char*) xmlNodeGetContent(node));
-	rfps = atoi(recordfps.c_str());
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/record-resolution", xc);
-	node = xo->nodesetval->nodeTab[0];
-	recordResolution = string((char*) xmlNodeGetContent(node));
+	prop = "camcaptureCompression";
+	camcaptureCompression = model[prop];
+	recordfps = to_string((int) model["recordFps"]);
+	rfps = model["recordFps"];
+	prop = "recordResolution";
+	recordResolution = string((const char*) model[prop]);
 	int p = recordResolution.find("x");
 	recordWidth = atoi(recordResolution.substr(0, p).c_str());
 	recordHeight = atoi(recordResolution.substr(p + 1).c_str());
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/stream-fps", xc);
-	node = xo->nodesetval->nodeTab[0];
-	streamfps = string((char*) xmlNodeGetContent(node));
-	sfps = atoi(streamfps.c_str());
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/stream-resolution", xc);
-	node = xo->nodesetval->nodeTab[0];
-	streamResolution = string((char*) xmlNodeGetContent(node));
+	prop = "streamFps";
+	streamfps = to_string((int) model["streamFps"]);
+	sfps = model["streamFps"];
+	prop = "streamResolution";
+	streamResolution = string((const char*) model[prop]);
 	p = streamResolution.find("x");
 	streamWidth = atoi(streamResolution.substr(0, p).c_str());
 	streamHeight = atoi(streamResolution.substr(p + 1).c_str());
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/manage-network", xc);
-	node = xo->nodesetval->nodeTab[0];
-	manageNetwork = atoi((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/reconnect-duration", xc);
-	node = xo->nodesetval->nodeTab[0];
-	reconnectDuration = atoi((char*) xmlNodeGetContent(node))*60;
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/reconnect-poll-count", xc);
-	node = xo->nodesetval->nodeTab[0];
-	reconnectPollCount = atoi((char*) xmlNodeGetContent(node));
+	prop = "manageNetwork";
+	manageNetwork = model[prop];
+	prop = "reconnectDuration";
+	reconnectDuration = model[prop];
+	prop = "reconnectPollCount";
+	reconnectPollCount = model[prop];
 	reconnectPollCountCopy = reconnectPollCount;
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/mobile-broadband-connection", xc);
-	node = xo->nodesetval->nodeTab[0];
-	mobileBroadbandCon = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/mobile-modem-vendor-product-id", xc);
-	node = xo->nodesetval->nodeTab[0];
-	mobileModemVendorProductID = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/usb-hub-vendor-product-id", xc);
-	node = xo->nodesetval->nodeTab[0];
-	usbHubVendorProductID = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/config-modem", xc);
-	node = xo->nodesetval->nodeTab[0];
-	configModem = (string((char*) xmlNodeGetContent(node)).compare("true") == 0);
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/internet-test-url", xc);
-	node = xo->nodesetval->nodeTab[0];
-	internetTestURL = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/corporate-network-gateway", xc);
-	node = xo->nodesetval->nodeTab[0];
-	corpNWGW = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/gps-device", xc);
-	node = xo->nodesetval->nodeTab[0];
-	gpsDevice = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/gps-sdevice-baudrate", xc);
-	node = xo->nodesetval->nodeTab[0];
-	gpsSDeviceBaudrate = string((char*) xmlNodeGetContent(node));
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/gps-protocol", xc);
-	node = xo->nodesetval->nodeTab[0];
-	string gp = string((char*) xmlNodeGetContent(node));
+	prop = "mobileBroadbandConnection";
+	mobileBroadbandCon = string((const char*) model[prop]);
+	prop = "mobileModemVendorProductId";
+	mobileModemVendorProductID = string((const char*) model[prop]);
+	prop = "usbHubVendorProductId";
+	usbHubVendorProductID = string((const char*) model[prop]);
+	prop = "configModem";
+	configModem = model[prop];
+	internetTestURL = string((const char*) model["internetTestURL"]);
+	prop = "corporateNetworkGateway";
+	corpNWGW = string((const char*) model[prop]);
+	gpsDevice = string((const char*) model["gpsDevice"]);
+	gpsSDeviceBaudrate = to_string((int) model["gpsSDeviceBaudrate"]);
+	string gp = string((const char*) model["gpsProtocol"]);
 	GPSManager::gp = gp.compare("GPS_PROTO_LOCAL") == 0 ? GPSManager::GPSProto::GPS_PROTO_LOCAL : (gp.compare("GPS_PROTO_NMEA0183") == 0 ? GPSManager::GPSProto::GPS_PROTO_NMEA0183 : GPSManager::GPSProto::GPS_PROTO_UNKNOWN);
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/server-type", xc);
-	node = xo->nodesetval->nodeTab[0];
-	string stt = string((char*) xmlNodeGetContent(node));
+	string stt = string((const char*) model["serverType"]);
 	serverType = (stt.compare("SOAP") == 0) ? ServerType::SOAP : ((stt.compare("REST") == 0) ? ServerType::REST : ServerType::SOAP);
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/cmos-batt", xc);
-	node = xo->nodesetval->nodeTab[0];
-	CMOSWorking = string((char*) xmlNodeGetContent(node)).compare("true") == 0 ? true : false;
-	xo = xmlXPathEvalExpression((xmlChar*) "/config/system-id", xc);
-	if (xo->nodesetval->nodeNr > 0) {
-		node = xo->nodesetval->nodeTab[0];
-		systemId = string((char*) xmlNodeGetContent(node));
-		xo = xmlXPathEvalExpression((xmlChar*) "/config/videoStreamingType", xc);
-		node = xo->nodesetval->nodeTab[0];
-		videoStreamingType = string((char*) xmlNodeGetContent(node));
+	CMOSWorking = model["cmosBatt"];
+	prop = "systemId";
+	if (model["systemId"]) {
+		systemId = to_string((int) model["systemId"]);
+		videoStreamingType = string((const char*) model["videoStreamingType"]);
 		if (videoStreamingType.compare("FMSP") == 0) {
 			stream_type = FMSP;
 		} else if (videoStreamingType.compare("RTMP") == 0) {
 			stream_type = RTMP;
 		}
-		xo = xmlXPathEvalExpression((xmlChar*) "/config/enable-mic", xc);
-		node = xo->nodesetval->nodeTab[0];
-		enable_mic = (string((char*) xmlNodeGetContent(node)).compare("true") == 0);
-		xo = xmlXPathEvalExpression((xmlChar*) "/config/pollInterval", xc);
-		node = xo->nodesetval->nodeTab[0];
-		pollInterval = string((char*) xmlNodeGetContent(node));
-		xo = xmlXPathEvalExpression((xmlChar*) "/config/autoInsertCameras", xc);
-		node = xo->nodesetval->nodeTab[0];
-		autoInsertCameras = string((char*) xmlNodeGetContent(node));
+		enable_mic = model["enableMic"];
+		pollInterval = to_string((int) model["pollInterval"]);
+		autoInsertCameras = model["autoInsertCameras"] ? "true" : "false";
 	}
 	securityKey = generateSecurityKey();
-	xmlCleanupParser();
 }
 
 void writeConfigValue(string name, string value) {
@@ -1494,6 +1442,11 @@ void writeConfigValue(string name, string value) {
 	FILE *fp = fopen(configFile.c_str(), "w");
 	fwrite((char*) s, 1, size, fp);
 	fclose(fp);
+	free(xc);
+	free(rxo);
+	free(xo);
+	xmlFreeDoc(xd);
+	xmlCleanupParser();
 }
 
 string readConfigValue(string name) {
@@ -1515,6 +1468,9 @@ string readConfigValue(string name) {
 	} else {
 		return "";
 	}
+	free(xc);
+	free(xo);
+	xmlFreeDoc(xd);
 	xmlCleanupParser();
 }
 
@@ -1821,6 +1777,7 @@ void print_usage(FILE* stream, int exit_code, char* program_name) {
 			"\n-k --keyInstall Installs " APP_NAME " with key given by user."
 			"\n-r --reinstall Reinstall the " APP_NAME ""
 			"\n-s --start=\033[4mTYPE\033[0m Runs client. If \033[4mTYPE\033[0m is 'daemon' " APP_NAME " runs as daemon. If \033[4mTYPE\033[0m is 'normal' " APP_NAME " runs normally."
+			"\n-t --time <seconds> runs the program of duration <seconds>"
 			"\n-u --uninstall Uninstalls " APP_NAME "."
 			"\n-x --stop Terminates " APP_NAME "."
 			"\n---------------------------"
@@ -1914,7 +1871,7 @@ void run() {
 				model["system"][machineName]["ip"].setQType(FFJSON::SET);
 				model["system"][machineName]["location"].setQType(FFJSON::SET);
 			}
-			while (true) {
+			while (true && (duration == 0 || duration > (time(NULL) - starttime))) {
 				previousRunTime = presentRunTime;
 				time(&presentRunTime);
 				if (presentRunTime - previousRunTime <= 10) {
@@ -2095,7 +2052,7 @@ void instReInstComCode(string sk) {
 	string content = (string) "<UpdateSystemInstallStatus xmlns='" + xmlnamespace + "'><SecurityKey>" + sk + "</SecurityKey><InstallStatus>1</InstallStatus></UpdateSystemInstallStatus>";
 	string res = reqSOAPService("UpdateSystemInstallStatus", (xmlChar*) content.c_str());
 	if ((int) res.find(">1<", 0) != -1) {
-		writeConfigValue("system-id", sk);
+		model["systemId"] = stoi(sk);
 		securityKey = sk;
 		content = "<AddSystem xmlns=\"" + xmlnamespace + "\"><SystemSecurityKey>" + securityKey + "</SystemSecurityKey><SystemName>" + getMachineName() + "</SystemName><IPAddress /></AddSystem>";
 		res = reqSOAPService("AddSystem", (xmlChar*) content.c_str());
@@ -2111,10 +2068,9 @@ void instReInstComCode(string sk) {
 				videoStreamingType = string((char*) xmlNodeGetContent(node->children->next));
 				autoInsertCameras = string((char*) xmlNodeGetContent(node->children->next->next));
 				pollInterval = string((char*) xmlNodeGetContent(node->children->next->next->next));
-				writeConfigValue("videoStreamingType", videoStreamingType);
-				writeConfigValue("autoInsertCameras", autoInsertCameras);
-				writeConfigValue("pollInterval", pollInterval);
-				xmlCleanupParser();
+				model["videoStreamingType"] = videoStreamingType;
+				model["autoInsertCameras"] = (autoInsertCameras.compare("true") == 0) ? true : false;
+				model["pollInterval"] = stoi(pollInterval);
 				struct stat st;
 				if (stat(initFile.c_str(), &st) != -1) {
 					cout << "\nAllowing to run " APP_NAME " at startup...";
@@ -2122,15 +2078,20 @@ void instReInstComCode(string sk) {
 						string rmfcmd = "rm " + initOverrideFile;
 						system(rmfcmd.c_str());
 					}
-					writeConfigValue("bootup", "true");
+					model["bootup"] = true;
 					cout << "ok\n";
 				} else {
 					cout << "\nInstall " APP_NAME " in first.\n";
 				}
+				ofstream cfile;
+				cfile.open(configFile.c_str(), ios::trunc);
+				cfile << model.prettyString();
+				cfile.close();
 				cout << "\n" APP_NAME " installed successfully :D"
 						"\nDo u wanna start " APP_NAME " now? [Y/n]: ";
+				fflush(stdin);
 				string input = inputText();
-				cout << "\n";
+				cout << endl;
 				if (input.length() == 0 || tolower(input).compare("y") == 0) {
 					string cmd = "start " + string(APP_NAME);
 					system(cmd.c_str());
@@ -2152,41 +2113,44 @@ void instReInstComCode(string sk) {
 
 void configure() {
 	readConfig();
-	cout << "\nCurrent " APP_NAME " configuration:\n----------------------------";
-	cout << "\napp-name:\t" + appName;
+	cout << "\nCurrent " APP_NAME " configuration:"
+			"\n----------------------------\n";
+	/*cout << "\napp-name:\t" + appName;
 	cout << "\nserver-addr:\t" + serverAddr;
 	cout << "\nserver-port:\t" + serverPort;
 	cout << "\nstream-addr:\t" + streamAddr;
 	cout << "\nstream-port:\t" + streamPort;
-	cout << "\nserver-type:\\t" + (serverType == SOAP ? string("SOAP") : string("REST"));
-	cout << "\nconnection-encryption:\t" + readConfigValue("connection-encryption");
+	cout << "\nserver-type:\t" + (serverType == SOAP ? string("SOAP") : string("REST"));
+	cout << "\nconnection-encryption:\t" << (const char*) model["connectionEncryption"];
 	cout << "\nnamespace:\t" + xmlnamespace;
-	cout << "\ncamcapture-compression:\t" + readConfigValue("camcapture-compression");
+	cout << "\ncamcapture-compression:\t" << camcaptureCompression;
 	cout << "\nrecord-fps:\t" + recordfps;
 	cout << "\nrecord-resolution:\t" + recordResolution;
 	cout << "\nstream-fps:\t" + streamfps;
 	cout << "\nstream-resolution:\t" + streamResolution;
-	cout << "\nbootup:\t" + readConfigValue("bootup");
+	cout << "\nbootup:\t" << (bool)model["bootup"];
 	cout << "\nsystem-id:\t" + systemId;
 	cout << "\nvideoStreamingType:\t" << stream_type_str[stream_type];
 	cout << "\nenable-mic:\t" << (enable_mic ? "true" : "false");
 	cout << "\nautoInsertCameras:\t" + autoInsertCameras;
 	cout << "\npollInterval:\t" + pollInterval;
-	cout << "\nmanage-network:\t" + string(itoa(manageNetwork));
+	cout << "\nmanage-network:\t" << manageNetwork;
 	cout << "\nreconnect-poll-count:\t" + string(itoa(reconnectPollCount));
 	cout << "\nreconnect-duration:\t" + string(itoa(reconnectDuration / 60));
 	cout << "\ninternet-test-url:\t" + internetTestURL;
 	cout << "\nmobile-broadband-connection:\t" + mobileBroadbandCon;
 	cout << "\nmobile-modem-vendor-product-id:\t" + mobileModemVendorProductID;
 	cout << "\nusb-hub-vendor-product-id:\t" + usbHubVendorProductID;
-	cout << "\nconfig-modem:\t" + readConfigValue("config-modem");
+	cout << "\nconfig-modem:\t" << configModem;
 	cout << "\ncorporate-network-gateway:\t" + corpNWGW;
 	cout << "\ngps-device:\t" + gpsDevice;
 	cout << "\ngps-sdevice-baudrate:\t" + gpsSDeviceBaudrate;
 	cout << "\ngps-protocol:\t" << (const char*) GPSManager::gpsProtoStr[GPSManager::gp];
 	cout << "\ndebug:\t" + string(itoa(debug));
-	cout << "\ncmos-batt:\t" + readConfigValue("cmos-batt");
-	cout << "\n-------------------------\nSet or Add configuration property\n";
+	cout << "\ncmos-batt:\t" << CMOSWorking;*/
+	cout << model.prettyString() << endl;
+	cout << "\n-------------------------\n"
+			"Set or Add configuration property\n";
 	string pn;
 	string val;
 	while (true) {
@@ -2207,7 +2171,7 @@ void configure() {
 								string rmfcmd = "rm " + initOverrideFile;
 								system(rmfcmd.c_str());
 							}
-							writeConfigValue(pn, val);
+							model[pn] = true;
 							cout << "ok\n";
 						} else {
 							cout << "\nInstall " APP_NAME " in first.\n";
@@ -2221,7 +2185,7 @@ void configure() {
 								write(fd, buf.c_str(), buf.length());
 								close(fd);
 							}
-							writeConfigValue(pn, val);
+							model[pn] = false;
 							cout << "ok\n";
 						} else {
 							cout << "\nInstall " APP_NAME " in first.\n";
@@ -2229,14 +2193,22 @@ void configure() {
 					}
 				}
 			} else {
-				writeConfigValue(pn, val);
+				model[pn].freeObj();
+				model[pn].init(val);
+				if (model.isType(FFJSON::UNDEFINED)) {
+					model[pn] = val;
+				}
 			}
 		} else {
-			cout << "\n";
+			cout << endl;
 			fflush(stdout);
 			break;
 		}
 	}
+	ofstream omodelf;
+	omodelf.open(configFile, ios::trunc);
+	omodelf << model.prettyString();
+	omodelf.close();
 }
 
 bool networkManagerRunning = false;
@@ -2863,7 +2835,7 @@ int main(int argc, char** argv) {
 	sigaction(SIGUSR1, &signalaction_struct, NULL);
 	sigaction(SIGUSR2, &signalaction_struct, NULL);
 	int next_option;
-	const char* short_options = "cdf:hikrs:tux";
+	const char* short_options = "cdf:hikrs:t:ux";
 	string opt;
 	const struct option long_options[] = {
 		{"configure", 0, NULL, 'c'},
@@ -2874,7 +2846,7 @@ int main(int argc, char** argv) {
 		{"keyInstall", 0, NULL, 'k'},
 		{"reinstall", 0, NULL, 'r'},
 		{"start", 1, NULL, 's'},
-		{"test", 0, NULL, 't'},
+		{"time", 1, NULL, 't'},
 		{"uninstall", 0, NULL, 'u'},
 		{"stop", 0, NULL, 'x'},
 		{NULL, 0, NULL, 0}
@@ -2923,10 +2895,7 @@ int main(int argc, char** argv) {
 				reinstallKey();
 				break;
 			case 't':
-				//                pthread_t test_thread;
-				//                pthread_create(&test_thread, NULL, &test, NULL);
-				//                pthread_join(test_thread, NULL);
-				test(NULL);
+				duration = std::stoi(optarg);
 				break;
 			case 'f':
 				configFile = string(optarg);

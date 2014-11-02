@@ -1,6 +1,6 @@
-ferryport (1.0-0ubuntu5) trusty; urgency=low
+ferryport (1.0-0ubuntu6) trusty; urgency=low
 
-  * ffmpeg isolated (Closes: #1)
-   - Its all good
+  * model implemented (Closes: #1)
+   - might be some unknown bugs
 
- -- Satya Gowtham Kudupudi (necktwi) <satyagowtham.k@gmail.com>  Sun, 21 Sept 2014 04:24:55 +0530
+ -- Satya Gowtham Kudupudi (necktwi) <satyagowtham.k@gmail.com>  Sat, 1 Nov 2014 22:13:55 +0530
