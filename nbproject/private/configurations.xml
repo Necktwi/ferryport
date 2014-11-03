@@ -26,7 +26,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t > libav</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t &lt; /dev/urandom</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t > libav_output_files/snd_capture.wav</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t &lt; libav_output_files/snd_capture.wav</runcommandpicklistitem>
@@ -36,8 +35,9 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" --config-file config.xml -s normal</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -c</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -i</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" -c</runcommand>
+        <runcommand>"${OUTPUT_PATH}" -i</runcommand>
         <rundir>~/Projects/ferryport</rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

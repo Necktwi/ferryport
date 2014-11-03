@@ -74,7 +74,7 @@
 		video capture=128,
 		video capture low level or frequent log = 256,
 		libavencoder=512
-    ",
+	",
 	debug: 145,
 
 	#cmosBatt: "true if main-board has CMOS battery else false",

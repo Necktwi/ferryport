@@ -2113,9 +2113,9 @@ void instReInstComCode(string sk) {
 
 void configure() {
 	readConfig();
-	cout << "\nCurrent " APP_NAME " configuration:"
+	/*cout << "\nCurrent " APP_NAME " configuration:"
 			"\n----------------------------\n";
-	/*cout << "\napp-name:\t" + appName;
+	cout << "\napp-name:\t" + appName;
 	cout << "\nserver-addr:\t" + serverAddr;
 	cout << "\nserver-port:\t" + serverPort;
 	cout << "\nstream-addr:\t" + streamAddr;
@@ -2195,7 +2195,7 @@ void configure() {
 			} else {
 				model[pn].freeObj();
 				model[pn].init(val);
-				if (model.isType(FFJSON::UNDEFINED)) {
+				if (model[pn].isType(FFJSON::UNDEFINED)) {
 					model[pn] = val;
 				}
 			}
