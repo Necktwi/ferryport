@@ -2666,6 +2666,7 @@ void* networkManager(void* arg) {
 sleep_enough_time:
 		sleep((int) remainingSleepTime);
 		time(&nm_presentCheckTime);
+		if (nm_presentCheckTime < nm_previousCheckTime)nm_previousCheckTime = nm_presentCheckTime;
 		waitInterval = nm_presentCheckTime - nm_previousCheckTime;
 		if (waitInterval >= reconnectDuration) {
 			nm_previousCheckTime = nm_presentCheckTime;
