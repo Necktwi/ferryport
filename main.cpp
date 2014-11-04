@@ -918,9 +918,10 @@ public:
 		if (!camAdded) {
 			csl[cam].cam = cam;
 			csit = csl.find(cam);
-			model["system"][machineName]["cameras"][cam].setQType(FFJSON::NONE);
-			model["system"][machineName]["cameras"][cam]["state"].setQType(FFJSON::SET);
-			model["system"][machineName]["cameras"][cam]["newState"].setQType(FFJSON::QUERY);
+			FFJSON& ffcam = model["system"][machineName]["cameras"][cam];
+			ffcam.setQType(FFJSON::NONE);
+			ffcam["state"].setQType(FFJSON::SET);
+			ffcam["newState"].setQType(FFJSON::QUERY);
 			if (stream_type == FMSP) {
 				csit->second.t = new pthread_t();
 				MediaManager::capture_thread_iargs* args = new MediaManager::capture_thread_iargs();
@@ -965,8 +966,8 @@ public:
 				(*args->outputs)[1].signalNewState = 0;
 				pthread_create(csit->second.t, NULL, &MediaManager::capture, (void*) (args));
 			}
-			model["system"][machineName]["cameras"][cam]["state"] = "CAM_OFF";
-			model["system"][machineName]["cameras"][cam]["newState"] = "CAM_RECORD";
+			ffcam["state"] = "CAM_OFF";
+			ffcam["newState"] = "CAM_RECORD";
 			if (strcmp(model["videoStreamingType"], "FMSP") == 0) {
 				setSId(cam, machineName + "/" + cam);
 			}
@@ -2638,8 +2639,7 @@ void usb_reset(string device) {
 		int rc = ioctl(fd, USBDEVFS_RESET, 0);
 		if (rc < 0) {
 			volatile_usb_hub_reset_interval = 10;
-			cerr << "\n" << getTime() << " usb_reset: Error in ioctl on " << device << ".\n";
-			ffl_err(FPOL_LL, "usb_reset: Error in ioctl on %s", device.c_str());
+			ffl_err(FPOL_MAIN, "usb_reset: Error in ioctl on %s", device.c_str());
 		} else {
 			ffl_warn(FPOL_LL, "usb_reset: ioctl reset on %s successful", device.c_str());
 		}
@@ -2693,12 +2693,15 @@ sleep_enough_time:
 										set_bus_device_file_name(usbHubVendorProductID, usb_hub_bus_device_file_name);
 										usb_reset(usb_hub_bus_device_file_name);
 										sleep(2);
+										setPaths();
 										time(&hub_last_reset_time);
 										//mobile_modem_disconnect_toggle = true;
 									}
 								} else if ((int) wvdialerrstr.find("Modem not responding", 0) > 0) {
 									set_bus_device_file_name(mobileModemVendorProductID, mobile_modem_bus_device_file_name);
 									usb_reset(mobile_modem_bus_device_file_name);
+									sleep(2);
+									setPaths();
 								}
 								sleep(2);
 								wvdial = new spawn("wvdial", true, NULL, true, false);

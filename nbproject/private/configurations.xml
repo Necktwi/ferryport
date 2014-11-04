@@ -30,14 +30,14 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t > libav_output_files/snd_capture.wav</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t &lt; libav_output_files/snd_capture.wav</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -s daemon</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -s normal</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" --config-file config.xml -s daemon</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" --config-file config.xml -s normal</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -c</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -i</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -s normal</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" -i</runcommand>
+        <runcommand>"${OUTPUT_PATH}" -s normal</runcommand>
         <rundir>~/Projects/ferryport</rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

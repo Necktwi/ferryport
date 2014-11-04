@@ -9,22 +9,19 @@
             <url>main.cpp</url>
             <bookmark id="1">
                 <name/>
-                <line>1074</line>
+                <line>1075</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>ferryport.ffjson</file>
-            <file>Multimedia.cpp</file>
-            <file>main.cpp</file>
-            <file>config.xml</file>
-            <file>debug.h</file>
-            <file>model.ffjson</file>
-            <file>MediaManager.cpp</file>
-            <file>capture.cpp</file>
-            <file>debian/control</file>
+            <file>rfs://gowtham@ubuntuvm.ferryfair.com:22/home/gowtham/Projects/ferryport/ferryport.ffjson</file>
+            <file>rfs://gowtham@ubuntuvm.ferryfair.com:22/home/gowtham/Projects/ferryport/Makefile</file>
+            <file>rfs://gowtham@ubuntuvm.ferryfair.com:22/home/gowtham/Projects/ferryport/config.ffjson</file>
+            <file>rfs://gowtham@ubuntuvm.ferryfair.com:22/home/gowtham/Projects/ferryport/debian/control</file>
+            <file>rfs://gowtham@ubuntuvm.ferryfair.com:22/home/gowtham/Projects/ferryport/main.cpp</file>
+            <file>rfs://gowtham@ubuntuvm.ferryfair.com:22/home/gowtham/Projects/ferryport/mypcm.cpp</file>
         </group>
     </open-files>
 </project-private>
