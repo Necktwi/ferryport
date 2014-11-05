@@ -837,50 +837,55 @@ void ffmpegOnStopHandler(spawn* process) {
 }
 
 void correctTimeStampFileNames() {
-	string fileName;
-	int lastslashpos;
-	string fold;
-	string camName;
-	string timestamp;
-	struct tm tms;
-	time_t t;
-	string path;
-	string fname;
-	ffl_debug(FPOL_MAIN, "correcting timestamps ...");
-	while (recordedFileNames.size() != 0) {
-		fileName = recordedFileNames[recordedFileNames.size() - 1];
-		recordedFileNames.pop_back();
-		lastslashpos = fileName.rfind('/', fileName.length());
-		fold = fileName.substr(0, lastslashpos);
-		camName = fold.substr(fold.rfind('/', fileName.length()) + 1);
-		timestamp = fileName.substr(lastslashpos + 1);
-		if (stream_type == FMSP) {
-			strptime(timestamp.c_str(), "%Y-%m-%d_%H-%M-%S.fp", &tms);
-		} else if (stream_type == RTMP) {
-			strptime(timestamp.c_str(), "%Y-%m-%d_%H-%M-%S.flv", &tms);
+	if (timeGapToCorrectTime > 3) {
+		string fileName;
+		int lastslashpos;
+		string fold;
+		string camName;
+		string timestamp;
+		struct tm tms;
+		time_t t;
+		string path;
+		string fname;
+		ffl_debug(FPOL_MAIN, "correcting timestamps ...");
+		while (recordedFileNames.size() != 0) {
+			fileName = recordedFileNames[recordedFileNames.size() - 1];
+			recordedFileNames.pop_back();
+			lastslashpos = fileName.rfind('/', fileName.length());
+			fold = fileName.substr(0, lastslashpos);
+			camName = fold.substr(fold.rfind('/', fileName.length()) + 1);
+			timestamp = fileName.substr(lastslashpos + 1);
+			if (stream_type == FMSP) {
+				strptime(timestamp.c_str(), "%Y-%m-%d_%H-%M-%S.fp", &tms);
+			} else if (stream_type == RTMP) {
+				strptime(timestamp.c_str(), "%Y-%m-%d_%H-%M-%S.flv", &tms);
+			}
+			t = mktime(&tms);
+			t += timeGapToCorrectTime;
+			struct tm * timeinfo;
+			char fn [80];
+			char dn [80];
+			timeinfo = localtime(&t);
+			if (stream_type == FMSP) {
+				strftime(fn, 80, "%Y-%m-%d_%H-%M-%S.fp", timeinfo);
+			} else if (stream_type == RTMP) {
+				strftime(fn, 80, "%Y-%m-%d_%H-%M-%S.flv", timeinfo);
+			}
+			strftime(dn, 80, "%Y-%m-%d", timeinfo);
+			string path = "/var/" APP_NAME "records/" + string(dn) + "/";
+			struct stat st = {0};
+			if (stat(path.c_str(), &st) == -1) {
+				mkdir(path.c_str(), 0774);
+			}
+			path += camName + "/";
+			fname = path + "/" + fn;
+			copyfile(fileName, fname);
+			unlink((char*) fileName.c_str());
+			ffl_debug(FPOL_MAIN, "renamed %s to %s", fileName.c_str(), fname.c_str());
 		}
-		t = mktime(&tms);
-		t += timeGapToCorrectTime;
-		struct tm * timeinfo;
-		char fn [80];
-		char dn [80];
-		timeinfo = localtime(&t);
-		if (stream_type == FMSP) {
-			strftime(fn, 80, "%Y-%m-%d_%H-%M-%S.fp", timeinfo);
-		} else if (stream_type == RTMP) {
-			strftime(fn, 80, "%Y-%m-%d_%H-%M-%S.flv", timeinfo);
-		}
-		strftime(dn, 80, "%Y-%m-%d", timeinfo);
-		string path = "/var/" APP_NAME "records/" + string(dn) + "/";
-		struct stat st = {0};
-		if (stat(path.c_str(), &st) == -1) {
-			mkdir(path.c_str(), 0774);
-		}
-		path += camName + "/";
-		fname = path + "/" + fn;
-		copyfile(fileName, fname);
-		unlink((char*) fileName.c_str());
-		ffl_debug(FPOL_MAIN, "renamed %s to %s", fileName.c_str(), fname.c_str());
+	} else {
+		ffl_debug(FPOL_MAIN, "skippping timestamp filename correction as the time"
+				" gap is less than 3 seconds");
 	}
 }
 
