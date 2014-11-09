@@ -35,74 +35,74 @@ Instructions for initial setup and installation on Ubuntu
 11. sudo ntpdate ntp.ubuntu.com
 12. sudo vi /etc/udev/rules.d/70-persistent-net.rules add at EOF
 
-# USB device 0x0bda:0x8189 (usb)
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="wlan*", NAME="wlan0"
+    # USB device 0x0bda:0x8189 (usb)
+    SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="wlan*", NAME="wlan0"
 
 
 13. sudo vi /etc/network/interfaces  and replace #wifi example section with the
     below
 
-# WiFi Example
-auto wlan0
-iface wlan0 inet static
-    wpa-ssid "NEWMEK"
-    wpa-psk  "ekmaster"
-    address 192.168.2.121
-    netmask 255.255.255.0
-    network 192.168.2.0
-#    gateway 192.168.2.1
-    dns-nameservers 192.168.2.21 8.8.8.8
+    #WiFi Example
+    auto wlan0
+    iface wlan0 inet static
+        wpa-ssid "NEWMEK"
+        wpa-psk  "ekmaster"
+        address 192.168.2.121
+        netmask 255.255.255.0
+        network 192.168.2.0
+        #gateway 192.168.2.1
+        dns-nameservers 192.168.2.21 8.8.8.8
 
-14. sudo apt-get update
-15. sudo apt-get dist-upgrade
-16. sudo apt-get install remotedevicecontroller
-17. sudo remotedevicecontroller -i
+14. `sudo apt-get update`
+15. `sudo apt-get dist-upgrade`
+16. `sudo apt-get install remotedevicecontroller`
+17. `sudo remotedevicecontroller -i`
 18. exit, connect wifi modem, connect 3g modem, connect camera, connect gps-device and ssh using wifi
-19. ssh ubuntu@192.168.2.121  #TO CHECK WIFI CONNECTION. SKIP IF NOT REQUIRED
-20. sudo vi /etc/wvdial.conf
-# for reliance netconnect+ modem
-[Dialer Defaults]
-Init1 = ATZ
-Init2 = ATQ0 V1 E1 S0=0 &C1 &D2 +FCLASS=0
-Modem Type = Analog Modem
-ISDN = 0
-New PPPD = yes
-Phone = #777
-Modem = /dev/CDMAModem
-Username = net
-Password = net
-Baud = 9600
+19. `ssh ubuntu@192.168.2.121  #TO CHECK WIFI CONNECTION. SKIP IF NOT REQUIRED`
+20. `sudo vi /etc/wvdial.conf`
+    #for reliance netconnect+ modem
+    [Dialer Defaults]
+    Init1 = ATZ
+    Init2 = ATQ0 V1 E1 S0=0 &C1 &D2 +FCLASS=0
+    Modem Type = Analog Modem
+    ISDN = 0
+    New PPPD = yes
+    Phone = #777
+    Modem = /dev/CDMAModem
+    Username = net
+    Password = net
+    Baud = 9600
 
-21. sudo init 6
+21. `sudo init 6`
 
 
 Preparing the image
 --------------------------------------------------------------------------------
-1. sudo cp -Rrf --preserve=all /media/gowtham/BOOT/* BOOT/
-2. sudo cp -Rrf --preserve=all /media/gowtham/rootfs/* rootfs/
-3. sudo dd if=/dev/sdb of=bbb_mbr_08-13.img bs=446 count=1
+1. `sudo cp -Rrf --preserve=all /media/gowtham/BOOT/* BOOT/`
+2. `sudo cp -Rrf --preserve=all /media/gowtham/rootfs/* rootfs/`
+3. `sudo dd if=/dev/sdb of=bbb_mbr_08-13.img bs=446 count=1`
 
 Copying image:
 --------------------------------------------------------------------------------
-1. sudo dd if=BBB_img/bbb_mbr.img of=/dev/sdb bs=446 count=1
+1. `sudo dd if=BBB_img/bbb_mbr.img of=/dev/sdb bs=446 count=1`
 2. partition /dev/sdb into boot(65MB,fat16) and rootfs(remaining,ext4) using gparted.
 3. mount all cards
-3. sudo cp -Rrf --preserve=all BBB_img/boot/* /media/boot
-4. sudo cp -Rrf --preserve=all BBB_img/rootfs/* /media/rootfs
+3. `sudo cp -Rrf --preserve=all BBB_img/boot/* /media/boot`
+4. `sudo cp -Rrf --preserve=all BBB_img/rootfs/* /media/rootfs`
 5. insert sd card, reliance modem in bbb and plug in to computer via usb.
-6. connect beaglebone with ssh ubuntu@192.168.7.2
-7. sudo vi /etc/wvdial.conf  and change username and password to the phone no. of the modem.
-8. sudo wvdial &   and test internet connection with ping www.google.com
-9. sudo remotedevicecontroller -i
+6. connect beaglebone with `ssh ubuntu@192.168.7.2`
+7. `sudo vi /etc/wvdial.conf`  and change username and password to the phone no. of the modem.
+8. `sudo wvdial` &   and test internet connection with ping www.google.com
+9. `sudo remotedevicecontroller -i`
 10. fetch system-id.
-11. $ sudo remotedevicecontroller -c
+11. `$ sudo remotedevicecontroller -c`
     gps-device
     device_name
 
 
 Building package:
 --------------------------------------------------------------------------------
-1.  sudo apt-get install gcc build-essential build-dep libcppunit-dev libssl-dev libxml2-dev
-2.  sudo apt-get install base-dev
+1.  `sudo apt-get install gcc build-essential build-dep libcppunit-dev libssl-dev libxml2-dev`
+2.  `sudo apt-get install base-dev`
 3.  do not build projects in netbeans initially build using terminal
 4.  
