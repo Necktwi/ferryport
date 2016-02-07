@@ -207,8 +207,8 @@ time_t nm_previousCheckTime;
 string mobile_modem_bus_device_file_name;
 string usb_hub_bus_device_file_name;
 
-int ff_log_type = FFL_NOTICE | FFL_WARN | FFL_ERR | FFL_DEBUG;
-unsigned int ff_log_level = FPOL_MAIN | FPOL_MM;
+_ff_log_type fp_log_type = FFL_NOTICE | FFL_WARN | FFL_ERR | FFL_DEBUG;
+unsigned int fp_log_level = FPOL_MAIN | FPOL_MM;
 
 enum StreamType {
 	FMSP,
@@ -352,7 +352,7 @@ void setPaths() {
 					APP_NAME".ffjson";
 			ifstream ifs(ferryportFFJSON, ios::in | ios::ate);
 			if (ifs.is_open()) {
-				ffl_debug(FPOL_MAIN, APP_NAME".ffjson found in %s mounted on %s", devname, localStorageMountFolder.c_str());
+				fp_debug(FPOL_MAIN, APP_NAME".ffjson found in %s mounted on %s", devname, localStorageMountFolder.c_str());
 				string ffjsonStr;
 				ifs.seekg(0, std::ios::end);
 				ffjsonStr.reserve(ifs.tellg());
@@ -363,7 +363,7 @@ void setPaths() {
 				if (ffjsonObj["StoreRecords"]) {
 					recordsFolder = localStorageMountFolder +
 							APP_NAME"Records/";
-					ffl_debug(FPOL_MAIN, "recordsFolder = %s",
+					fp_debug(FPOL_MAIN, "recordsFolder = %s",
 							recordsFolder.c_str());
 					struct stat st = {0};
 					if (stat(recordsFolder.c_str(), &st) == -1) {
@@ -373,18 +373,18 @@ void setPaths() {
 				};
 				if (ffjsonObj["StoreLog"]) {
 					logFile = localStorageMountFolder + APP_NAME".log";
-					ffl_debug(FPOL_MAIN, "logFile = %s", logFile.c_str());
+					fp_debug(FPOL_MAIN, "logFile = %s", logFile.c_str());
 				}
 				ifs.close();
 			} else {
-				ffl_debug(FPOL_MAIN, "unable to open " APP_NAME ".ffjson in %s mounted on %s", devname, localStorageMountFolder.c_str());
+				fp_debug(FPOL_MAIN, "unable to open " APP_NAME ".ffjson in %s mounted on %s", devname, localStorageMountFolder.c_str());
 				if (mounted) {
 					spawn umount("umount " + localStorageMountFolder, daemon, NULL, false, true);
-					ffl_debug(FPOL_MAIN, "%s unmounted", devname);
+					fp_debug(FPOL_MAIN, "%s unmounted", devname);
 				}
 			}
 		} else {
-			ffl_debug(FPOL_MAIN, "couldn't mount %s. exit code is %d", splFile.c_str(), merr);
+			fp_debug(FPOL_MAIN, "couldn't mount %s. exit code is %d", splFile.c_str(), merr);
 		}
 	}
 	struct stat st = {0};
@@ -464,12 +464,12 @@ public:
 	static void bye_rfspawn(spawn* rfspawn) {
 		bt_respawn = true;
 		if (initConnectTrials > 0) {
-			ffl_warn(FPOL_GPS, "gpsManager: No bluetooth gps found; sleeping "
+			fp_warn(FPOL_GPS, "gpsManager: No bluetooth gps found; sleeping "
 					"for 20 seconds");
 			sleep(20);
 			initConnectTrials--;
 		} else {
-			ffl_warn(FPOL_GPS, "gpsManager: No bluetooth gps found; sleeping "
+			fp_warn(FPOL_GPS, "gpsManager: No bluetooth gps found; sleeping "
 					"for 120 seconds");
 			sleep(120);
 		}
@@ -496,7 +496,7 @@ public:
 							GPRMCphrases[4] + "," + GPRMCphrases[5] +
 							GPRMCphrases[6] : gpsDevice + ":" +
 							"Latitude,Longitude:-0000.0000,0000.0000";
-					ffl_debug(FPOL_GPS, "gpsCoordinates: %s",
+					fp_debug(FPOL_GPS, "gpsCoordinates: %s",
 							gpsCoordinates.c_str());
 				}
 			}
@@ -529,10 +529,10 @@ public:
 					time(&gpsReadEnd);
 					buf[i] = '\0';
 					gpsCoordinates = gpsDevice + ":" + string(buf, i);
-					ffl_debug(FPOL_GPS, "gpsCoordinates : %s",
+					fp_debug(FPOL_GPS, "gpsCoordinates : %s",
 							gpsCoordinates.c_str());
 				} else {
-					ffl_err(FPOL_GPS, "gpsManager: illegal string from GPS"
+					fp_err(FPOL_GPS, "gpsManager: illegal string from GPS"
 							" device");
 				}
 			} else if (c == EOF) {
@@ -556,17 +556,17 @@ public:
 rerfspawn:
 			string cmd = "rfcomm connect " + gpsDevice.substr(devno, gpsDevice.length());
 			spawn * rfspawn = new spawn(cmd, true, &GPSManager::bye_rfspawn, false, false);
-			ffl_notice(FPOL_GPS, "gpsManager: connecting to bluetooth gps device...");
+			fp_notice(FPOL_GPS, "gpsManager: connecting to bluetooth gps device...");
 			sleep(6);
 		}
 opendevice:
 		FILE *f = fopen(gpsDevice.c_str(), "r");
-		ffl_notice(FPOL_GPS, "reading gps device: %s", gpsDevice.c_str());
+		fp_notice(FPOL_GPS, "reading gps device: %s", gpsDevice.c_str());
 		if (gt == RS232 && f && gpsSDeviceBaudrate.length() > 0) {
 			cmd = "stty -F " + gpsDevice + " " + gpsSDeviceBaudrate;
 			spawn *gpsdbrsetter = new spawn(cmd, false, NULL, false, true);
 			delete gpsdbrsetter;
-			ffl_debug(FPOL_GPS, "baudrate set:cmd:%s", cmd.c_str());
+			fp_debug(FPOL_GPS, "baudrate set:cmd:%s", cmd.c_str());
 		} else if (gt == BT && f == NULL) {
 			sleep(30);
 			if (bt_respawn) {
@@ -580,7 +580,7 @@ opendevice:
 			//char dto[] = "ttyO1_armhf.com";
 			//write(slots, dto, 15);
 			//close(slots);
-			ffl_notice(FPOL_GPS, "gpsManager: enabling serial port ttyO1");
+			fp_notice(FPOL_GPS, "gpsManager: enabling serial port ttyO1");
 			DIR *dpdf;
 			dirent *epdf;
 			dpdf = opendir("/sys/devices");
@@ -608,12 +608,12 @@ opendevice:
 				} else {
 					parseLocalGPSProtocol(f, gpsReadStart, gpsReadEnd, gpsCoordinates);
 				}
-				ffl_notice(FPOL_GPS, "gpsManager: gps device disconnected. sleeping for 10 secs.");
+				fp_notice(FPOL_GPS, "gpsManager: gps device disconnected. sleeping for 10 secs.");
 				sleep(10);
 				goto opendevice;
 			}
 		}
-		ffl_notice(FPOL_GPS, "gpsManager: no gps device found. sleeping for 60 secs.");
+		fp_notice(FPOL_GPS, "gpsManager: no gps device found. sleeping for 60 secs.");
 		sleep(60);
 		goto opendevice;
 	}
@@ -781,7 +781,7 @@ public:
 			} else {
 				string cmd = "ffmpeg -re -i " + rfa + " -r " + streamfps + " -s " + streamResolution + " -f flv " + sa;
 				records[rIndex].recorder = spawn(cmd, true, NULL, false);
-				ffl_debug(FPOL_MAIN, "%s : %d", cmd.c_str(), records[rIndex].recorder.cpid);
+				fp_debug(FPOL_MAIN, "%s : %d", cmd.c_str(), records[rIndex].recorder.cpid);
 				records[rIndex].spid = records[rIndex].recorder.cpid;
 			}
 			records[rIndex].newState = RECORD_PREVIOUS_STATE;
@@ -815,7 +815,7 @@ void ffmpegOnStopHandler(spawn* process) {
 	ffmpegerr[100] = '\0';
 	read(process->cpstderr, ffmpegerr, 99);
 	string ffmpegerrstr = string(ffmpegerr);
-	ffl_debug(FPOL_MAIN, "ffmpeg->pid=%d, ffmpeg->exitcode=%d,"
+	fp_debug(FPOL_MAIN, "ffmpeg->pid=%d, ffmpeg->exitcode=%d,"
 			"ffmpegerr->error=%s", (int) process->cpid,
 			process->getChildExitStatus(), ffmpegerr);
 	if ((int) ffmpegerrstr.find("No space left on device", 0) > 0) {
@@ -847,7 +847,7 @@ void correctTimeStampFileNames() {
 		time_t t;
 		string path;
 		string fname;
-		ffl_debug(FPOL_MAIN, "correcting timestamps ...");
+		fp_debug(FPOL_MAIN, "correcting timestamps ...");
 		while (recordedFileNames.size() != 0) {
 			fileName = recordedFileNames[recordedFileNames.size() - 1];
 			recordedFileNames.pop_back();
@@ -881,10 +881,10 @@ void correctTimeStampFileNames() {
 			fname = path + "/" + fn;
 			copyfile(fileName, fname);
 			unlink((char*) fileName.c_str());
-			ffl_debug(FPOL_MAIN, "renamed %s to %s", fileName.c_str(), fname.c_str());
+			fp_debug(FPOL_MAIN, "renamed %s to %s", fileName.c_str(), fname.c_str());
 		}
 	} else {
-		ffl_debug(FPOL_MAIN, "skippping timestamp filename correction as the time"
+		fp_debug(FPOL_MAIN, "skippping timestamp filename correction as the time"
 				" gap is less than 3 seconds");
 	}
 }
@@ -987,7 +987,7 @@ public:
 	 */
 	static std::map<string, camService>::iterator removeCamService(string cam) {
 		std::map<std::string, camService>::iterator csit = csl.find(cam);
-		ffl_debug(FPOL_MAIN | NO_NEW_LINE, "removing a cam service...");
+		fp_debug(FPOL_MAIN | NO_NEW_LINE, "removing a cam service...");
 		if (csit != csl.end()) {
 			if (stream_type == FMSP) {
 				FerryTimeStamp fts;
@@ -999,9 +999,9 @@ public:
 			csit = csl.erase(csit);
 			model["system"][machineName]["cameras"].erase(cam);
 			model["system"][machineName]["cameras"][cam].setQType(FFJSON::DELETE);
-			ffl_debug_contnu(FPOL_MAIN, "OK");
+			fp_debug_contnu(FPOL_MAIN, "OK");
 		} else {
-			ffl_debug_contnu(FPOL_MAIN, "FAIL");
+			fp_debug_contnu(FPOL_MAIN, "FAIL");
 		}
 		return csit;
 	}
@@ -1052,7 +1052,7 @@ public:
 					csList::stopCam(cam);
 					cmd = "ffmpeg -loglevel error -f video4linux2 " + (camcaptureCompression ? string("-vcodec mjpeg ") : string("")) + "-r " + recordfps + " -s " + recordResolution + " -i " + dev + " " + cs.recordPath;
 					process = new spawn(cmd, true, &ffmpegOnStopHandler, false);
-					ffl_debug(FPOL_MAIN, "%s :%d", cmd.c_str(), process->cpid);
+					fp_debug(FPOL_MAIN, "%s :%d", cmd.c_str(), process->cpid);
 					fcpid = process->cpid;
 				}
 				ns = CAM_RECORD;
@@ -1070,7 +1070,7 @@ public:
 					cmd = "ffmpeg -loglevel error -f video4linux2 " + (camcaptureCompression ? string("-vcodec mjpeg ") : string("")) + "-r " + recordfps + " -s " + recordResolution + " -i " + dev + " -r " + streamfps + " -s " + streamResolution + " -f flv " + cs.streamPath;
 					csList::stopCam(cam);
 					process = new spawn(cmd, true, &ffmpegOnStopHandler, false);
-					ffl_debug(FPOL_MAIN, "%s :%d", cmd.c_str(), process->cpid);
+					fp_debug(FPOL_MAIN, "%s :%d", cmd.c_str(), process->cpid);
 					fcpid = process->cpid;
 				}
 				ns = CAM_STREAM;
@@ -1087,7 +1087,7 @@ public:
 					cmd = "ffmpeg -loglevel error -f video4linux2 " + (camcaptureCompression ? string("-vcodec mjpeg ") : string("")) + "-r " + recordfps + " -s " + recordResolution + " -i " + dev + " -r " + streamfps + " -s " + streamResolution + " -f flv " + cs.streamPath + " " + cs.recordPath;
 					csList::stopCam(cam);
 					process = new spawn(cmd, true, &ffmpegOnStopHandler, false);
-					ffl_debug(FPOL_MAIN, "%s :%d", cmd.c_str(), process->cpid);
+					fp_debug(FPOL_MAIN, "%s :%d", cmd.c_str(), process->cpid);
 					fcpid = process->cpid;
 				}
 				ns = CAM_STREAM_N_RECORD;
@@ -1342,7 +1342,7 @@ void readConfig() {
 		configFile = "config.ffjson";
 		t.open(configFile.c_str());
 		if (!t.is_open()) {
-			ffl_err(FPOL_MAIN, "configuration file not found!");
+			fp_err(FPOL_MAIN, "configuration file not found!");
 			return;
 		}
 	}
@@ -1656,7 +1656,7 @@ camState systemStateChange() {
 		csList::setStateAllCams(CAM_RECORD);
 		setState();
 	} else if (IP.length() == 0) {
-		ffl_err(FPOL_MAIN, "No IP: CONNECTION ERROR.");
+		fp_err(FPOL_MAIN, "No IP: CONNECTION ERROR.");
 		csList::setStateAllCams(CAM_RECORD);
 		cs = CAM_NEW_STATE;
 		return cs;
@@ -1666,15 +1666,15 @@ camState systemStateChange() {
 	string strNetwork = "ip:" + currentIP + ",signalstrength:-1";
 	if (serverType == SOAP) {
 		string content = "<GetDataChangeBySystemId xmlns=\"" + xmlnamespace + "\"><SystemName>" + getMachineName() + "</SystemName><SecurityKey>" + securityKey + "</SecurityKey><Cameras>" + strCameras + "</Cameras><GPS>" + strGPS + "</GPS><network>" + strNetwork + "</network></GetDataChangeBySystemId>";
-		ffl_debug(FPOL_MAIN, "SOAPRequest %d: %s", SOAPServiceReqCount, content.c_str());
+		fp_debug(FPOL_MAIN, "SOAPRequest %d: %s", SOAPServiceReqCount, content.c_str());
 		string response = reqSOAPService("GetDataChangeBySystemId", (xmlChar*) content.c_str());
 		if (response.compare("CONNECTION ERROR") == 0) {
-			ffl_err(FPOL_MAIN, "unable to connect server CONNECTION ERROR");
+			fp_err(FPOL_MAIN, "unable to connect server CONNECTION ERROR");
 			csList::setStateAllCams(CAM_RECORD);
 			cs = CAM_NEW_STATE;
 			return cs;
 		}
-		ffl_debug(FPOL_MAIN, "SOAPResponse:%s", response.c_str());
+		fp_debug(FPOL_MAIN, "SOAPResponse:%s", response.c_str());
 		xmlChar *res = (xmlChar*) response.c_str();
 		xmlDoc *xd = xmlParseDoc(res);
 		xmlXPathContext *xpathCtx = xmlXPathNewContext(xd);
@@ -1762,9 +1762,9 @@ camState systemStateChange() {
 		xmlCleanupParser();
 	} else if (serverType == REST) {
 		string qs = model["system"].queryString();
-		ffl_debug(FPOL_MAIN, "%s", qs.c_str());
+		fp_debug(FPOL_MAIN, "%s", qs.c_str());
 		string res = HTTPReq(serverAddr, "", serverPort, qs);
-		ffl_debug(FPOL_MAIN, "%s", res.c_str());
+		fp_debug(FPOL_MAIN, "%s", res.c_str());
 		FFJSON ansObj(res);
 		delete model["system"].answerObject(&ansObj);
 		cs = CAM_NEW_STATE;
@@ -1795,7 +1795,7 @@ void print_usage(FILE* stream, int exit_code, char* program_name) {
 void internetTimeUpdater(void *arg) {
 	time_t oldTimeStamp;
 	time(&oldTimeStamp);
-	ffl_debug(FPOL_MAIN, "spawning ntpdate");
+	fp_debug(FPOL_MAIN, "spawning ntpdate");
 	spawn *ntpdate = new spawn("ntpdate ntp.ubuntu.com", true, NULL, false, true);
 	if ((int) ntpdate->getChildExitStatus() == 0) {
 		time_t newTimeStamp;
@@ -1811,12 +1811,12 @@ void internetTimeUpdater(void *arg) {
 		}
 		correctAllTimeVariables();
 	}
-	ffl_debug(FPOL_MAIN, "ntpdate: ces: %d cout: %s cerr %s", ntpdate->getChildExitStatus(), get_fd_contents(ntpdate->cpstdout).c_str(), get_fd_contents(ntpdate->cpstderr).c_str());
+	fp_debug(FPOL_MAIN, "ntpdate: ces: %d cout: %s cerr %s", ntpdate->getChildExitStatus(), get_fd_contents(ntpdate->cpstdout).c_str(), get_fd_contents(ntpdate->cpstderr).c_str());
 	delete ntpdate;
 }
 
 void correctAllTimeVariables() {
-	ffl_debug(FPOL_MAIN, "process %d is correcting timestamps", getpid());
+	fp_debug(FPOL_MAIN, "process %d is correcting timestamps", getpid());
 	GPSManager::gpsReadStart += timeGapToCorrectTime;
 	GPSManager::gpsReadEnd += timeGapToCorrectTime;
 	nm_presentCheckTime += timeGapToCorrectTime;
@@ -1839,7 +1839,7 @@ void groomLogFile() {
 void run() {
 	secondChild = getpid();
 	if (geteuid() != 0) {
-		ffl_err(FPOL_MAIN, "Please login as root or run as sudo user");
+		fp_err(FPOL_MAIN, "Please login as root or run as sudo user");
 		exit(-1);
 	} else {
 		if (runMode.compare("daemon") != 0) {
@@ -1858,7 +1858,7 @@ void run() {
 				dup2(ferr, 2);
 				dup2(2, 1);
 			}
-			ffl_notice(FPOL_MAIN, " -------------   Run Started   -------------");
+			fp_notice(FPOL_MAIN, " -------------   Run Started   -------------");
 			GPSManager::init();
 			writeRootProcess();
 			csList::initialize(10);
@@ -2224,7 +2224,7 @@ struct networkManagerCleanUpBuffers {
 } nMCUB;
 
 void networkManagerCleanUp(void* buffers) {
-	ffl_debug(FPOL_MAIN, "setting networkManagerRunning to false");
+	fp_debug(FPOL_MAIN, "setting networkManagerRunning to false");
 	networkManagerCleanUpBuffers *b = (networkManagerCleanUpBuffers*) buffers;
 	*b->networkManagerRunning = false;
 }
@@ -2242,11 +2242,11 @@ wait_till_child_dead:
 		if (deadpid == -1 && waitpid(secondChild, &status, WNOHANG) == 0) {
 			goto wait_till_child_dead;
 		}
-		ffl_warn(FPOL_MAIN, "%d process exited!", deadpid);
+		fp_warn(FPOL_MAIN, "%d process exited!", deadpid);
 		secondFork();
 	} else {
 		secondChild = getpid();
-		ffl_notice(FPOL_MAIN, "second child started; pid= %d", secondChild);
+		fp_notice(FPOL_MAIN, "second child started; pid= %d", secondChild);
 		prctl(PR_SET_PDEATHSIG, SIGHUP);
 		run();
 	}
@@ -2270,11 +2270,11 @@ wait_till_child_dead:
 		if (deadpid == -1 && waitpid(firstChild, &status, WNOHANG) == 0) {
 			goto wait_till_child_dead;
 		}
-		ffl_debug(FPOL_MAIN, "%d process exited", deadpid);
+		fp_debug(FPOL_MAIN, "%d process exited", deadpid);
 		firstFork();
 	} else {
 		firstChild = getpid();
-		ffl_notice(FPOL_MAIN, "firstChild started; pid=%d", firstChild);
+		fp_notice(FPOL_MAIN, "firstChild started; pid=%d", firstChild);
 		fflush(stdout);
 		prctl(PR_SET_PDEATHSIG, SIGHUP);
 		secondFork();
@@ -2295,7 +2295,7 @@ int log(string prefix, string msg) {
 }
 
 void signalHandler(int signal_number) {
-	ffl_debug(FPOL_LL, "process %d received signal %d", getpid(),
+	fp_debug(FPOL_LL, "process %d received signal %d", getpid(),
 			signal_number);
 	if (signal_number == SIGUSR1) {
 		int fd;
@@ -2319,7 +2319,7 @@ void signalHandler(int signal_number) {
 	}
 	if (signal_number == SIGTERM || signal_number == SIGINT) {
 		if (getpid() == rootProcess) {
-			ffl_err(FPOL_MAIN, "%s terminated by %d number", APP_NAME,
+			fp_err(FPOL_MAIN, "%s terminated by %d number", APP_NAME,
 					signal_number);
 		}
 	}
@@ -2330,7 +2330,7 @@ void signalHandler(int signal_number) {
 			child_exit_status = status;
 			if (processMap[pid] != NULL) {
 				spawn *process = processMap[pid];
-				ffl_debug(FPOL_LL, "process %d's child %s with pid %d exited.",
+				fp_debug(FPOL_LL, "process %d's child %s with pid %d exited.",
 						process->cmdName.c_str(), pid);
 				process->childExitStatus = status;
 				process->onStopHandler(process);
@@ -2344,7 +2344,7 @@ void signalHandler(int signal_number) {
 
 void stopRunningProcess() {
 	if (runningProcess > 0) {
-		ffl_notice(FPOL_MAIN | NO_NEW_LINE, "Stopping current process...");
+		fp_notice(FPOL_MAIN | NO_NEW_LINE, "Stopping current process...");
 		if (kill(runningProcess, SIGTERM) != -1) {
 			cout << "OK\n";
 		} else {
@@ -2644,20 +2644,20 @@ void usb_reset(string device) {
 		int rc = ioctl(fd, USBDEVFS_RESET, 0);
 		if (rc < 0) {
 			volatile_usb_hub_reset_interval = 10;
-			ffl_err(FPOL_MAIN, "usb_reset: Error in ioctl on %s", device.c_str());
+			fp_err(FPOL_MAIN, "usb_reset: Error in ioctl on %s", device.c_str());
 		} else {
-			ffl_warn(FPOL_LL, "usb_reset: ioctl reset on %s successful", device.c_str());
+			fp_warn(FPOL_LL, "usb_reset: ioctl reset on %s successful", device.c_str());
 		}
 		close(fd);
 	} else {
-		ffl_err(FPOL_MAIN, "usb_reset: unable to open %s", device.c_str());
+		fp_err(FPOL_MAIN, "usb_reset: unable to open %s", device.c_str());
 	}
 }
 
 void* networkManager(void* arg) {
 	networkManagerRunning = true;
 	pthread_cleanup_push(&networkManagerCleanUp, &nMCUB);
-	ffl_debug(FPOL_MAIN, "NetworkManager started");
+	fp_debug(FPOL_MAIN, "NetworkManager started");
 	time_t waitInterval = reconnectDuration;
 	spawn *wvdial = NULL;
 	spawn *wvdialconf;
@@ -2667,7 +2667,7 @@ void* networkManager(void* arg) {
 	while (true) {
 		remainingSleepTime = reconnectDuration - waitInterval;
 		remainingSleepTime = remainingSleepTime < 0 ? 0 : remainingSleepTime;
-		ffl_debug(FPOL_MAIN, "process %d sleeping for %d", getpid(), remainingSleepTime);
+		fp_debug(FPOL_MAIN, "process %d sleeping for %d", getpid(), remainingSleepTime);
 sleep_enough_time:
 		sleep((int) remainingSleepTime);
 		time(&nm_presentCheckTime);
@@ -2686,8 +2686,8 @@ sleep_enough_time:
 								memset(wvdialerr, 0, 500);
 								read(wvdial->cpstderr, wvdialerr, 500);
 								string wvdialerrstr = string(wvdialerr);
-								ffl_debug(FPOL_MAIN, "wvdial killed; wvdail->pid=%d, wvdial->exitcode=%d,wvdialerr->error=%s", wvdial->cpid, wvdial->getChildExitStatus(), wvdialerrstr.c_str());
-								ffl_debug(FPOL_MAIN, "Gonna re-spawn wvdial :) don worry I will connect u to the network!...If u've given me what I need (;");
+								fp_debug(FPOL_MAIN, "wvdial killed; wvdail->pid=%d, wvdial->exitcode=%d,wvdialerr->error=%s", wvdial->cpid, wvdial->getChildExitStatus(), wvdialerrstr.c_str());
+								fp_debug(FPOL_MAIN, "Gonna re-spawn wvdial :) don worry I will connect u to the network!...If u've given me what I need (;");
 								waitpid(wvdial->cpid, NULL, WNOHANG);
 								delete wvdial;
 								if ((int) wvdialerrstr.find("Cannot open /dev/CDMAModem:", 0) > 0) {

@@ -171,7 +171,7 @@ void audio_encode(libav_encode_args* a) {
     }
     /* setup the data pointers in the AVFrame */
     if (computed_buffer_size != (*args.input_buffer.periodbuffer)[(args.initptr) % max_input_buffer_size].length) {
-        ffl_err(FPOL_LAV, "buffer statement mismatch. Encoder exited");
+        fp_err(FPOL_LAV, "buffer statement mismatch. Encoder exited");
         return;
     }
     ret = avcodec_fill_audio_frame(frame, c->channels, c->sample_fmt, (const uint8_t*) samples, computed_buffer_size, 0);

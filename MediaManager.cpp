@@ -58,7 +58,7 @@ int MediaManager::capture(std::valarray<MediaManager::media>& inputs, std::valar
 
 void MediaManager::pthreadCleanupCapture(void* args) {
 	pthreadCleanupCaptureArgs& pcca = *(pthreadCleanupCaptureArgs*) args;
-	ffl_debug(FPOL_MM, "terminating output threads");
+	fp_debug(FPOL_MM, "terminating output threads");
 	int i = 0;
 	while (pcca.oupthreads.size() > 0) {
 		pthread_t* thread = pcca.oupthreads[pcca.oupthreads.size() - 1];
@@ -67,7 +67,7 @@ void MediaManager::pthreadCleanupCapture(void* args) {
 		pcca.oupthreads.pop_back();
 		delete thread;
 	}
-	ffl_debug(FPOL_MM, "terminating input threads");
+	fp_debug(FPOL_MM, "terminating input threads");
 	i = 0;
 	timespec ts = {0, 0};
 	while (pcca.inpthreads.size() > 0) {
@@ -76,7 +76,7 @@ void MediaManager::pthreadCleanupCapture(void* args) {
 		pthread_join(*pcca.inpthreads[pcca.inpthreads.size() - 1], NULL);
 		pcca.inpthreads.pop_back();
 	}
-	ffl_debug(FPOL_MM, "freeing up buffers");
+	fp_debug(FPOL_MM, "freeing up buffers");
 	i = 0;
 	while (i < (*pcca.inputs).size()) {
 		if ((*pcca.inputs)[i].type == VIDEO)delete (*pcca.inputs)[i].buffer.framebuffer;
@@ -210,7 +210,7 @@ void* MediaManager::capture(void * args) {
 		}
 		i++;
 	}
-	ffl_debug(FPOL_MM, "waiting for output threads to join");
+	fp_debug(FPOL_MM, "waiting for output threads to join");
 	i = 0;
 	while (pcca.oupthreads.size() > 0) {
 		pthread_t* thread = pcca.oupthreads[pcca.oupthreads.size() - 1];
@@ -218,7 +218,7 @@ void* MediaManager::capture(void * args) {
 		pcca.oupthreads.pop_back();
 		delete thread;
 	}
-	ffl_debug(FPOL_MM, "terminating input threads");
+	fp_debug(FPOL_MM, "terminating input threads");
 	i = 0;
 	timespec ts = {0, 0};
 	while (pcca.inpthreads.size() > 0) {
@@ -227,7 +227,7 @@ void* MediaManager::capture(void * args) {
 		pthread_join(*pcca.inpthreads[pcca.inpthreads.size() - 1], NULL);
 		pcca.inpthreads.pop_back();
 	}
-	ffl_debug(FPOL_MM, "freeing up buffers");
+	fp_debug(FPOL_MM, "freeing up buffers");
 	i = 0;
 	while (i < inputs.size()) {
 		if (inputs[i].type == VIDEO)delete inputs[i].buffer.framebuffer;
@@ -287,17 +287,17 @@ connect:
 		if ((ffargs->ivideomedia == NULL || ffargs->ivideomedia->state < 0)&&
 				(ffargs->iaudiomedia == NULL ||
 				ffargs->iaudiomedia->state < 0)) {
-			ffl_err(FPOL_MM, "Exiting because neither input audiomedia nor "
+			fp_err(FPOL_MM, "Exiting because neither input audiomedia nor "
 					"videomedia working.");
 			return NULL;
 		}
 		if (ffargs->omedia->signalNewState < 1) {
 			if (ffargs->omedia->signalNewState < 0) {
 				ffargs->omedia->state = -1;
-				ffl_debug(FPOL_MM, "Exiting as signalNewState is < 0");
+				fp_debug(FPOL_MM, "Exiting as signalNewState is < 0");
 				return NULL;
 			} else {
-				ffl_debug(FPOL_MM, "waiting for start_stop set");
+				fp_debug(FPOL_MM, "waiting for start_stop set");
 				sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.
 						reconnectIntervalSec);
 				goto connect;
@@ -305,7 +305,7 @@ connect:
 		} else {
 			cpos = ffargs->omedia->identifier.find(":", 10);
 			ppos = ffargs->omedia->identifier.find("/", 10);
-			ffl_notice(FPOL_MM, "Stream address: %s", ffargs->omedia->
+			fp_notice(FPOL_MM, "Stream address: %s", ffargs->omedia->
 					identifier.c_str());
 			port = cpos > 0 ? atoi(ffargs->omedia->identifier.
 					substr(cpos + 1,
@@ -318,12 +318,12 @@ connect:
 			init = true;
 		}
 	}
-	ffl_notice(FPOL_MM, "MediaManager: connecting to %s:%d", url.c_str(), port);
+	fp_notice(FPOL_MM, "MediaManager: connecting to %s:%d", url.c_str(), port);
 	try {
 		ffargs->cs = new ClientSocket(url, port);
 	} catch (SocketException&) {
 		if (ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnect) {
-			ffl_err(FPOL_MM, "MediaManager: connection to %s:%d failed. sleeping for %d sec", url.c_str(), port, ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
+			fp_err(FPOL_MM, "MediaManager: connection to %s:%d failed. sleeping for %d sec", url.c_str(), port, ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
 			if ((ffargs->ivideomedia == NULL || ffargs->ivideomedia->state < 0)&&(ffargs->iaudiomedia == NULL || ffargs->iaudiomedia->state < 0)) return NULL;
 			sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
 			goto connect;
@@ -337,7 +337,7 @@ connect:
 	try {
 		*ffargs->cs << beacon;
 	} catch (SocketException e) {
-		ffl_err(FPOL_MM, "MediaManager: unable to send initpack to %s:%d", url.c_str(), port);
+		fp_err(FPOL_MM, "MediaManager: unable to send initpack to %s:%d", url.c_str(), port);
 		if (ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnect) {
 			delete ffargs->cs;
 			sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
@@ -410,11 +410,11 @@ connect:
 		if (ffargs->iaudiomedia != NULL && ffargs->iaudiomedia->state > 0) {
 			lavea.initptr = audioperiodPfloat;
 			lavea.termptr = audioperiodCfloat - 1;
-			ffl_debug(FPOL_MM, "collected sound samples at %d to %d", audioperiodPfloat, audioperiodCfloat);
+			fp_debug(FPOL_MM, "collected sound samples at %d to %d", audioperiodPfloat, audioperiodCfloat);
 			audio_encode(&lavea);
 			if (lavea.output_buffer != NULL) {
 				packet->append(lavea.output_buffer, lavea.output_buffer_size);
-				ffl_debug(FPOL_MM, "mp3 encoded packet size: %d", lavea.output_buffer_size);
+				fp_debug(FPOL_MM, "mp3 encoded packet size: %d", lavea.output_buffer_size);
 			}
 			free(lavea.output_buffer);
 		}
@@ -422,13 +422,13 @@ connect:
 		ffargs->csm.lock();
 		try {
 			ffargs->cs->send(packet, MSG_DONTWAIT | MSG_NOSIGNAL);
-			ffl_debug(FPOL_MM, "sent %dbytes in %d", packet->length(), index);
+			fp_debug(FPOL_MM, "sent %dbytes in %d", packet->length(), index);
 			delete packet;
 		} catch (SocketException e) {
 			ffargs->csm.unlock();
 			delete ffargs->cs;
 			delete packet;
-			ffl_notice(FPOL_MM, "MediaManager: unable to send packet to %s:%d", url.c_str(), port);
+			fp_notice(FPOL_MM, "MediaManager: unable to send packet to %s:%d", url.c_str(), port);
 			goto connect;
 		}
 		ffargs->csm.unlock();
@@ -439,10 +439,10 @@ connect:
 nsleep:
 		ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, &tend);
 		if (ret) {
-			ffl_debug(FPOL_MM, "MediaManager: clock_nanosleep interrupted! remaining %d.%dsec. gonna sleep again zzzz");
+			fp_debug(FPOL_MM, "MediaManager: clock_nanosleep interrupted! remaining %d.%dsec. gonna sleep again zzzz");
 			goto nsleep;
 		} else {
-			//ffl_debug(FPOL_MM, "MediaManager: clock_nanosleep successfully slept till %ul.%ul", tstart.tv_sec, tstart.tv_nsec);
+			//fp_debug(FPOL_MM, "MediaManager: clock_nanosleep successfully slept till %ul.%ul", tstart.tv_sec, tstart.tv_nsec);
 		}
 
 	}
@@ -464,7 +464,7 @@ void* MediaManager::fPRecorder(void* args) {
 	 * It contains length of initial bytes common in frames captured by the video source.
 	 */
 	int headerLength = 0;
-	ffl_debug(FPOL_MM, "fPRecorder started");
+	fp_debug(FPOL_MM, "fPRecorder started");
 	fPRecorderArgs * ffargs = (fPRecorderArgs *) args;
 	pthreadCleanupFPRecorderArgs pcfpra;
 	pcfpra.fprargs = ffargs;
@@ -487,7 +487,7 @@ start_stop:
 				ffargs->omedia->state = -1;
 				return NULL;
 			} else {
-				ffl_debug(FPOL_MM, "waiting for start_stop set");
+				fp_debug(FPOL_MM, "waiting for start_stop set");
 				sleep(1);
 				goto start_stop;
 			}
@@ -504,10 +504,10 @@ start_stop:
 	ffargs->fd = open(fn.c_str(), O_WRONLY | O_CREAT);
 	if (ffargs->fd < 1) {
 		ffargs->omedia->state = -1;
-		ffl_err(FPOL_MM, "unable to create file %s", fn.c_str());
+		fp_err(FPOL_MM, "unable to create file %s", fn.c_str());
 		return NULL;
 	}
-	ffl_debug(FPOL_MM, "file %s is created", fn.c_str());
+	fp_debug(FPOL_MM, "file %s is created", fn.c_str());
 	int videoframesPfloat;
 	int videoframesCfloat = ffargs->ivideomedia != NULL ? ffargs->ivideomedia->bufferfloat : 0;
 	int audioperiodPfloat;
@@ -517,7 +517,7 @@ start_stop:
 	std::string buf;
 	int transmitted_frames_per_segment_duration = ffargs->omedia->videoframerate * ffargs->omedia->segmentDuration;
 	if (transmitted_frames_per_segment_duration < 1) {
-		ffl_err(FPOL_MM, "MediaManager::fPRecorder: your frame rate should give atleast one frame in segment duration");
+		fp_err(FPOL_MM, "MediaManager::fPRecorder: your frame rate should give atleast one frame in segment duration");
 		return NULL;
 	}
 	int pf;
@@ -542,7 +542,7 @@ start_stop:
 		time(&max_fileduration_tracker_term);
 		if (max_fileduration_tracker_term - max_fileduration_tracker_init >= ffargs->omedia->splMediaProps.fPRecorderExclProps.perFileDurationSec) {
 			close(ffargs->fd);
-			ffl_debug(FPOL_MM, "max file duration hit!");
+			fp_debug(FPOL_MM, "max file duration hit!");
 			goto start_stop;
 		}
 		tstart.tv_sec += ffargs->omedia->segmentDuration;
@@ -577,11 +577,11 @@ start_stop:
 		if (ffargs->iaudiomedia != NULL && ffargs->iaudiomedia->state > 0) {
 			lavea.initptr = audioperiodPfloat;
 			lavea.termptr = audioperiodCfloat - 1;
-			ffl_debug(FPOL_MM, "collected sound samples at %d to %d", audioperiodPfloat, audioperiodCfloat);
+			fp_debug(FPOL_MM, "collected sound samples at %d to %d", audioperiodPfloat, audioperiodCfloat);
 			audio_encode(&lavea);
 			if (lavea.output_buffer != NULL) {
 				packet->append(lavea.output_buffer, lavea.output_buffer_size);
-				ffl_debug(FPOL_MM, "mp3 encoded packet size: %d", lavea.output_buffer_size);
+				fp_debug(FPOL_MM, "mp3 encoded packet size: %d", lavea.output_buffer_size);
 			}
 			free(lavea.output_buffer);
 		}
@@ -590,16 +590,16 @@ start_stop:
 		if (ffargs->omedia->signalNewState < 2) {
 			close(ffargs->fd);
 			time(&max_fileduration_tracker_term);
-			ffl_debug(FPOL_MM, "external signalNewState set to stop");
+			fp_debug(FPOL_MM, "external signalNewState set to stop");
 			goto start_stop;
 		}
 nsleep:
 		ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, &tend);
 		if (ret) {
-			ffl_debug(FPOL_MM, "MediaManager: clock_nanosleep interrupted! remaining %d.%dsec");
+			fp_debug(FPOL_MM, "MediaManager: clock_nanosleep interrupted! remaining %d.%dsec");
 			goto nsleep;
 		} else {
-			//ffl_debug(FPOL_MM, "MediaManager: clock_nanosleep successfully slept till %ul.%ul", tstart.tv_sec, tstart.tv_nsec);
+			//fp_debug(FPOL_MM, "MediaManager: clock_nanosleep successfully slept till %ul.%ul", tstart.tv_sec, tstart.tv_nsec);
 		}
 	}
 	pthread_cleanup_pop(1);
@@ -629,7 +629,7 @@ void* MediaManager::raw_mjpeg_mp3_dump(void* args) { //#rmmd
 	int received_frames_per_segment_duration;
 	int transmitted_frames_per_segment_duration = rmmdargs->omedia->videoframerate * rmmdargs->omedia->segmentDuration;
 	if (transmitted_frames_per_segment_duration < 1) {
-		ffl_err(FPOL_MM, "your frame rate should give atleast one frame in segment duration");
+		fp_err(FPOL_MM, "your frame rate should give atleast one frame in segment duration");
 		pthread_exit(NULL);
 	}
 	int pf;
@@ -678,23 +678,23 @@ void* MediaManager::raw_mjpeg_mp3_dump(void* args) { //#rmmd
 		if (rmmdargs->iaudiomedia->state > 0) {
 			lavea.initptr = audioperiodPfloat;
 			lavea.termptr = audioperiodCfloat - 1;
-			ffl_debug(FPOL_MM, "collected sound samples at %d to %d", lavea.initptr, lavea.termptr);
+			fp_debug(FPOL_MM, "collected sound samples at %d to %d", lavea.initptr, lavea.termptr);
 			audio_encode(&lavea);
 			if (lavea.output_buffer != NULL) {
 				write(audio_fd, lavea.output_buffer, lavea.output_buffer_size);
-				ffl_debug(FPOL_MM, "mp3 encoded packet size: %d", lavea.output_buffer_size);
+				fp_debug(FPOL_MM, "mp3 encoded packet size: %d", lavea.output_buffer_size);
 			}
 			free(lavea.output_buffer);
 		}
 nsleep:
 		ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, &tend);
 		if (ret) {
-			ffl_warn(FPOL_MM | NO_NEW_LINE, "");
+			fp_warn(FPOL_MM | NO_NEW_LINE, "");
 			perror("clock_nanosleep");
 			std::cout << "; remaining " << tend.tv_sec << "sec " << tend.tv_nsec << "nsec\n";
 			goto nsleep;
 		} else {
-			//ffl_debug(FPOL_MM, "Clock_nanosleep successfully slept for %ul.%ulsec", tstart.tv_sec, tstart.tv_nsec);
+			//fp_debug(FPOL_MM, "Clock_nanosleep successfully slept for %ul.%ulsec", tstart.tv_sec, tstart.tv_nsec);
 
 		}
 	}

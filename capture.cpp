@@ -87,7 +87,7 @@ ferryframe::~ferryframe() {
 }
 
 void VideoCapture::errnoExit(const char *s) {
-    ffl_err(FPOL_CAP, "%s: %s error %d: %s", devName, s, errno, strerror(errno));
+    fp_err(FPOL_CAP, "%s: %s error %d: %s", devName, s, errno, strerror(errno));
     //exit(EXIT_FAILURE);
     pthread_exit(NULL);
 }
@@ -135,7 +135,7 @@ void VideoCapture::processImage(const void *p, int size) {
         //            };
         //        }
         if (finalFrameCount % framerate == 0) {
-            ffl_debug(FPOL_CAP_L, "%s", std::string(framerate, '.').c_str());
+            fp_debug(FPOL_CAP_L, "%s", std::string(framerate, '.').c_str());
         }
         //fprintf(stdout, ".");
         //fflush(stdout);
@@ -488,7 +488,7 @@ void VideoCapture::initDevice(void) {
             errnoExit("VIDIOC_QUERYCAP");
         }
     }
-    ffl_debug(FPOL_CAP, "capabilities of %s:\n\tndriver: %s\n\tcard: %s\n\tbus_info: %s\n\tversion: %u\n\tcapabilities: %u\n\tdevice_caps: %u\n\treserved: %u,%u,%u", devName, cap.driver, cap.card, cap.bus_info, cap.version, cap.capabilities, cap.device_caps, cap.reserved[0], cap.reserved[1], cap.reserved[2]);
+    fp_debug(FPOL_CAP, "capabilities of %s:\n\tndriver: %s\n\tcard: %s\n\tbus_info: %s\n\tversion: %u\n\tcapabilities: %u\n\tdevice_caps: %u\n\treserved: %u,%u,%u", devName, cap.driver, cap.card, cap.bus_info, cap.version, cap.capabilities, cap.device_caps, cap.reserved[0], cap.reserved[1], cap.reserved[2]);
     if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
         //        fprintf(stderr, "%s is no video capture device\n", devName);
         //        exit(EXIT_FAILURE);
@@ -539,7 +539,7 @@ void VideoCapture::initDevice(void) {
     } else {
         /* Errors ignored. */
     }
-    ffl_debug(FPOL_CAP, "%s crop capabilities:\n\tbounds:\n\t\tleft: %d\n\t\ttop: %d\n\t\twidth: %d\n\t\theight: %d\n\tdefrect:\n\t\tleft: %d\n\t\ttop: %d\n\t\twidth: %d\n\t\theight: %d\n\tpixelaspect: %u/%u\n\ttype:%u", devName, cropcap.bounds.left, cropcap.bounds.top, cropcap.bounds.width, cropcap.bounds.height, cropcap.defrect.left, cropcap.defrect.top, cropcap.defrect.width, cropcap.defrect.height, cropcap.pixelaspect.numerator, cropcap.pixelaspect.denominator, cropcap.type);
+    fp_debug(FPOL_CAP, "%s crop capabilities:\n\tbounds:\n\t\tleft: %d\n\t\ttop: %d\n\t\twidth: %d\n\t\theight: %d\n\tdefrect:\n\t\tleft: %d\n\t\ttop: %d\n\t\twidth: %d\n\t\theight: %d\n\tpixelaspect: %u/%u\n\ttype:%u", devName, cropcap.bounds.left, cropcap.bounds.top, cropcap.bounds.width, cropcap.bounds.height, cropcap.defrect.left, cropcap.defrect.top, cropcap.defrect.width, cropcap.defrect.height, cropcap.pixelaspect.numerator, cropcap.pixelaspect.denominator, cropcap.type);
     argp.index = 0;
     argp.width = width;
     argp.height = height;
@@ -552,7 +552,7 @@ void VideoCapture::initDevice(void) {
     CLEAR(fmt);
 
     fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    ffl_debug(FPOL_CAP, "input_format=%s", forceFormat);
+    fp_debug(FPOL_CAP, "input_format=%s", forceFormat);
     if (forceFormat) {
         fmt.fmt.pix.width = width;
         fmt.fmt.pix.height = height;
@@ -567,7 +567,7 @@ void VideoCapture::initDevice(void) {
 
         if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt)) {
             if (-1 < xioctl(fd, VIDIOC_G_FMT, &fmt)) {
-                ffl_debug(FPOL_CAP, "%s is set to pixel format:\n\tpixelformat:\t%s\n\tfield:\t\t%s\n\twidth:\t\t%d\n\theight:\t\t%d", devName, std::string((char*) &fmt.fmt.pix.pixelformat, 4).c_str(), v4l2_field_str[(v4l2_field) fmt.fmt.pix.field].c_str(), fmt.fmt.pix.width, fmt.fmt.pix.height);
+                fp_debug(FPOL_CAP, "%s is set to pixel format:\n\tpixelformat:\t%s\n\tfield:\t\t%s\n\twidth:\t\t%d\n\theight:\t\t%d", devName, std::string((char*) &fmt.fmt.pix.pixelformat, 4).c_str(), v4l2_field_str[(v4l2_field) fmt.fmt.pix.field].c_str(), fmt.fmt.pix.width, fmt.fmt.pix.height);
             }
             errnoExit("VIDIOC_S_FMT");
         }
@@ -722,7 +722,7 @@ void* videocapture(void * voidarg) {
     struct capture_args* arg = (capture_args*) voidarg;
     *arg->returnObj.state = 0;
     v4l2_field_str_init();
-    ffl_debug(FPOL_CAP, "arg->device=%s", arg->device.c_str());
+    fp_debug(FPOL_CAP, "arg->device=%s", arg->device.c_str());
     //arg->framebuffer->resize(arg->buffersize); //(ferryframe*) calloc(arg->buffersize, sizeof (ferryframe));
     pthread_cleanup_push(pthreadCancelVideoCapture, arg);
     vc.readersCount = arg->readerscount;
@@ -786,11 +786,11 @@ void* videocapture(void * voidarg) {
     dup2(stdoutfd, 1);
     arg->framerate = vc.framerate;
     //#ifdef _DEBUG    
-    //    ffl_debug(FPOL_CAP, "\n--------videoparams-------");
-    //    if (ffl_debug_lvl(FPOL_CAP)) {
+    //    fp_debug(FPOL_CAP, "\n--------videoparams-------");
+    //    if (fp_debug_lvl(FPOL_CAP)) {
     //        print_videoparams();
     //    }
-    //    ffl_debug(FPOL_CAP, "\n--------videoparams-------");
+    //    fp_debug(FPOL_CAP, "\n--------videoparams-------");
     //#endif
     *arg->returnObj.state = -1;
     pthread_cleanup_pop(0);

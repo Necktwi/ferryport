@@ -356,8 +356,8 @@ void * snd_record(void* voidargs) {
     rc = snd_pcm_open(&handle, (const char*) args->dev_name.c_str(), SND_PCM_STREAM_CAPTURE, 0);
     pthread_cleanup_push(deallocate_srarg, voidargs);
     if (rc < 0) {
-        ffl_err(FPOL_PCM, "unable to open pcm device: %s", snd_strerror(rc));
-        ffl_debug(FPOL_PCM, "dev_name: %s", (char*) args->dev_name.c_str());
+        fp_err(FPOL_PCM, "unable to open pcm device: %s", snd_strerror(rc));
+        fp_debug(FPOL_PCM, "dev_name: %s", (char*) args->dev_name.c_str());
         args->returnObj.errorcode = 1;
         //pthread_cleanup_pop(1);
         //return NULL;

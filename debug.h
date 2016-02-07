@@ -10,6 +10,7 @@
 #include <map>
 #include <utility>
 #include <sys/types.h>
+#include <base/logger.h>
 
 #define NELEMS(x)  (sizeof(x) / sizeof(x[0]))
 #define DEBUG
@@ -34,6 +35,31 @@ enum FPOL_LEVEL {
 
     NO_NEW_LINE = 1 << 31 //*< or it with above options for the log to be terminated with out new line
 };
+
+
+extern _ff_log_type fp_log_type;
+extern unsigned int fp_log_level;
+
+
+#define fp_notice(level,...) ffl_notice(fp_log_type,fp_log_level,level,__VA_ARGS__)
+#define fp_warn(level,...) ffl_warn(fp_log_type,fp_log_level,level,__VA_ARGS__)
+#define fp_err(level,...) ffl_err(fp_log_type,fp_log_level,level,__VA_ARGS__)
+#define fp_info(level,...) ffl_info(fp_log_type,fp_log_level,level,__VA_ARGS__)
+
+/*
+ *  weaker logging can be deselected at configure time using --disable-debug
+ *  that gets rid of the overhead of checking while keeping _warn and _err
+ *  active
+ */
+#ifdef _DEBUG
+
+#define fp_debug(level,...) ffl_debug(fp_log_type,fp_log_level,level,__VA_ARGS__)
+#define ffl_parser(...) _ff_log(FFL_PARSER, __VA_ARGS__)
+#define ffl_header(...)  _ff_log(FFL_HEADER, __VA_ARGS__)
+#define ffl_ext(...)  _ff_log(FFL_EXT, __VA_ARGS__)
+#define ffl_client(...) _ff_log(FFL_CLIENT, __VA_ARGS__)
+#define ffl_latency(...) _ff_log(FFL_LATENCY, __VA_ARGS__)
+#endif  
 
 #endif	/* DEBUG_H */
 

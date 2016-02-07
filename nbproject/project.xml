@@ -12,6 +12,8 @@
             <sourceRootList>
                 <sourceRootElem>../../Projects/ferryport/nbproject</sourceRootElem>
                 <sourceRootElem>debian</sourceRootElem>
+                <sourceRootElem>../../Projects/ferryport/nbproject</sourceRootElem>
+                <sourceRootElem>debian</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
