@@ -207,7 +207,7 @@ time_t nm_previousCheckTime;
 string mobile_modem_bus_device_file_name;
 string usb_hub_bus_device_file_name;
 
-_ff_log_type fp_log_type = FFL_NOTICE | FFL_WARN | FFL_ERR | FFL_DEBUG;
+_ff_log_type fp_log_type = (_ff_log_type)(FFL_NOTICE | FFL_WARN | FFL_ERR | FFL_DEBUG);
 unsigned int fp_log_level = FPOL_MAIN | FPOL_MM;
 
 enum StreamType {
@@ -1361,7 +1361,7 @@ void readConfig() {
 	appName.assign(model["appName"]);
 	xmlnamespace = string((const char*) model["namespace"]);
 	debug = model["debug"];
-	ff_log_level = debug;
+	fp_log_level = debug;
 	prop = "camcaptureCompression";
 	camcaptureCompression = model[prop];
 	recordfps = to_string((int) model["recordFps"]);

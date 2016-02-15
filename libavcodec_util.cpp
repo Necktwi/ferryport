@@ -153,7 +153,7 @@ void audio_encode(libav_encode_args* a) {
     //    }
 
     /* frame containing input raw audio */
-    frame = avcodec_alloc_frame();
+    frame = av_frame_alloc();
     if (!frame) {
         fprintf(stderr, "Could not allocate audio frame\n");
         exit(1);
@@ -216,7 +216,7 @@ void audio_encode(libav_encode_args* a) {
             //pkt.data[pkt.size] = 0;
             memcpy(args.output_buffer + args.output_buffer_size, pkt.data, pkt.size);
             args.output_buffer_size += pkt.size;
-            av_free_packet(&pkt);
+            av_packet_unref(&pkt);
         }
     }
     /* get the delayed frames */
@@ -230,12 +230,12 @@ void audio_encode(libav_encode_args* a) {
             //fwrite(pkt.data, 1, pkt.size, f);
             memcpy(args.output_buffer + args.output_buffer_size, pkt.data, pkt.size);
             args.output_buffer_size += pkt.size;
-            av_free_packet(&pkt);
+            av_packet_unref(&pkt);
         }
     }
     //    fclose(f);
     av_freep(&samples);
-    avcodec_free_frame(&frame);
+    av_frame_free(&frame);
     avcodec_close(c);
     av_free(c);
 }
@@ -285,12 +285,12 @@ static void audio_decode_example(const char *outfilename, const char *filename) 
     while (avpkt.size > 0) {
         int got_frame = 0;
         if (!decoded_frame) {
-            if (!(decoded_frame = avcodec_alloc_frame())) {
+            if (!(decoded_frame = av_frame_alloc())) {
                 fprintf(stderr, "Could not allocate audio frame\n");
                 exit(1);
             }
         } else
-            avcodec_get_frame_defaults(decoded_frame);
+            av_frame_unref(decoded_frame);
         len = avcodec_decode_audio4(c, decoded_frame, &got_frame, &avpkt);
         if (len < 0) {
             fprintf(stderr, "Error while decoding\n");
@@ -324,7 +324,7 @@ static void audio_decode_example(const char *outfilename, const char *filename) 
     fclose(f);
     avcodec_close(c);
     av_free(c);
-    avcodec_free_frame(&decoded_frame);
+    av_frame_free(&decoded_frame);
 }
 
 /*
@@ -372,7 +372,7 @@ static void video_encode_example(const char *filename, int codec_id) {
         fprintf(stderr, "Could not open %s\n", filename);
         exit(1);
     }
-    frame = avcodec_alloc_frame();
+    frame = av_frame_alloc();
     if (!frame) {
         fprintf(stderr, "Could not allocate video frame\n");
         exit(1);
@@ -417,7 +417,7 @@ static void video_encode_example(const char *filename, int codec_id) {
         if (got_output) {
             printf("Write frame %3d (size=%5d)\n", i, pkt.size);
             fwrite(pkt.data, 1, pkt.size, f);
-            av_free_packet(&pkt);
+            av_packet_unref(&pkt);
         }
     }
     /* get the delayed frames */
@@ -431,7 +431,7 @@ static void video_encode_example(const char *filename, int codec_id) {
         if (got_output) {
             printf("Write frame %3d (size=%5d)\n", i, pkt.size);
             fwrite(pkt.data, 1, pkt.size, f);
-            av_free_packet(&pkt);
+            av_packet_unref(&pkt);
         }
     }
     /* add sequence end code to have a real mpeg file */
@@ -440,7 +440,7 @@ static void video_encode_example(const char *filename, int codec_id) {
     avcodec_close(c);
     av_free(c);
     av_freep(&frame->data[0]);
-    avcodec_free_frame(&frame);
+    av_frame_free(&frame);
     printf("\n");
 }
 
@@ -521,7 +521,7 @@ static void video_decode_example(const char *outfilename, const char *filename) 
         fprintf(stderr, "Could not open %s\n", filename);
         exit(1);
     }
-    frame = avcodec_alloc_frame();
+    frame = av_frame_alloc();
     if (!frame) {
         fprintf(stderr, "Could not allocate video frame\n");
         exit(1);
@@ -557,7 +557,7 @@ static void video_decode_example(const char *outfilename, const char *filename) 
     fclose(f);
     avcodec_close(c);
     av_free(c);
-    avcodec_free_frame(&frame);
+    av_frame_free(&frame);
     printf("\n");
 }
 

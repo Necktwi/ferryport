@@ -5,7 +5,7 @@
  * Created on 7 June, 2013, 4:07 PM
  */
 #ifndef DEBUG_H
-#define	DEBUG_H
+#define DEBUG_H
 #include <base/mystdlib.h>
 #include <map>
 #include <utility>
@@ -22,18 +22,18 @@ extern int stderrfd;
 extern int child_exit_status;
 
 enum FPOL_LEVEL {
-    FPOL_MAIN = 1 << 0,
-    FPOL_SPAWN = 1 << 1,
-    FPOL_SOCKET = 1 << 2,
-    FPOL_GPS = 1 << 3,
-    FPOL_MM = 1 << 4, //*< MediaManager
-    FPOL_LL = 1 << 5, //*< lowlevel calls like siganlHandler, spawn
-    FPOL_PCM = 1 << 6, //*< pulse code modulation(sound recording)
-    FPOL_CAP = 1 << 7, //*< video capture
-    FPOL_CAP_L = 1 << 8, //*< low level or frequent log
-    FPOL_LAV = 1 << 9, //*< libavcodec
+	FPOL_MAIN = 1 << 0,
+	FPOL_SPAWN = 1 << 1,
+	FPOL_SOCKET = 1 << 2,
+	FPOL_GPS = 1 << 3,
+	FPOL_MM = 1 << 4, //*< MediaManager
+	FPOL_LL = 1 << 5, //*< lowlevel calls like siganlHandler, spawn
+	FPOL_PCM = 1 << 6, //*< pulse code modulation(sound recording)
+	FPOL_CAP = 1 << 7, //*< video capture
+	FPOL_CAP_L = 1 << 8, //*< low level or frequent log
+	FPOL_LAV = 1 << 9, //*< libavcodec
 
-    NO_NEW_LINE = 1 << 31 //*< or it with above options for the log to be terminated with out new line
+	NO_NEW_LINE = 1 << 31 //*< or it with above options for the log to be terminated with out new line
 };
 
 
@@ -54,12 +54,15 @@ extern unsigned int fp_log_level;
 #ifdef _DEBUG
 
 #define fp_debug(level,...) ffl_debug(fp_log_type,fp_log_level,level,__VA_ARGS__)
-#define ffl_parser(...) _ff_log(FFL_PARSER, __VA_ARGS__)
-#define ffl_header(...)  _ff_log(FFL_HEADER, __VA_ARGS__)
-#define ffl_ext(...)  _ff_log(FFL_EXT, __VA_ARGS__)
-#define ffl_client(...) _ff_log(FFL_CLIENT, __VA_ARGS__)
-#define ffl_latency(...) _ff_log(FFL_LATENCY, __VA_ARGS__)
+#define fp_parser(...) _ff_log(FFL_PARSER, __VA_ARGS__)
+#define fp_header(...)  _ff_log(FFL_HEADER, __VA_ARGS__)
+#define fp_ext(...)  _ff_log(FFL_EXT, __VA_ARGS__)
+#define fp_client(...) _ff_log(FFL_CLIENT, __VA_ARGS__)
+#define fp_latency(...) _ff_log(FFL_LATENCY, __VA_ARGS__)
 #endif  
 
-#endif	/* DEBUG_H */
+#ifdef _DEBUG
+#define fp_debug_contnu(level,...) _ff_log_contnu(fp_log_type, FFL_DEBUG, fp_log_level, level, __VA_ARGS__)
+#endif
+#endif /* DEBUG_H */
 
