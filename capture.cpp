@@ -543,7 +543,7 @@ void VideoCapture::initDevice(void) {
     argp.index = 0;
     argp.width = width;
     argp.height = height;
-    argp.pixel_format = V4L2_PIX_FMT_MJPEG;
+    argp.pixel_format = V4L2_PIX_FMT_YUYV;
     if (ioctl(fd, VIDIOC_ENUM_FRAMEINTERVALS, &argp) < 0) {
         //exit(EXIT_FAILURE);
         errnoExit("VIDIOC_ENUM_FRAMEINTERVALS");

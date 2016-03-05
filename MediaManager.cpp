@@ -39,8 +39,7 @@ MediaManager::~MediaManager() {
 }
 
 MediaManager::capture_thread_iargs::~capture_thread_iargs() {
-	delete this->inputs;
-	delete this->outputs;
+
 }
 
 std::string MediaManager::MediaTypeString[] = {"AUDIO", "VIDEO"};
@@ -314,7 +313,8 @@ connect:
 			path = ppos > 0 ? ffargs->omedia->identifier.substr(ppos,
 					ffargs->omedia->identifier.length()) : "";
 			url = ffargs->omedia->identifier.substr(7, cpos > 0 ? cpos - 7 :
-					(ppos > 0 ? ppos - 7 : ffargs->omedia->identifier.length() - 7));
+					(ppos > 0 ? ppos - 7 : ffargs->omedia->identifier.length() -
+					7));
 			init = true;
 		}
 	}
@@ -323,9 +323,14 @@ connect:
 		ffargs->cs = new ClientSocket(url, port);
 	} catch (SocketException&) {
 		if (ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnect) {
-			fp_err(FPOL_MM, "MediaManager: connection to %s:%d failed. sleeping for %d sec", url.c_str(), port, ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
-			if ((ffargs->ivideomedia == NULL || ffargs->ivideomedia->state < 0)&&(ffargs->iaudiomedia == NULL || ffargs->iaudiomedia->state < 0)) return NULL;
-			sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
+			fp_err(FPOL_MM, "MediaManager: connection to %s:%d failed. sleeping"
+					" for %d sec", url.c_str(), port, ffargs->omedia->
+					splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
+			if ((ffargs->ivideomedia == NULL || ffargs->ivideomedia->state < 0)
+					&&(ffargs->iaudiomedia == NULL || ffargs->iaudiomedia->state
+					< 0)) return NULL;
+			sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.
+					reconnectIntervalSec);
 			goto connect;
 		}
 		ffargs->ffr.error = "Unable to connect streaming server.";
@@ -337,10 +342,12 @@ connect:
 	try {
 		*ffargs->cs << beacon;
 	} catch (SocketException e) {
-		fp_err(FPOL_MM, "MediaManager: unable to send initpack to %s:%d", url.c_str(), port);
+		fp_err(FPOL_MM, "MediaManager: unable to send initpack to %s:%d",
+				url.c_str(), port);
 		if (ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnect) {
 			delete ffargs->cs;
-			sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.reconnectIntervalSec);
+			sleep(ffargs->omedia->splMediaProps.fmpFeederSplProps.
+					reconnectIntervalSec);
 			goto connect;
 		} else {
 			pthread_exit(NULL);
@@ -348,15 +355,20 @@ connect:
 	}
 	ffargs->cs->set_non_blocking(true);
 	int videoframesPfloat;
-	int videoframesCfloat = ffargs->ivideomedia != NULL ? ffargs->ivideomedia->bufferfloat : 0;
+	int videoframesCfloat = ffargs->ivideomedia != NULL ? ffargs->ivideomedia->
+			bufferfloat : 0;
 	int audioperiodPfloat;
-	int audioperiodCfloat = ffargs->iaudiomedia != NULL ? ffargs->iaudiomedia->bufferfloat : 0;
+	int audioperiodCfloat = ffargs->iaudiomedia != NULL ? ffargs->iaudiomedia->
+			bufferfloat : 0;
 	int received_frames_per_segment_duration;
 	std::string * packet;
 	std::string buf;
-	int transmitted_frames_per_segment_duration = ffargs->omedia->videoframerate * ffargs->omedia->segmentDuration;
+	int transmitted_frames_per_segment_duration = ffargs->omedia->videoframerate
+			* ffargs->omedia->segmentDuration;
 	if (transmitted_frames_per_segment_duration < 1) {
-		std::cout << "\n" << getTime() << " MediaManager::raw_mjpeg_mp3_dump: error: your frame rate should give atleast one frame in segment duration.\n";
+		std::cout << "\n" << getTime() << " MediaManager::raw_mjpeg_mp3_dump: "
+				"error: your frame rate should give atleast one frame in "
+				"segment duration.\n";
 		pthread_exit(NULL);
 	}
 	int pf;
@@ -367,7 +379,8 @@ connect:
 		lavea.av_smpl_fmt = AV_SAMPLE_FMT_S16P;
 		lavea.bitrate = ffargs->omedia->audioBitrate;
 		lavea.samplingFrequency = ffargs->iaudiomedia->audioSamplingFrequency;
-		lavea.input_buffer.periodbuffer = ffargs->iaudiomedia->buffer.periodbuffer;
+		lavea.input_buffer.periodbuffer = ffargs->iaudiomedia->buffer.
+				periodbuffer;
 		lavea.output_buffer = NULL;
 	}
 	sleep(ffargs->omedia->segmentDuration);
@@ -376,7 +389,8 @@ connect:
 	/**
 	 * It holds the last byte of the video head to check its same for all frames. 
 	 */
-	while ((ffargs->iaudiomedia != NULL && ffargs->iaudiomedia->state > 0) || (ffargs->ivideomedia != NULL && ffargs->ivideomedia->state > 0)) {
+	while ((ffargs->iaudiomedia != NULL && ffargs->iaudiomedia->state > 0) ||
+			(ffargs->ivideomedia != NULL && ffargs->ivideomedia->state > 0)) {
 		clock_gettime(CLOCK_REALTIME, &tstart);
 		tstart.tv_sec += ffargs->omedia->segmentDuration;
 		if (ffargs->ivideomedia != NULL && ffargs->ivideomedia->state != -1) {
@@ -392,14 +406,25 @@ connect:
 		*packet += ",ferryframes:[";
 		std::vector<int> framesizes;
 		if (ffargs->ivideomedia != NULL && ffargs->ivideomedia->state > 0) {
-			received_frames_per_segment_duration = videoframesCfloat > videoframesPfloat ? (videoframesCfloat - videoframesPfloat + 1) : (videoframesCfloat + 200 - videoframesPfloat + 1);
-			if (transmitted_frames_per_segment_duration == 0 || transmitted_frames_per_segment_duration > received_frames_per_segment_duration)transmitted_frames_per_segment_duration = received_frames_per_segment_duration;
+			received_frames_per_segment_duration = videoframesCfloat >
+					videoframesPfloat ? (videoframesCfloat - videoframesPfloat +
+					1) : (videoframesCfloat + 200 - videoframesPfloat + 1);
+			if (transmitted_frames_per_segment_duration == 0 ||
+					transmitted_frames_per_segment_duration >
+					received_frames_per_segment_duration)
+				transmitted_frames_per_segment_duration =
+					received_frames_per_segment_duration;
 			cf = videoframesPfloat;
 			for (int i = 0; i < transmitted_frames_per_segment_duration; i++) {
 				pf = cf;
-				cf = (videoframesPfloat + (i * received_frames_per_segment_duration / transmitted_frames_per_segment_duration)) % ffargs->ivideomedia->buffer.framebuffer->size();
+				cf = (videoframesPfloat + (i *
+						received_frames_per_segment_duration /
+						transmitted_frames_per_segment_duration)) %
+						ffargs->ivideomedia->buffer.framebuffer->size();
 				*packet += "<BINARY>";
-				packet->append((char*) (((char*) (*ffargs->ivideomedia->buffer.framebuffer)[cf].frame)), (*ffargs->ivideomedia->buffer.framebuffer)[cf].length);
+				packet->append((char*) (((char*) (*ffargs->ivideomedia->buffer.
+						framebuffer)[cf].frame)), (*ffargs->ivideomedia->buffer.
+						framebuffer)[cf].length);
 				*packet += "</BINARY>";
 				if (i < (transmitted_frames_per_segment_duration - 1)) {
 					*packet += ",";
@@ -410,15 +435,20 @@ connect:
 		if (ffargs->iaudiomedia != NULL && ffargs->iaudiomedia->state > 0) {
 			lavea.initptr = audioperiodPfloat;
 			lavea.termptr = audioperiodCfloat - 1;
-			fp_debug(FPOL_MM, "collected sound samples at %d to %d", audioperiodPfloat, audioperiodCfloat);
+			fp_debug(FPOL_MM, "collected sound samples at %d to %d", 
+					audioperiodPfloat, audioperiodCfloat);
 			audio_encode(&lavea);
 			if (lavea.output_buffer != NULL) {
 				packet->append(lavea.output_buffer, lavea.output_buffer_size);
-				fp_debug(FPOL_MM, "mp3 encoded packet size: %d", lavea.output_buffer_size);
+				fp_debug(FPOL_MM, "mp3 encoded packet size: %d",
+						lavea.output_buffer_size);
 			}
 			free(lavea.output_buffer);
 		}
-		*packet += "</BINARY>,time:\"" + std::to_string((unsigned int) (tstart.tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + std::to_string(ffargs->omedia->segmentDuration) + ",endex:" + std::to_string(index) + "}";
+		*packet += "</BINARY>,time:\"" + std::to_string((unsigned int) (tstart.
+				tv_sec * 1000 + tstart.tv_nsec / 1000)) + "\",duration:" + 
+				std::to_string(ffargs->omedia->segmentDuration) + ",endex:" + 
+				std::to_string(index) + "}";
 		ffargs->csm.lock();
 		try {
 			ffargs->cs->send(packet, MSG_DONTWAIT | MSG_NOSIGNAL);
@@ -428,7 +458,8 @@ connect:
 			ffargs->csm.unlock();
 			delete ffargs->cs;
 			delete packet;
-			fp_notice(FPOL_MM, "MediaManager: unable to send packet to %s:%d", url.c_str(), port);
+			fp_notice(FPOL_MM, "MediaManager: unable to send packet to %s:%d",
+					url.c_str(), port);
 			goto connect;
 		}
 		ffargs->csm.unlock();
@@ -439,10 +470,12 @@ connect:
 nsleep:
 		ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tstart, &tend);
 		if (ret) {
-			fp_debug(FPOL_MM, "MediaManager: clock_nanosleep interrupted! remaining %d.%dsec. gonna sleep again zzzz");
+			fp_debug(FPOL_MM, "MediaManager: clock_nanosleep interrupted! "
+					"remaining %d.%dsec. gonna sleep again zzzz");
 			goto nsleep;
 		} else {
-			//fp_debug(FPOL_MM, "MediaManager: clock_nanosleep successfully slept till %ul.%ul", tstart.tv_sec, tstart.tv_nsec);
+			fp_debug(FPOL_MM_DEEP, "MediaManager: clock_nanosleep successfully slept"
+					" till %ul.%ul", tstart.tv_sec, tstart.tv_nsec);
 		}
 
 	}

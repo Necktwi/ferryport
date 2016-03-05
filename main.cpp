@@ -207,9 +207,6 @@ time_t nm_previousCheckTime;
 string mobile_modem_bus_device_file_name;
 string usb_hub_bus_device_file_name;
 
-_ff_log_type fp_log_type = (_ff_log_type)(FFL_NOTICE | FFL_WARN | FFL_ERR | FFL_DEBUG);
-unsigned int fp_log_level = FPOL_MAIN | FPOL_MM;
-
 enum StreamType {
 	FMSP,
 	RTMP
@@ -1360,7 +1357,13 @@ void readConfig() {
 	socketType = (et.compare("NO") == 0) ? Socket::DEFAULT : ((et.compare("TLS1_1") == 0) ? Socket::TLS1_1 : Socket::DEFAULT);
 	appName.assign(model["appName"]);
 	xmlnamespace = string((const char*) model["namespace"]);
-	debug = model["debug"];
+	if (model["debug"].isType(FFJSON::ARRAY)) {
+		for (FFJSON::Iterator it = model["debug"].begin();
+				it != model["debug"].end(); it++)
+			debug |= (int) *it;
+	} else {
+		debug = model["debug"];
+	}
 	fp_log_level = debug;
 	prop = "camcaptureCompression";
 	camcaptureCompression = model[prop];
@@ -2468,44 +2471,44 @@ void* test(void *) {
 	//    pcm_open_set_device();
 
 	/*Testing MediaManager*/
-	//    setuid(1000);
-	//    debug = 17;
-	//    readConfig();
-	//    valarray<MediaManager::media> imedia(2);
-	//    imedia[0].duration = 0;
-	//    imedia[0].encoding = MediaManager::MJPEG;
-	//    imedia[0].height = 240;
-	//    imedia[0].identifier = "/dev/video0";
-	//    imedia[0].type = MediaManager::VIDEO;
-	//    imedia[0].videoframerate = 10;
-	//    imedia[0].width = 320;
-	//    imedia[1].audioSamplingFrequency = 44100;
-	//    imedia[1].duration = 0;
-	//    imedia[1].identifier = "plughw:1";
-	//    imedia[1].type = MediaManager::AUDIO;
-	//    imedia[2].duration = 0;
-	//    imedia[2].encoding = MediaManager::MJPEG;
-	//    imedia[2].height = 240;
-	//    imedia[2].identifier = "/dev/video2";
-	//    imedia[2].type = MediaManager::VIDEO;
-	//    imedia[2].videoframerate = 0.4;
-	//    imedia[2].width = 320;
-	//    imedia[3].audioSamplingFrequency = 44100;
-	//    imedia[3].duration = 0;
-	//    imedia[3].identifier = "default";
-	//    imedia[3].type = MediaManager::AUDIO;
-	//    valarray<MediaManager::media> omedia(1);
-	//    omedia[0].identifier = "fmsp://fms.newmeksolutions.com:92711/" + appName + "1780";
-	//    omedia[0].identifier = "ferrymediacapture1/";
-	//    omedia[0].segmentDuration = 1;
-	//    omedia[0].videoframerate = 10;
-	//    omedia[0].audioBitrate = 64000;
-	//    omedia[0].duration = 10;
-	//    omedia[0].encoding = MediaManager::MP2;
-	//    omedia[0].splMediaProps.fmpFeederSplProps.reconnect = true;
-	//    omedia[0].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
-	//    omedia[0].signalNewState = 0;
-	//    MediaManager::capture(imedia, omedia);
+	setuid(1000);
+	debug = 17;
+	readConfig();
+	valarray<MediaManager::media> imedia(2);
+	imedia[0].duration = 0;
+	imedia[0].encoding = MediaManager::MJPEG;
+	imedia[0].height = 240;
+	imedia[0].identifier = "/dev/video0";
+	imedia[0].type = MediaManager::VIDEO;
+	imedia[0].videoframerate = 10;
+	imedia[0].width = 320;
+	imedia[1].audioSamplingFrequency = 44100;
+	imedia[1].duration = 0;
+	imedia[1].identifier = "plughw:0";
+	imedia[1].type = MediaManager::AUDIO;
+	//	imedia[2].duration = 0;
+	//	imedia[2].encoding = MediaManager::MJPEG;
+	//	imedia[2].height = 240;
+	//	imedia[2].identifier = "/dev/video2";
+	//	imedia[2].type = MediaManager::VIDEO;
+	//	imedia[2].videoframerate = 0.4;
+	//	imedia[2].width = 320;
+	//	imedia[3].audioSamplingFrequency = 44100;
+	//	imedia[3].duration = 0;
+	//	imedia[3].identifier = "default";
+	//	imedia[3].type = MediaManager::AUDIO;
+	valarray<MediaManager::media> omedia(1);
+	omedia[0].identifier = "fmsp://fairplay.ferryfair.com:92711/" + appName + "1780";
+	//omedia[0].identifier = "ferrymediacapture1/";
+	omedia[0].segmentDuration = 1;
+	omedia[0].videoframerate = 10;
+	omedia[0].audioBitrate = 64000;
+	omedia[0].duration = duration;
+	omedia[0].encoding = MediaManager::MP2;
+	omedia[0].splMediaProps.fmpFeederSplProps.reconnect = true;
+	omedia[0].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
+	omedia[0].signalNewState = 2;
+	MediaManager::capture(imedia, omedia);
 	/*stat*/
 	//    struct stat statbuf;
 	//    struct passwd *pwd;
@@ -2905,6 +2908,7 @@ int main(int argc, char** argv) {
 				break;
 			case 't':
 				duration = std::stoi(optarg);
+				test(NULL);
 				break;
 			case 'f':
 				configFile = string(optarg);

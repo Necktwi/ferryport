@@ -32,7 +32,7 @@ enum FPOL_LEVEL {
 	FPOL_CAP = 1 << 7, //*< video capture
 	FPOL_CAP_L = 1 << 8, //*< low level or frequent log
 	FPOL_LAV = 1 << 9, //*< libavcodec
-
+	FPOL_MM_DEEP = 1 << 10, //*< MediaManager deep debug
 	NO_NEW_LINE = 1 << 31 //*< or it with above options for the log to be terminated with out new line
 };
 

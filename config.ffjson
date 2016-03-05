@@ -73,9 +73,10 @@
 		pcm=64,
 		video capture=128,
 		video capture low level or frequent log = 256,
-		libavencoder=512
+		libavencoder=512,
+		MediaManagerDeep=1024
 	",
-	debug: 145,
+	debug: 1169,
 
 	#cmosBatt: "true if main-board has CMOS battery else false",
 	cmosBatt: false,

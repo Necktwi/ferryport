@@ -16,12 +16,21 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>rfs://gowtham@ubuntuvm.ferryfair.com:22/home/gowtham/Projects/ferryport/debian/control</file>
-            <file>rfs://gowtham@ubuntuvm.ferryfair.com:22/home/gowtham/Projects/ferryport/main.cpp</file>
-            <file>rfs://gowtham@ubuntuvm.ferryfair.com:22/home/gowtham/Projects/ferryport/config.ffjson</file>
-            <file>rfs://gowtham@ubuntuvm.ferryfair.com:22/home/gowtham/Projects/ferryport/Makefile</file>
-            <file>rfs://gowtham@ubuntuvm.ferryfair.com:22/home/gowtham/Projects/ferryport/mypcm.cpp</file>
-            <file>rfs://gowtham@ubuntuvm.ferryfair.com:22/home/gowtham/Projects/ferryport/ferryport.ffjson</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/MediaManager.h</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/Makefile</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/MediaManager.cpp</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/mypcm.cpp</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/main.cpp</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/debug.h</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/README.md</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/Multimedia.cpp</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/debug.cpp</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/config.ffjson</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/tests/audioTest.cpp</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/test%2D%65%63%68%6F%2E%63</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/tests/rawPlayer.cpp</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/capture.h</file>
+            <file>rfs://gowtham@bunsen:22/home/gowtham/workspace/ferryport/capture.cpp</file>
         </group>
     </open-files>
 </project-private>
