@@ -1,16 +1,16 @@
 {
 	appName: "",
 	
-	serverAddress: "demo.viewyourworld.com",
+	serverAddress: "fairplay.bunsen.local",
 	
 	serverPort: 80,
 	
-	streamAddress: "demo.viewyourworld.com",
+	streamAddress: "fairplay.bunsen.local",
 	
 	streamPort: 25222,
 
 	#serverType: "REST/SOAP",
-	serverType: "SOAP",
+	serverType: "REST",
 
 	#connectionEncryption: "NO-default value,TLS1_1-TLS version 1.1 encryption",
 	connectionEncryption: "NO",
@@ -87,9 +87,12 @@
 		for ffmpeg and flash set to 'RTMP';
 		for FairPlay set to 'FMSP'
 	",
-	videoStreamingType: "RTMP",
+	videoStreamingType: "FMSP",
 	
 	autoInsertCameras: true,
 	pollInterval: 60000,
-	pid: 4188
+	pid: 4188,
+
+	#NoRootCheck: "If set Application is allowed to run as non root user",
+	NoRootCheck: true
 }

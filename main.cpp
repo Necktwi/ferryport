@@ -20,6 +20,7 @@
 #include <base/logger.h>
 #include <base/FFJSON.h>
 #include <cstdlib>
+#include <cstring>
 #include <stdio.h>
 #include <string.h>
 #include <string>
@@ -74,6 +75,13 @@ enum ServerType {
 enum RecordState {
 	RECORD_PREVIOUS_STATE, RECORD_STOP, RECORD_STREAM
 };
+
+enum RUNMODE {
+	NONE,
+	NORMAL,
+	DAEMON
+};
+
 string recordStateStr[] = {"RECORD_PREVIOUS_STATE", "RECORD_STOP",
 	"RECORD_STREAM"};
 
@@ -252,15 +260,22 @@ void set_bus_device_file_name(string vpid, string& bus_device_file_name);
 void usb_reset(string device);
 
 void setPaths() {
-	ifstream mtabifs("/etc/mtab", ios::in | ios::ate);
-	string mtabstr;
+	ifstream mtabifs("/etc/mtab", ios::in);
+	if (!mtabifs.is_open()) {
+		mtabifs.open("/proc/mounts", ios::in);
+		if (!mtabifs.is_open()) {
+			mtabifs.open("/proc/self/mounts", ios::in);
+			if (!mtabifs.is_open()) {
+				fp_err(FPOL_MAIN, "Can not open /proc/self/mounts. Error %s",
+						strerror(errno));
+				throw "Can not open /proc/self/mounts";
+			}
+		}
+	};
 	string localStorageMountFolder;
 	bool checkStorageMountFolder = false;
-	mtabifs.seekg(0, std::ios::end);
-	mtabstr.reserve(mtabifs.tellg());
-	mtabifs.seekg(0, std::ios::beg);
 
-	mtabstr.assign((std::istreambuf_iterator<char>(mtabifs)),
+	string mtabstr((std::istreambuf_iterator<char>(mtabifs)),
 			std::istreambuf_iterator<char>());
 	std::map<int, string> mount_err_map;
 	mount_err_map[EPERM] = "EPERM";
@@ -374,14 +389,18 @@ void setPaths() {
 				}
 				ifs.close();
 			} else {
-				fp_debug(FPOL_MAIN, "unable to open " APP_NAME ".ffjson in %s mounted on %s", devname, localStorageMountFolder.c_str());
+				fp_debug(FPOL_MAIN, "unable to open " APP_NAME ".ffjson in %s "
+						"mounted on %s", devname, localStorageMountFolder.
+						c_str());
 				if (mounted) {
-					spawn umount("umount " + localStorageMountFolder, daemon, NULL, false, true);
+					spawn umount("umount " + localStorageMountFolder, daemon,
+							NULL, false, true);
 					fp_debug(FPOL_MAIN, "%s unmounted", devname);
 				}
 			}
 		} else {
-			fp_debug(FPOL_MAIN, "couldn't mount %s. exit code is %d", splFile.c_str(), merr);
+			fp_debug(FPOL_MAIN, "couldn't mount %s. exit code is %d",
+					splFile.c_str(), merr);
 		}
 	}
 	struct stat st = {0};
@@ -1841,12 +1860,11 @@ void groomLogFile() {
 
 void run() {
 	secondChild = getpid();
-	if (geteuid() != 0) {
+	if (geteuid() != 0 && !model["NoRootCheck"]) {
 		fp_err(FPOL_MAIN, "Please login as root or run as sudo user");
 		exit(-1);
 	} else {
 		if (runMode.compare("daemon") != 0) {
-			readConfig();
 			if (manageNetwork == 1) {
 				pthread_create(&nwMgrThread, NULL, &networkManager, NULL);
 			}
@@ -2471,21 +2489,21 @@ void* test(void *) {
 	//    pcm_open_set_device();
 
 	/*Testing MediaManager*/
-	setuid(1000);
-	debug = 17;
-	readConfig();
-	valarray<MediaManager::media> imedia(2);
-	imedia[0].duration = 0;
-	imedia[0].encoding = MediaManager::MJPEG;
-	imedia[0].height = 240;
-	imedia[0].identifier = "/dev/video0";
-	imedia[0].type = MediaManager::VIDEO;
-	imedia[0].videoframerate = 10;
-	imedia[0].width = 320;
-	imedia[1].audioSamplingFrequency = 44100;
-	imedia[1].duration = 0;
-	imedia[1].identifier = "plughw:0";
-	imedia[1].type = MediaManager::AUDIO;
+	//	setuid(1000);
+	//	debug = 17;
+	//	readConfig();
+	//	valarray<MediaManager::media> imedia(2);
+	//	imedia[0].duration = 0;
+	//	imedia[0].encoding = MediaManager::MJPEG;
+	//	imedia[0].height = 240;
+	//	imedia[0].identifier = "/dev/video0";
+	//	imedia[0].type = MediaManager::VIDEO;
+	//	imedia[0].videoframerate = 10;
+	//	imedia[0].width = 320;
+	//	imedia[1].audioSamplingFrequency = 44100;
+	//	imedia[1].duration = 0;
+	//	imedia[1].identifier = "plughw:0";
+	//	imedia[1].type = MediaManager::AUDIO;
 	//	imedia[2].duration = 0;
 	//	imedia[2].encoding = MediaManager::MJPEG;
 	//	imedia[2].height = 240;
@@ -2497,18 +2515,19 @@ void* test(void *) {
 	//	imedia[3].duration = 0;
 	//	imedia[3].identifier = "default";
 	//	imedia[3].type = MediaManager::AUDIO;
-	valarray<MediaManager::media> omedia(1);
-	omedia[0].identifier = "fmsp://fairplay.ferryfair.com:92711/" + appName + "1780";
+	//valarray<MediaManager::media> omedia(1);
+	//omedia[0].identifier = "fmsp://fairplay.ferryfair.com:92711/" + appName + "1780";
+	//omedia[0].identifier = "fmsp://fairplay.ferryfair.com:92711/fp4/video0";
 	//omedia[0].identifier = "ferrymediacapture1/";
-	omedia[0].segmentDuration = 1;
-	omedia[0].videoframerate = 10;
-	omedia[0].audioBitrate = 64000;
-	omedia[0].duration = duration;
-	omedia[0].encoding = MediaManager::MP2;
-	omedia[0].splMediaProps.fmpFeederSplProps.reconnect = true;
-	omedia[0].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
-	omedia[0].signalNewState = 2;
-	MediaManager::capture(imedia, omedia);
+	//	omedia[0].segmentDuration = 1;
+	//	omedia[0].videoframerate = 10;
+	//	omedia[0].audioBitrate = 64000;
+	//	omedia[0].duration = duration;
+	//	omedia[0].encoding = MediaManager::MP2;
+	//	omedia[0].splMediaProps.fmpFeederSplProps.reconnect = true;
+	//	omedia[0].splMediaProps.fmpFeederSplProps.reconnectIntervalSec = 10;
+	//	omedia[0].signalNewState = 2;
+	//	MediaManager::capture(imedia, omedia);
 	/*stat*/
 	//    struct stat statbuf;
 	//    struct passwd *pwd;
@@ -2614,6 +2633,12 @@ void* test(void *) {
 	//    std::cout << "MakeFile Chnages Reflected\n";
 	//#endif
 
+	/*Testing Mtabifs*/
+	ifstream mtabifs("/etc/mtab", ios::in);
+	string mtabstr((std::istreambuf_iterator<char>(mtabifs)),
+			std::istreambuf_iterator<char>());
+	cout << mtabstr << endl;
+	mtabifs.close();
 }
 
 void set_bus_device_file_name(string vpid, string& bus_device_file_name) { //#vpid-vendor product id
@@ -2863,7 +2888,7 @@ int main(int argc, char** argv) {
 		{"stop", 0, NULL, 'x'},
 		{NULL, 0, NULL, 0}
 	};
-
+	RUNMODE eRunMode = RUNMODE::NONE;
 	do {
 		next_option = getopt_long(argc, argv, short_options, long_options, NULL);
 		switch (next_option) {
@@ -2875,13 +2900,9 @@ int main(int argc, char** argv) {
 				rootProcess = getpid();
 				opt = string(optarg);
 				if (opt.compare("daemon") == 0) {
-					runMode = opt;
-					close(1);
-					dup2(ferr, 2);
-					stderrfd = ferr;
-					firstFork();
+					eRunMode = DAEMON;
 				} else if (opt.compare("normal") == 0) {
-					run();
+					eRunMode = NORMAL;
 				}
 				break;
 			case 'i':
@@ -2923,6 +2944,16 @@ int main(int argc, char** argv) {
 				break;
 		}
 	} while (next_option != -1);
+	readConfig();
+	if (eRunMode == DAEMON) {
+		runMode = opt;
+		close(1);
+		dup2(ferr, 2);
+		stderrfd = ferr;
+		firstFork();
+	} else if (eRunMode == NORMAL) {
+		run();
+	}
 	fflush(stdout);
 	shmdt(family_message_block_ptr);
 	shmctl(family_message_block_id, IPC_RMID, 0);

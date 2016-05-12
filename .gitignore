@@ -7,7 +7,6 @@ dist/
 var/tmp/
 .bzr/
 .bzrignore
-
 nbproject/private/
 build/
 nbbuild/
